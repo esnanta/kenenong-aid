@@ -81,8 +81,8 @@ Before you begin, ensure you have the following installed on your system:
 ### Step 1: Clone the Repository
 
 ```bash
-git clone <repository-url> basic-yii2
-cd basic-yii2
+git clone git@github.com:crenspire/yii2-react-starter.git
+cd yii2-react-starter
 ```
 
 Or download and extract the project archive to your desired directory.
