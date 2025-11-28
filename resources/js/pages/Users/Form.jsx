@@ -1,0 +1,239 @@
+import { Head, Link, router, usePage } from '@inertiajs/react';
+import DashboardLayout from '@/components/layouts/DashboardLayout';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowLeft } from 'lucide-react';
+import { toast } from 'sonner';
+import { useForm as useHookForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+// Validation schema - password validation is handled in onSubmit
+const userSchema = z.object({
+  name: z.string().min(1, 'Name is required').min(2, 'Name must be at least 2 characters'),
+  email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
+  password: z.string().optional(),
+});
+
+export default function UserForm({ user, errors: serverErrors }) {
+  const { props } = usePage();
+  const isEdit = !!user?.id;
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    watch,
+    setValue,
+  } = useHookForm({
+    resolver: zodResolver(userSchema),
+    defaultValues: {
+      name: user?.name || '',
+      email: user?.email || '',
+      password: '',
+    },
+  });
+
+  const onSubmit = (data) => {
+    // Get CSRF token from meta tag or props
+    const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    const metaParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute('content');
+    
+    const csrfToken = metaToken || props.csrfToken;
+    const csrfParam = metaParam || props.csrfParam;
+    
+    if (!csrfToken || !csrfParam) {
+      toast.error('CSRF token missing. Please refresh the page.');
+      return;
+    }
+
+    // Validate password for create
+    if (!isEdit && !data.password) {
+      toast.error('Password is required');
+      return;
+    }
+
+    // Create form data with CSRF token
+    const formData = {
+      ...data,
+      [csrfParam]: csrfToken,
+    };
+
+    // Remove password if it's empty (for edit)
+    if (isEdit && !data.password) {
+      delete formData.password;
+    }
+
+    const url = isEdit ? `/users/${user.id}/edit` : '/users/create';
+    const method = isEdit ? 'put' : 'post';
+
+    router[method](url, formData, {
+      preserveScroll: true,
+      onSuccess: (page) => {
+        // Check if we navigated to the users list page (success)
+        // Inertia::location() causes a full page reload, so we check the component
+        const isOnUsersList = page?.component === 'Users/Index';
+        
+        // Check if we're still on the form page (validation failed)
+        const isStillOnForm = page?.component === 'Users/Form';
+        
+        // Check for errors in props
+        const hasErrors = (page?.props?.errors && Object.keys(page.props.errors).length > 0) ||
+                         (page?.props?.serverErrors && Object.keys(page.props.serverErrors).length > 0);
+        
+        // Only show success toast if we navigated to users list (success)
+        if (isOnUsersList) {
+          toast.success(isEdit ? 'User updated successfully' : 'User created successfully');
+        }
+        
+        // If we're still on the form, don't show success toast
+        // Errors are already displayed inline
+      },
+      onError: (errors) => {
+        console.error('Form submission error:', errors);
+        // Show error toast for HTTP errors
+        if (errors && typeof errors === 'object') {
+          Object.values(errors).forEach((error) => {
+            if (Array.isArray(error)) {
+              error.forEach((err) => toast.error(err));
+            } else if (typeof error === 'string') {
+              toast.error(error);
+            }
+          });
+        }
+      },
+    });
+  };
+
+  // Merge all error sources: react-hook-form errors, server errors prop, and page props errors
+  const allErrors = {};
+  
+  // Get errors from page props (Inertia standard location)
+  const pageErrors = props?.errors || {};
+  
+  // Process react-hook-form errors
+  if (errors) {
+    Object.keys(errors).forEach(key => {
+      const errorValue = errors[key];
+      if (errorValue?.message) {
+        allErrors[key] = errorValue.message;
+      }
+    });
+  }
+  
+  // Process server errors prop (from backend)
+  if (serverErrors) {
+    Object.keys(serverErrors).forEach(key => {
+      const errorValue = serverErrors[key];
+      allErrors[key] = Array.isArray(errorValue) ? errorValue[0] : errorValue;
+    });
+  }
+  
+  // Process page props errors (Inertia standard)
+  if (pageErrors) {
+    Object.keys(pageErrors).forEach(key => {
+      const errorValue = pageErrors[key];
+      if (!allErrors[key]) { // Don't override if already set
+        allErrors[key] = Array.isArray(errorValue) ? errorValue[0] : errorValue;
+      }
+    });
+  }
+
+  return (
+    <>
+      <Head title={isEdit ? 'Edit User' : 'Create User'} />
+      <DashboardLayout user={props.user}>
+        <div className="space-y-6">
+          <div className="flex items-center gap-4">
+            <Link href="/users">
+              <Button variant="ghost" size="icon">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">
+                {isEdit ? 'Edit User' : 'Create User'}
+              </h1>
+              <p className="text-muted-foreground">
+                {isEdit ? 'Update user information' : 'Add a new user to the system'}
+              </p>
+            </div>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>User Information</CardTitle>
+              <CardDescription>
+                Enter the user's details below
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name *</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    {...register('name')}
+                    className={allErrors.name ? 'border-destructive' : ''}
+                  />
+                  {allErrors.name && (
+                    <p className="text-sm text-destructive">
+                      {allErrors.name}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    {...register('email')}
+                    className={allErrors.email ? 'border-destructive' : ''}
+                  />
+                  {allErrors.email && (
+                    <p className="text-sm text-destructive">
+                      {allErrors.email}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="password">
+                    Password {isEdit ? '(leave blank to keep current password)' : '*'}
+                  </Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    {...register('password')}
+                    className={allErrors.password ? 'border-destructive' : ''}
+                  />
+                  {allErrors.password && (
+                    <p className="text-sm text-destructive">
+                      {allErrors.password}
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex gap-2">
+                  <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? 'Saving...' : isEdit ? 'Update User' : 'Create User'}
+                  </Button>
+                  <Link href="/users">
+                    <Button type="button" variant="outline">
+                      Cancel
+                    </Button>
+                  </Link>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      </DashboardLayout>
+    </>
+  );
+}
+
