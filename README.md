@@ -66,123 +66,204 @@ The template includes a beautiful UI built with Shadcn UI components, dark/light
 
 </div>
 
-[![Latest Stable Version](https://img.shields.io/packagist/v/yiisoft/yii2-app-basic.svg)](https://packagist.org/packages/yiisoft/yii2-app-basic)
-[![Total Downloads](https://img.shields.io/packagist/dt/yiisoft/yii2-app-basic.svg)](https://packagist.org/packages/yiisoft/yii2-app-basic)
-[![build](https://github.com/yiisoft/yii2-app-basic/workflows/build/badge.svg)](https://github.com/yiisoft/yii2-app-basic/actions?query=workflow%3Abuild)
+## Requirements
 
-DIRECTORY STRUCTURE
--------------------
+Before you begin, ensure you have the following installed on your system:
 
-      assets/             contains assets definition
-      commands/           contains console commands (controllers)
-      config/             contains application configurations
-      controllers/        contains Web controller classes
-      mail/               contains view files for e-mails
-      models/             contains model classes
-      runtime/            contains files generated during runtime
-      tests/              contains various tests for the basic application
-      vendor/             contains dependent 3rd-party packages
-      views/              contains view files for the Web application
-      web/                contains the entry script and Web resources
+- **PHP** >= 7.4.0 (PHP 8.0+ recommended)
+- **Composer** - PHP dependency manager ([Install Composer](https://getcomposer.org/download/))
+- **Node.js** >= 18.0.0 and **npm** (or **yarn**)
+- **MySQL** >= 5.7 or **MariaDB** >= 10.3
+- **Web Server** (Apache/Nginx) or PHP built-in server
 
+## Installation
 
+### Step 1: Clone the Repository
 
-REQUIREMENTS
-------------
-
-The minimum requirement by this project template that your Web server supports PHP 7.4.
-
-
-INSTALLATION
-------------
-
-### Install via Composer
-
-If you do not have [Composer](https://getcomposer.org/), you may install it by following the instructions
-at [getcomposer.org](https://getcomposer.org/doc/00-intro.md#installation-nix).
-
-You can then install this project template using the following command:
-
-~~~
-composer create-project --prefer-dist yiisoft/yii2-app-basic basic
-~~~
-
-Now you should be able to access the application through the following URL, assuming `basic` is the directory
-directly under the Web root.
-
-~~~
-http://localhost/basic/web/
-~~~
-
-### Install from an Archive File
-
-Extract the archive file downloaded from [yiiframework.com](https://www.yiiframework.com/download/) to
-a directory named `basic` that is directly under the Web root.
-
-Set cookie validation key in `config/web.php` file to some random secret string:
-
-```php
-'request' => [
-    // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-    'cookieValidationKey' => '<secret random string goes here>',
-],
+```bash
+git clone <repository-url> basic-yii2
+cd basic-yii2
 ```
 
-You can then access the application through the following URL:
+Or download and extract the project archive to your desired directory.
 
-~~~
-http://localhost/basic/web/
-~~~
+### Step 2: Install PHP Dependencies
 
+Install all PHP dependencies using Composer:
 
-### Install with Docker
+```bash
+composer install
+```
 
-Update your vendor packages
+This will install all required PHP packages including Yii2 framework and Inertia.js adapter.
 
-    docker-compose run --rm php composer update --prefer-dist
-    
-Run the installation triggers (creating cookie validation code)
+### Step 3: Install Node.js Dependencies
 
-    docker-compose run --rm php composer install    
-    
-Start the container
+Install all frontend dependencies:
 
-    docker-compose up -d
-    
-You can then access the application through the following URL:
+```bash
+npm install
+```
 
-    http://127.0.0.1:8000
+This will install React, Inertia.js, Shadcn UI components, Tailwind CSS, and all other frontend dependencies.
 
-**NOTES:** 
-- Minimum required Docker engine version `17.04` for development (see [Performance tuning for volume mounts](https://docs.docker.com/docker-for-mac/osxfs-caching/))
-- The default configuration uses a host-volume in your home directory `.docker-composer` for composer caches
+### Step 4: Configure Database
 
+1. Create a MySQL database for your application:
 
-CONFIGURATION
--------------
+```sql
+CREATE DATABASE yii2basic CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
 
-### Database
-
-Edit the file `config/db.php` with real data, for example:
+2. Update the database configuration in `config/db.php`:
 
 ```php
 return [
     'class' => 'yii\db\Connection',
     'dsn' => 'mysql:host=localhost;dbname=yii2basic',
     'username' => 'root',
-    'password' => '1234',
-    'charset' => 'utf8',
+    'password' => 'your_password',
+    'charset' => 'utf8mb4',
 ];
 ```
 
+Replace `your_password` with your MySQL root password (or your database user credentials).
+
+### Step 5: Run Database Migrations
+
+Run the migrations to create all necessary database tables:
+
+```bash
+php yii migrate
+```
+
+This will create the following tables:
+- `users` - User accounts with soft deletes
+- `password_reset_tokens` - Password reset functionality
+- And other required tables
+
+### Step 6: Seed Admin User (Optional)
+
+Create an admin user for testing:
+
+```bash
+php yii seed/admin
+```
+
+This creates an admin user with:
+- **Email**: `admin@example.com`
+- **Password**: `admin123`
+
+### Step 7: Configure Cookie Validation Key
+
+The cookie validation key should be automatically generated during `composer install`. If it wasn't, you can generate it manually:
+
+1. Open `config/web.php`
+2. Find the `cookieValidationKey` in the `request` component
+3. Set it to a random string (32 characters recommended):
+
+```php
+'request' => [
+    'cookieValidationKey' => 'your-random-32-character-string-here',
+],
+```
+
+You can generate a random string using:
+
+```bash
+php -r "echo bin2hex(random_bytes(16));"
+```
+
+### Step 8: Start Development Servers
+
+You need to run two servers simultaneously:
+
+1. **PHP Development Server** (Backend):
+   ```bash
+   php yii serve
+   ```
+
+2. **Vite Development Server** (Frontend):
+   ```bash
+   npm run dev
+   ```
+
+Or use `concurrently` to run both at once (if installed):
+
+```bash
+npx concurrently "php yii serve" "npm run dev"
+```
+
+### Step 9: Access the Application
+
+Open your browser and navigate to:
+
+```
+http://localhost:8080
+```
+
+You should see the home page. You can now:
+
+- **Sign Up**: Create a new account at `/auth/register`
+- **Sign In**: Login at `/auth/login` (or use admin credentials if you seeded)
+- **Dashboard**: Access the dashboard at `/dashboard` (requires login)
+
+## Production Build
+
+For production deployment, build the frontend assets:
+
+```bash
+npm run build
+```
+
+This will compile and optimize all React components and assets into the `web/dist` directory.
+
+## Configuration
+
+### Environment Configuration
+
+The application uses Yii2's environment configuration. You can set the environment by:
+
+1. Copying `config/params.php` and modifying as needed
+2. Setting `YII_ENV` constant in `web/index.php`:
+   - `YII_ENV_DEV` - Development mode
+   - `YII_ENV_PROD` - Production mode
+
+### Additional Configuration Files
+
+- `config/web.php` - Web application configuration
+- `config/console.php` - Console application configuration
+- `config/db.php` - Database configuration
+- `config/params.php` - Application parameters
+
 **NOTES:**
-- Yii won't create the database for you, this has to be done manually before you can access it.
-- Check and edit the other files in the `config/` directory to customize your application as required.
-- Refer to the README in the `tests` directory for information specific to basic application tests.
+- Make sure the `runtime/` and `web/assets/` directories are writable by the web server
+- For production, disable debug mode and enable schema caching in `config/web.php`
+- Configure your web server to point to the `web/` directory as the document root
 
+## Directory Structure
 
-TESTING
--------
+```
+assets/             contains assets definition
+commands/           contains console commands (controllers)
+config/             contains application configurations
+controllers/        contains Web controller classes
+mail/               contains view files for e-mails
+models/             contains model classes
+migrations/         contains database migrations
+resources/          contains frontend resources (React, CSS, JS)
+  js/               React components and pages
+  css/              Stylesheets
+runtime/            contains files generated during runtime
+tests/              contains various tests for the basic application
+vendor/             contains dependent 3rd-party packages
+views/              contains view files for the Web application
+web/                contains the entry script and Web resources
+  images/           contains screenshots and images
+  dist/             contains built frontend assets (production)
+```
+
+## Testing
 
 Tests are located in `tests` directory. They are developed with [Codeception PHP Testing Framework](https://codeception.com/).
 By default, there are 3 test suites:
