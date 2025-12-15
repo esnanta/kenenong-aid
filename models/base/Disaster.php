@@ -8,7 +8,7 @@ use yii\behaviors\BlameableBehavior;
 use mootensai\behaviors\UUIDBehavior;
 
 /**
- * This is the base model class for table "disaster".
+ * This is the base model class for table "t_disaster".
  *
  * @property integer $id
  * @property integer $disaster_type
@@ -76,7 +76,7 @@ class Disaster extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'disaster';
+        return 't_disaster';
     }
 
     /**

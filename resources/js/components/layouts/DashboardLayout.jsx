@@ -1,7 +1,19 @@
-import { Link, usePage, router } from '@inertiajs/react';
-import { getCsrfToken, getCsrfParam } from '@/lib/csrf';
-import { Button } from '@/components/ui/button';
-import { Logo } from '@/components/Logo';
+import { Link, usePage } from '@inertiajs/react'
+import {
+  AlertTriangle,
+  Bell,
+  ChevronDown,
+  LayoutDashboard,
+  LogOut,
+  Search,
+  Settings,
+  User,
+  Users,
+} from 'lucide-react'
+import { Logo } from '@/components/Logo'
+import { ThemeToggle } from '@/components/ThemeToggle'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,10 +21,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { ThemeToggle } from '@/components/ThemeToggle';
-import { Input } from '@/components/ui/input';
+} from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
 import {
   Sidebar,
   SidebarContent,
@@ -26,57 +36,48 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
-} from '@/components/ui/sidebar';
-import {
-  LayoutDashboard,
-  Settings,
-  User,
-  LogOut,
-  Bell,
-  Search,
-  ChevronDown,
-  Users,
-} from 'lucide-react';
+} from '@/components/ui/sidebar'
+import { getCsrfParam, getCsrfToken } from '@/lib/csrf'
 
 export default function DashboardLayout({ children, user }) {
-  const { url } = usePage();
-  
+  const { url } = usePage()
+
   // Handle logout - use form submission to ensure full page reload
   const handleLogout = (e) => {
-    e.preventDefault();
-    
+    e.preventDefault()
+
     // Create a form and submit it to ensure full page reload
     // This is more reliable than Inertia for logout
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/auth/logout';
-    
+    const form = document.createElement('form')
+    form.method = 'POST'
+    form.action = '/auth/logout'
+
     // Add CSRF token using the utility function
-    const csrfToken = getCsrfToken();
-    const csrfParam = getCsrfParam();
-    
+    const csrfToken = getCsrfToken()
+    const csrfParam = getCsrfParam()
+
     if (csrfToken && csrfParam) {
-      const csrfInput = document.createElement('input');
-      csrfInput.type = 'hidden';
-      csrfInput.name = csrfParam;
-      csrfInput.value = csrfToken;
-      form.appendChild(csrfInput);
+      const csrfInput = document.createElement('input')
+      csrfInput.type = 'hidden'
+      csrfInput.name = csrfParam
+      csrfInput.value = csrfToken
+      form.appendChild(csrfInput)
     }
-    
-    document.body.appendChild(form);
-    form.submit();
-  };
+
+    document.body.appendChild(form)
+    form.submit()
+  }
 
   // Get user initials
   const getUserInitials = () => {
-    if (!user?.name) return 'U';
-    const names = user.name.split(' ');
+    if (!user?.name)
+      return 'U'
+    const names = user.name.split(' ')
     if (names.length >= 2) {
-      return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+      return (names[0][0] + names[names.length - 1][0]).toUpperCase()
     }
-    return user.name.charAt(0).toUpperCase();
-  };
-
+    return user.name.charAt(0).toUpperCase()
+  }
 
   return (
     <SidebarProvider>
@@ -112,6 +113,18 @@ export default function DashboardLayout({ children, user }) {
                     <Link href="/users">
                       <Users />
                       <span>Users</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={url === '/disasters' || url.startsWith('/disasters/')}
+                    tooltip="Disasters"
+                  >
+                    <Link href="/disasters">
+                      <AlertTriangle />
+                      <span>Disasters</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -192,7 +205,8 @@ export default function DashboardLayout({ children, user }) {
                   className="pl-9 pr-9 h-9"
                 />
                 <kbd className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-                  <span className="text-xs">⌘</span>K
+                  <span className="text-xs">⌘</span>
+                  K
                 </kbd>
               </div>
             </div>
@@ -256,5 +270,5 @@ export default function DashboardLayout({ children, user }) {
         <main className="p-4 sm:p-6 lg:p-8">{children}</main>
       </SidebarInset>
     </SidebarProvider>
-  );
+  )
 }
