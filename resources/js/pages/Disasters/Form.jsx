@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import DashboardLayout from '@/components/layouts/DashboardLayout'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -132,28 +132,18 @@ export default function DisasterForm({ disaster, errors: serverErrors, disasterT
       <Head title={isEdit ? 'Edit Disaster' : 'Create Disaster'} />
       <DashboardLayout user={props.user}>
         <div className="space-y-6">
-          <div className="flex items-center gap-4">
-            <Link href="/disasters">
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">
-                {isEdit ? 'Edit Disaster' : 'Create Disaster'}
-              </h1>
-              <p className="text-muted-foreground">
-                {isEdit ? 'Update disaster information' : 'Add a new disaster to the system'}
-              </p>
-            </div>
-          </div>
-
           <Card>
             <CardHeader>
-              <CardTitle>Disaster Information</CardTitle>
-              <CardDescription>
-                Enter the disaster details below
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Link href="/disasters">
+                    <Button variant="ghost" size="icon">
+                      <ArrowLeft className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                  <CardTitle>{isEdit ? 'Edit Disaster' : 'Create Disaster'}</CardTitle>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
