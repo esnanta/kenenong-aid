@@ -16,18 +16,20 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `aid_items`
+-- Table structure for table `t_access_route`
 --
 
-DROP TABLE IF EXISTS `aid_items`;
+DROP TABLE IF EXISTS `t_access_route`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `aid_items` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `aid_category` int DEFAULT NULL COMMENT 'food, water, medicine, shelter, etc for disaster',
-  `title` varchar(255) DEFAULT NULL,
-  `unit` int DEFAULT NULL,
-  `description` text,
+CREATE TABLE `t_access_route` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `disaster_id` int DEFAULT NULL,
+  `shelter_id` int DEFAULT NULL,
+  `route_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `route_geometry` linestring DEFAULT NULL,
+  `route_status` int DEFAULT NULL COMMENT 'safe | damaged | blocked',
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
@@ -36,58 +38,48 @@ CREATE TABLE `aid_items` (
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
-  `uuid` varchar(36) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `uuid` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `t_access_route_relation_disaster` (`disaster_id`),
+  CONSTRAINT `t_access_route_relation_disaster` FOREIGN KEY (`disaster_id`) REFERENCES `t_disaster` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `aid_items`
+-- Dumping data for table `t_access_route`
 --
 
-LOCK TABLES `aid_items` WRITE;
-/*!40000 ALTER TABLE `aid_items` DISABLE KEYS */;
-/*!40000 ALTER TABLE `aid_items` ENABLE KEYS */;
+LOCK TABLES `t_access_route` WRITE;
+/*!40000 ALTER TABLE `t_access_route` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_access_route` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `t_access_routes`
+-- Table structure for table `t_access_route_vehicles`
 --
 
-DROP TABLE IF EXISTS `t_access_routes`;
+DROP TABLE IF EXISTS `t_access_route_vehicles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `t_access_routes` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `disaster_id` int DEFAULT NULL,
-  `route_name` varchar(255) DEFAULT NULL,
-  `latitude_start` decimal(11,8) DEFAULT NULL,
-  `longitude_start` decimal(11,8) DEFAULT NULL,
-  `latitude_end` decimal(11,8) DEFAULT NULL,
-  `longitude_end` decimal(11,8) DEFAULT NULL,
-  `route_status` int DEFAULT NULL COMMENT 'safe | damaged | blocked',
-  `vehicle_types` int DEFAULT NULL COMMENT 'motorcycle, car, truck',
-  `description` text,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  `created_by` int DEFAULT NULL,
-  `updated_by` int DEFAULT NULL,
-  `is_deleted` int DEFAULT NULL,
-  `deleted_at` datetime DEFAULT NULL,
-  `deleted_by` int DEFAULT NULL,
-  `verlock` int DEFAULT NULL,
-  `uuid` varchar(36) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+CREATE TABLE `t_access_route_vehicles` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `access_route_id` int DEFAULT NULL,
+  `vehicle_type_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `t_access_route_vehicles_relation_route` (`access_route_id`),
+  KEY `t_access_route_vehicles_relation_vehicle` (`vehicle_type_id`),
+  CONSTRAINT `t_access_route_vehicles_relation_route` FOREIGN KEY (`access_route_id`) REFERENCES `t_access_route` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `t_access_route_vehicles_relation_vehicle` FOREIGN KEY (`vehicle_type_id`) REFERENCES `t_vehicle_types` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `t_access_routes`
+-- Dumping data for table `t_access_route_vehicles`
 --
 
-LOCK TABLES `t_access_routes` WRITE;
-/*!40000 ALTER TABLE `t_access_routes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `t_access_routes` ENABLE KEYS */;
+LOCK TABLES `t_access_route_vehicles` WRITE;
+/*!40000 ALTER TABLE `t_access_route_vehicles` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_access_route_vehicles` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -98,11 +90,9 @@ DROP TABLE IF EXISTS `t_aid_distribution`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `t_aid_distribution` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `shelter_location_id` int DEFAULT NULL,
-  `aid_item_id` int DEFAULT NULL,
-  `quantity` int DEFAULT NULL,
-  `unit` int DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `aid_plan_id` int DEFAULT NULL,
+  `shelter_id` int DEFAULT NULL,
   `distribution_date` date DEFAULT NULL,
   `distributed_by` int DEFAULT NULL,
   `remark` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
@@ -115,7 +105,11 @@ CREATE TABLE `t_aid_distribution` (
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
   `uuid` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `t_aid_distribution_relation_plan` (`aid_plan_id`),
+  KEY `t_aid_distribution_relation_shelter` (`shelter_id`),
+  CONSTRAINT `t_aid_distribution_relation_plan` FOREIGN KEY (`aid_plan_id`) REFERENCES `t_aid_plan` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `t_aid_distribution_relation_shelter` FOREIGN KEY (`shelter_id`) REFERENCES `t_shelter` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -136,12 +130,16 @@ DROP TABLE IF EXISTS `t_aid_distribution_details`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `t_aid_distribution_details` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `aid_distribution_id` int DEFAULT NULL,
-  `aid_item` int DEFAULT NULL,
+  `aid_item_id` int DEFAULT NULL,
   `quantity` int DEFAULT NULL,
   `unit` int DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `t_aid_distribution_details_relation_master` (`aid_distribution_id`),
+  KEY `t_aid_distribution_details_relation_item` (`aid_item_id`),
+  CONSTRAINT `t_aid_distribution_details_relation_item` FOREIGN KEY (`aid_item_id`) REFERENCES `t_aid_items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `t_aid_distribution_details_relation_master` FOREIGN KEY (`aid_distribution_id`) REFERENCES `t_aid_distribution` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -155,6 +153,41 @@ LOCK TABLES `t_aid_distribution_details` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `t_aid_items`
+--
+
+DROP TABLE IF EXISTS `t_aid_items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `t_aid_items` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `aid_category` int DEFAULT NULL COMMENT 'food, water, medicine, shelter, etc for disaster',
+  `title` varchar(255) DEFAULT NULL,
+  `unit` int DEFAULT NULL,
+  `description` text,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `created_by` int DEFAULT NULL,
+  `updated_by` int DEFAULT NULL,
+  `is_deleted` int DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  `deleted_by` int DEFAULT NULL,
+  `verlock` int DEFAULT NULL,
+  `uuid` varchar(36) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_aid_items`
+--
+
+LOCK TABLES `t_aid_items` WRITE;
+/*!40000 ALTER TABLE `t_aid_items` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_aid_items` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `t_aid_plan`
 --
 
@@ -162,13 +195,9 @@ DROP TABLE IF EXISTS `t_aid_plan`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `t_aid_plan` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `shelter_location_id` int DEFAULT NULL,
-  `aid_item_id` int DEFAULT NULL,
-  `quantity` int DEFAULT NULL,
-  `unit` int DEFAULT NULL,
-  `distribution_date` date DEFAULT NULL,
-  `distributed_by` int DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `shelter_id` int DEFAULT NULL,
+  `distribution_plan_date` date DEFAULT NULL,
   `remark` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
@@ -179,7 +208,9 @@ CREATE TABLE `t_aid_plan` (
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
   `uuid` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `t_aid_plan_relation_shelter` (`shelter_id`),
+  CONSTRAINT `t_aid_plan_relation_shelter` FOREIGN KEY (`shelter_id`) REFERENCES `t_shelter` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -200,12 +231,16 @@ DROP TABLE IF EXISTS `t_aid_plan_details`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `t_aid_plan_details` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `aid_distribution_id` int DEFAULT NULL,
-  `aid_item` int DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `aid_plan_id` int DEFAULT NULL,
+  `aid_item_id` int DEFAULT NULL,
   `quantity` int DEFAULT NULL,
   `unit` int DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `t_aid_plan_details_relation_plan` (`aid_plan_id`),
+  KEY `t_aid_plan_details_relation_item` (`aid_item_id`),
+  CONSTRAINT `t_aid_plan_details_relation_item` FOREIGN KEY (`aid_item_id`) REFERENCES `t_aid_items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `t_aid_plan_details_relation_plan` FOREIGN KEY (`aid_plan_id`) REFERENCES `t_aid_plan` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -226,7 +261,7 @@ DROP TABLE IF EXISTS `t_disaster`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `t_disaster` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `disaster_type` int DEFAULT NULL COMMENT '(banjir, gempa, dll)',
   `disaster_status` int DEFAULT NULL,
   `start_date` date DEFAULT NULL,
@@ -340,20 +375,20 @@ LOCK TABLES `t_password_reset_tokens` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `t_shelter_locations`
+-- Table structure for table `t_shelter`
 --
 
-DROP TABLE IF EXISTS `t_shelter_locations`;
+DROP TABLE IF EXISTS `t_shelter`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `t_shelter_locations` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `t_shelter` (
+  `id` int NOT NULL AUTO_INCREMENT,
   `disaster_id` int DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   `latitude` decimal(11,8) DEFAULT NULL,
   `longitude` decimal(11,8) DEFAULT NULL,
   `evacuee_count` int DEFAULT NULL,
-  `aid_status` tinyint DEFAULT NULL COMMENT 'none | partial | full',
+  `aid_status` tinyint DEFAULT NULL COMMENT 'derived',
   `verification_status` int DEFAULT NULL,
   `description` text,
   `created_at` datetime DEFAULT NULL,
@@ -365,17 +400,19 @@ CREATE TABLE `t_shelter_locations` (
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
   `uuid` varchar(36) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `t_shelter_relation_disaster` (`disaster_id`),
+  CONSTRAINT `t_shelter_relation_disaster` FOREIGN KEY (`disaster_id`) REFERENCES `t_disaster` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `t_shelter_locations`
+-- Dumping data for table `t_shelter`
 --
 
-LOCK TABLES `t_shelter_locations` WRITE;
-/*!40000 ALTER TABLE `t_shelter_locations` DISABLE KEYS */;
-/*!40000 ALTER TABLE `t_shelter_locations` ENABLE KEYS */;
+LOCK TABLES `t_shelter` WRITE;
+/*!40000 ALTER TABLE `t_shelter` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_shelter` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -416,6 +453,39 @@ INSERT INTO `t_users` VALUES (1,'Admin User','admin@example.com',NULL,'$2y$13$kl
 UNLOCK TABLES;
 
 --
+-- Table structure for table `t_vehicle_types`
+--
+
+DROP TABLE IF EXISTS `t_vehicle_types`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `t_vehicle_types` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) DEFAULT NULL,
+  `description` text,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `created_by` int DEFAULT NULL,
+  `updated_by` int DEFAULT NULL,
+  `is_deleted` int DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  `deleted_by` int DEFAULT NULL,
+  `verlock` int DEFAULT NULL,
+  `uuid` varchar(36) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_vehicle_types`
+--
+
+LOCK TABLES `t_vehicle_types` WRITE;
+/*!40000 ALTER TABLE `t_vehicle_types` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_vehicle_types` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `t_verification`
 --
 
@@ -423,8 +493,8 @@ DROP TABLE IF EXISTS `t_verification`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `t_verification` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `entity_type` int DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `entity_type` int DEFAULT NULL COMMENT 'shelter | distribution | route',
   `entity_id` int DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
@@ -462,7 +532,9 @@ CREATE TABLE `t_verification_details` (
   `remark` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `verified_by` int DEFAULT NULL,
   `verified_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `t_verification_details_relation_verification` (`verification_id`),
+  CONSTRAINT `t_verification_details_relation_verification` FOREIGN KEY (`verification_id`) REFERENCES `t_verification` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -484,4 +556,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-15 23:41:06
+-- Dump completed on 2025-12-16  3:28:23
