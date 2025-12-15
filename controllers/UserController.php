@@ -32,7 +32,7 @@ class UserController extends BaseController
     /**
      * Lists all users.
      *
-     * @return string
+     * @return \yii\web\Response
      */
     public function actionIndex()
     {
@@ -127,7 +127,7 @@ class UserController extends BaseController
      * Displays a single user.
      *
      * @param int $id
-     * @return string
+     * @return \yii\web\Response
      * @throws NotFoundHttpException if the user cannot be found
      */
     public function actionView($id)
