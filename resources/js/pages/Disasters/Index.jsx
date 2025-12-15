@@ -15,11 +15,10 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import {
   DropdownMenu,
@@ -198,19 +197,21 @@ export default function DisastersIndex({ disasters, pagination, filters, sort, d
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Disasters</CardTitle>
-                  <CardDescription>
-                    Manage disaster records and their details
-                  </CardDescription>
-                </div>
+                <CardTitle>Disasters</CardTitle>
                 <div className="flex gap-2">
-                  <Link href="/disasters/create">
-                    <Button>
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add Disaster
-                    </Button>
-                  </Link>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsFilterOpen(!isFilterOpen)}
+                  >
+                    <Filter className="mr-2 h-4 w-4" />
+                    Filters
+                    {hasActiveFilters && (
+                      <Badge variant="secondary" className="ml-2">
+                        {[search, disasterType, disasterStatus, dateFrom, dateTo].filter(Boolean).length}
+                      </Badge>
+                    )}
+                  </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" size="sm">
@@ -259,34 +260,33 @@ export default function DisastersIndex({ disasters, pagination, filters, sort, d
                       </DropdownMenuCheckboxItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
+                  <Link href="/disasters/create">
+                    <Button>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Disaster
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              {/* Advanced Filters */}
+              {/* Advanced Filters - Collapsible */}
               <Collapsible open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-                <div className="space-y-4 mb-6 p-4 border rounded-lg bg-muted/50">
-                  <div className="flex items-center justify-between">
-                    <CollapsibleTrigger asChild>
-                      <Button variant="ghost" size="sm" className="flex items-center gap-2 p-0 hover:bg-transparent">
+                <CollapsibleContent>
+                  <div className="space-y-4 mb-6 p-4 border rounded-lg bg-muted/50">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
                         <Filter className="h-4 w-4" />
-                        <h3 className="font-semibold">Filters</h3>
-                        {hasActiveFilters && (
-                          <Badge variant="secondary" className="ml-2">
-                            {[search, disasterType, disasterStatus, dateFrom, dateTo].filter(Boolean).length}
-                          </Badge>
-                        )}
-                      </Button>
-                    </CollapsibleTrigger>
-                    {hasActiveFilters && (
-                      <Button variant="ghost" size="sm" onClick={handleClearFilters}>
-                        <X className="mr-2 h-4 w-4" />
-                        Clear All
-                      </Button>
-                    )}
-                  </div>
+                        <h3 className="font-semibold">Filter Options</h3>
+                      </div>
+                      {hasActiveFilters && (
+                        <Button variant="ghost" size="sm" onClick={handleClearFilters}>
+                          <X className="mr-2 h-4 w-4" />
+                          Clear All
+                        </Button>
+                      )}
+                    </div>
 
-                  <CollapsibleContent className="space-y-4">
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
                       {/* Search */}
                       <div className="space-y-2">
@@ -371,8 +371,8 @@ export default function DisastersIndex({ disasters, pagination, filters, sort, d
                         Apply Filters
                       </Button>
                     </div>
-                  </CollapsibleContent>
-                </div>
+                  </div>
+                </CollapsibleContent>
               </Collapsible>
 
               {/* Table */}
