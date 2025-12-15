@@ -133,16 +133,14 @@ export default function DisasterForm({ disaster, errors: serverErrors, disasterT
       <DashboardLayout user={props.user}>
         <div className="space-y-6">
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Link href="/disasters">
-                    <Button variant="ghost" size="icon">
-                      <ArrowLeft className="h-4 w-4" />
-                    </Button>
-                  </Link>
-                  <CardTitle>{isEdit ? 'Edit Disaster' : 'Create Disaster'}</CardTitle>
-                </div>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+              <div className="flex items-center gap-3">
+                <Link href="/disasters">
+                  <Button variant="ghost" size="icon">
+                    <ArrowLeft className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <CardTitle>{isEdit ? 'Edit Disaster' : 'Create Disaster'}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
