@@ -17,6 +17,11 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
+import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -67,6 +72,7 @@ export default function DisastersIndex({ disasters, pagination, filters, sort, d
   const [dateFrom, setDateFrom] = useState(filters?.date_from || '')
   const [dateTo, setDateTo] = useState(filters?.date_to || '')
   const [deleteId, setDeleteId] = useState(null)
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [columnVisibility, setColumnVisibility] = useState({
     id: true,
     type: true,
@@ -189,31 +195,22 @@ export default function DisastersIndex({ disasters, pagination, filters, sort, d
       <Head title="Disasters | Yii2 - Modern Starter Kit" />
       <DashboardLayout user={props.user}>
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Disasters</h1>
-              <p className="text-muted-foreground">
-                Manage disaster records and their details
-              </p>
-            </div>
-            <Link href="/disasters/create">
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Disaster
-              </Button>
-            </Link>
-          </div>
-
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Disasters List</CardTitle>
+                  <CardTitle>Disasters</CardTitle>
                   <CardDescription>
-                    A list of all disasters in the system
+                    Manage disaster records and their details
                   </CardDescription>
                 </div>
                 <div className="flex gap-2">
+                  <Link href="/disasters/create">
+                    <Button>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Disaster
+                    </Button>
+                  </Link>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" size="sm">
@@ -267,105 +264,116 @@ export default function DisastersIndex({ disasters, pagination, filters, sort, d
             </CardHeader>
             <CardContent>
               {/* Advanced Filters */}
-              <div className="space-y-4 mb-6 p-4 border rounded-lg bg-muted/50">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Filter className="h-4 w-4" />
-                    <h3 className="font-semibold">Filters</h3>
+              <Collapsible open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+                <div className="space-y-4 mb-6 p-4 border rounded-lg bg-muted/50">
+                  <div className="flex items-center justify-between">
+                    <CollapsibleTrigger asChild>
+                      <Button variant="ghost" size="sm" className="flex items-center gap-2 p-0 hover:bg-transparent">
+                        <Filter className="h-4 w-4" />
+                        <h3 className="font-semibold">Filters</h3>
+                        {hasActiveFilters && (
+                          <Badge variant="secondary" className="ml-2">
+                            {[search, disasterType, disasterStatus, dateFrom, dateTo].filter(Boolean).length}
+                          </Badge>
+                        )}
+                      </Button>
+                    </CollapsibleTrigger>
+                    {hasActiveFilters && (
+                      <Button variant="ghost" size="sm" onClick={handleClearFilters}>
+                        <X className="mr-2 h-4 w-4" />
+                        Clear All
+                      </Button>
+                    )}
                   </div>
-                  {hasActiveFilters && (
-                    <Button variant="ghost" size="sm" onClick={handleClearFilters}>
-                      <X className="mr-2 h-4 w-4" />
-                      Clear All
-                    </Button>
-                  )}
-                </div>
 
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-                  {/* Search */}
-                  <div className="space-y-2">
-                    <Label htmlFor="search">Search</Label>
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="search"
-                        type="search"
-                        placeholder="Description..."
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                        className="pl-9"
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault()
-                            handleFilter()
-                          }
-                        }}
-                      />
+                  <CollapsibleContent className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+                      {/* Search */}
+                      <div className="space-y-2">
+                        <Label htmlFor="search">Search</Label>
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            id="search"
+                            type="search"
+                            placeholder="Description..."
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                            className="pl-9"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault()
+                                handleFilter()
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Disaster Type Filter */}
+                      <div className="space-y-2">
+                        <Label htmlFor="disaster-type">Disaster Type</Label>
+                        <Select value={disasterType || 'all'} onValueChange={value => setDisasterType(value === 'all' ? '' : value)}>
+                          <SelectTrigger id="disaster-type">
+                            <SelectValue placeholder="All" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Types</SelectItem>
+                            {Object.entries(disasterTypes || {}).map(([key, value]) => (
+                              <SelectItem key={key} value={key}>{value}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Disaster Status Filter */}
+                      <div className="space-y-2">
+                        <Label htmlFor="disaster-status">Status</Label>
+                        <Select value={disasterStatus || 'all'} onValueChange={value => setDisasterStatus(value === 'all' ? '' : value)}>
+                          <SelectTrigger id="disaster-status">
+                            <SelectValue placeholder="All" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Statuses</SelectItem>
+                            {Object.entries(disasterStatuses || {}).map(([key, value]) => (
+                              <SelectItem key={key} value={key}>{value}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Date From */}
+                      <div className="space-y-2">
+                        <Label htmlFor="date-from">Date From</Label>
+                        <Input
+                          id="date-from"
+                          type="date"
+                          value={dateFrom}
+                          onChange={e => setDateFrom(e.target.value)}
+                        />
+                      </div>
+
+                      {/* Date To */}
+                      <div className="space-y-2">
+                        <Label htmlFor="date-to">Date To</Label>
+                        <Input
+                          id="date-to"
+                          type="date"
+                          value={dateTo}
+                          onChange={e => setDateTo(e.target.value)}
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Disaster Type Filter */}
-                  <div className="space-y-2">
-                    <Label htmlFor="disaster-type">Disaster Type</Label>
-                    <Select value={disasterType || 'all'} onValueChange={value => setDisasterType(value === 'all' ? '' : value)}>
-                      <SelectTrigger id="disaster-type">
-                        <SelectValue placeholder="All" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Types</SelectItem>
-                        {Object.entries(disasterTypes || {}).map(([key, value]) => (
-                          <SelectItem key={key} value={key}>{value}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Disaster Status Filter */}
-                  <div className="space-y-2">
-                    <Label htmlFor="disaster-status">Status</Label>
-                    <Select value={disasterStatus || 'all'} onValueChange={value => setDisasterStatus(value === 'all' ? '' : value)}>
-                      <SelectTrigger id="disaster-status">
-                        <SelectValue placeholder="All" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Statuses</SelectItem>
-                        {Object.entries(disasterStatuses || {}).map(([key, value]) => (
-                          <SelectItem key={key} value={key}>{value}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Date From */}
-                  <div className="space-y-2">
-                    <Label htmlFor="date-from">Date From</Label>
-                    <Input
-                      id="date-from"
-                      type="date"
-                      value={dateFrom}
-                      onChange={e => setDateFrom(e.target.value)}
-                    />
-                  </div>
-
-                  {/* Date To */}
-                  <div className="space-y-2">
-                    <Label htmlFor="date-to">Date To</Label>
-                    <Input
-                      id="date-to"
-                      type="date"
-                      value={dateTo}
-                      onChange={e => setDateTo(e.target.value)}
-                    />
-                  </div>
+                    <div className="flex justify-end">
+                      <Button onClick={handleFilter}>
+                        <Filter className="mr-2 h-4 w-4" />
+                        Apply Filters
+                      </Button>
+                    </div>
+                  </CollapsibleContent>
                 </div>
-
-                <div className="flex justify-end">
-                  <Button onClick={handleFilter}>
-                    <Filter className="mr-2 h-4 w-4" />
-                    Apply Filters
-                  </Button>
-                </div>
-              </div>
+              </Collapsible>
 
               {/* Table */}
               <div className="rounded-md border">
