@@ -11,8 +11,9 @@ use mootensai\behaviors\UUIDBehavior;
  * This is the base model class for table "t_disaster".
  *
  * @property integer $id
- * @property integer $disaster_type
- * @property integer $disaster_status
+ * @property string $title
+ * @property integer $disaster_type_id
+ * @property integer $disaster_status_id
  * @property string $start_date
  * @property string $end_date
  * @property string $description
@@ -25,6 +26,11 @@ use mootensai\behaviors\UUIDBehavior;
  * @property integer $deleted_by
  * @property integer $verlock
  * @property string $uuid
+ *
+ * @property \app\models\AccessRoute[] $accessRoutes
+ * @property \app\models\DisasterStatus $disasterStatus
+ * @property \app\models\DisasterType $disasterType
+ * @property \app\models\Shelter[] $shelters
  */
 class Disaster extends \yii\db\ActiveRecord
 {
@@ -52,7 +58,10 @@ class Disaster extends \yii\db\ActiveRecord
     public function relationNames()
     {
         return [
-            ''
+            'accessRoutes',
+            'disasterStatus',
+            'disasterType',
+            'shelters'
         ];
     }
 
@@ -62,9 +71,11 @@ class Disaster extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['disaster_type', 'disaster_status', 'created_by', 'updated_by', 'is_deleted', 'deleted_by', 'verlock'], 'integer'],
+            [['disaster_type_id', 'disaster_status_id', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
             [['start_date', 'end_date', 'created_at', 'updated_at', 'deleted_at'], 'safe'],
             [['description'], 'string'],
+            [['title'], 'string', 'max' => 255],
+            [['is_deleted'], 'string', 'max' => 1],
             [['uuid'], 'string', 'max' => 36],
             [['verlock'], 'default', 'value' => '0'],
             [['verlock'], 'mootensai\components\OptimisticLockValidator']
@@ -97,8 +108,9 @@ class Disaster extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'disaster_type' => Yii::t('app', 'Disaster Type'),
-            'disaster_status' => Yii::t('app', 'Disaster Status'),
+            'title' => Yii::t('app', 'Title'),
+            'disaster_type_id' => Yii::t('app', 'Disaster Type ID'),
+            'disaster_status_id' => Yii::t('app', 'Disaster Status ID'),
             'start_date' => Yii::t('app', 'Start Date'),
             'end_date' => Yii::t('app', 'End Date'),
             'description' => Yii::t('app', 'Description'),
@@ -107,7 +119,39 @@ class Disaster extends \yii\db\ActiveRecord
             'uuid' => Yii::t('app', 'Uuid'),
         ];
     }
-
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAccessRoutes()
+    {
+        return $this->hasMany(\app\models\AccessRoute::className(), ['disaster_id' => 'id']);
+    }
+        
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDisasterStatus()
+    {
+        return $this->hasOne(\app\models\DisasterStatus::className(), ['id' => 'disaster_status_id']);
+    }
+        
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDisasterType()
+    {
+        return $this->hasOne(\app\models\DisasterType::className(), ['id' => 'disaster_type_id']);
+    }
+        
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getShelters()
+    {
+        return $this->hasMany(\app\models\Shelter::className(), ['disaster_id' => 'id']);
+    }
+    
     /**
      * @inheritdoc
      * @return array mixed
