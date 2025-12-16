@@ -1,12 +1,17 @@
 <?php
 
+use app\components\InertiaBootstrap;
+use app\components\InertiaErrorHandler;
+use Crenspire\Yii2Inertia\ViewRenderer;
+use yii\symfonymailer\Mailer;
+
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log', \app\components\InertiaBootstrap::class],
+    'bootstrap' => ['log', InertiaBootstrap::class, 'user'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -14,7 +19,7 @@ $config = [
     'components' => [
          'view' => [
             'renderers' => [
-                'inertia' => \Crenspire\Yii2Inertia\ViewRenderer::class,
+                'inertia' => ViewRenderer::class,
             ],
         ],
         'request' => [
@@ -28,16 +33,20 @@ $config = [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+        ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass' => Da\User\Model\User::class,
             'enableAutoLogin' => true,
+            'loginUrl' => ['/user/security/login'], // usuario's login route
         ],
         'errorHandler' => [
-            'class' => \app\components\InertiaErrorHandler::class,
+            'class' => InertiaErrorHandler::class,
             'errorAction' => 'home/error',
         ],
         'mailer' => [
-            'class' => \yii\symfonymailer\Mailer::class,
+            'class' => Mailer::class,
             'viewPath' => '@app/mail',
             // send all mails to a file by default.
             'useFileTransport' => true,
@@ -88,6 +97,25 @@ $config = [
             ],
         ],
         */
+    ],
+//    'modudles' => [
+//        'user' => [
+//            'class' => Da\User\Module::class,
+//            // Usuario configuration
+//            'administrators' => ['admin'], // usernames with admin privileges
+//            'enableEmailConfirmation' => false, // set to true if you want email confirmation
+//            'enablePasswordRecovery' => true,
+//            'enableRegistration' => true,
+//            'enableUnconfirmedLogin' => true,
+//        ],
+//    ],
+    'modules' => [
+        'user' => [
+            'class' => 'Da\User\Module',
+            'administrators' => ['admin'],
+            'enableRegistration' => true,
+            'enableEmailConfirmation' => true,
+        ],
     ],
     'params' => $params,
 ];

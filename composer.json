@@ -26,7 +26,8 @@
     "crenspire/yii2-inertia": "^1.0",
 
     "mootensai/yii2-enhanced-gii": "dev-master",
-    "ext-json": "*"
+    "ext-json": "*",
+    "2amigos/yii2-usuario": "^1.6"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.1.0",
