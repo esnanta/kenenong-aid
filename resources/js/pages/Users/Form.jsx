@@ -1,25 +1,25 @@
-import { Head, Link, router, usePage } from '@inertiajs/react';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft } from 'lucide-react';
-import { toast } from 'sonner';
-import { useForm as useHookForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Head, Link, router, usePage } from '@inertiajs/react'
+import { ArrowLeft } from 'lucide-react'
+import { useForm as useHookForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+import DashboardLayout from '@/components/layouts/DashboardLayout'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 // Validation schema - password validation is handled in onSubmit
 const userSchema = z.object({
   name: z.string().min(1, 'Name is required').min(2, 'Name must be at least 2 characters'),
   email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
   password: z.string().optional(),
-});
+})
 
 export default function UserForm({ user, errors: serverErrors }) {
-  const { props } = usePage();
-  const isEdit = !!user?.id;
+  const { props } = usePage()
+  const isEdit = !!user?.id
 
   const {
     register,
@@ -34,111 +34,112 @@ export default function UserForm({ user, errors: serverErrors }) {
       email: user?.email || '',
       password: '',
     },
-  });
+  })
 
   const onSubmit = (data) => {
     // Get CSRF token from meta tag or props
-    const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-    const metaParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute('content');
-    
-    const csrfToken = metaToken || props.csrfToken;
-    const csrfParam = metaParam || props.csrfParam;
-    
+    const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+    const metaParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute('content')
+
+    const csrfToken = metaToken || props.csrfToken
+    const csrfParam = metaParam || props.csrfParam
+
     if (!csrfToken || !csrfParam) {
-      toast.error('CSRF token missing. Please refresh the page.');
-      return;
+      toast.error('CSRF token missing. Please refresh the page.')
+      return
     }
 
     // Validate password for create
     if (!isEdit && !data.password) {
-      toast.error('Password is required');
-      return;
+      toast.error('Password is required')
+      return
     }
 
     // Create form data with CSRF token
     const formData = {
       ...data,
       [csrfParam]: csrfToken,
-    };
+    }
 
     // Remove password if it's empty (for edit)
     if (isEdit && !data.password) {
-      delete formData.password;
+      delete formData.password
     }
 
-    const url = isEdit ? `/users/${user.id}/edit` : '/users/create';
-    const method = isEdit ? 'put' : 'post';
+    const url = isEdit ? `/users/${user.id}/edit` : '/users/create'
+    const method = isEdit ? 'put' : 'post'
 
     router[method](url, formData, {
       preserveScroll: true,
       onSuccess: (page) => {
         // Check if we navigated to the users list page (success)
         // Inertia::location() causes a full page reload, so we check the component
-        const isOnUsersList = page?.component === 'Users/Index';
-        
+        const isOnUsersList = page?.component === 'Users/Index'
+
         // Check if we're still on the form page (validation failed)
-        const isStillOnForm = page?.component === 'Users/Form';
-        
+        const isStillOnForm = page?.component === 'Users/Form'
+
         // Check for errors in props
-        const hasErrors = (page?.props?.errors && Object.keys(page.props.errors).length > 0) ||
-                         (page?.props?.serverErrors && Object.keys(page.props.serverErrors).length > 0);
-        
+        const hasErrors = (page?.props?.errors && Object.keys(page.props.errors).length > 0)
+          || (page?.props?.serverErrors && Object.keys(page.props.serverErrors).length > 0)
+
         // Only show success toast if we navigated to users list (success)
         if (isOnUsersList) {
-          toast.success(isEdit ? 'User updated successfully' : 'User created successfully');
+          toast.success(isEdit ? 'User updated successfully' : 'User created successfully')
         }
-        
+
         // If we're still on the form, don't show success toast
         // Errors are already displayed inline
       },
       onError: (errors) => {
-        console.error('Form submission error:', errors);
+        console.error('Form submission error:', errors)
         // Show error toast for HTTP errors
         if (errors && typeof errors === 'object') {
           Object.values(errors).forEach((error) => {
             if (Array.isArray(error)) {
-              error.forEach((err) => toast.error(err));
-            } else if (typeof error === 'string') {
-              toast.error(error);
+              error.forEach(err => toast.error(err))
             }
-          });
+            else if (typeof error === 'string') {
+              toast.error(error)
+            }
+          })
         }
       },
-    });
-  };
+    })
+  }
 
   // Merge all error sources: react-hook-form errors, server errors prop, and page props errors
-  const allErrors = {};
-  
+  const allErrors = {}
+
   // Get errors from page props (Inertia standard location)
-  const pageErrors = props?.errors || {};
-  
+  const pageErrors = props?.errors || {}
+
   // Process react-hook-form errors
   if (errors) {
-    Object.keys(errors).forEach(key => {
-      const errorValue = errors[key];
+    Object.keys(errors).forEach((key) => {
+      const errorValue = errors[key]
       if (errorValue?.message) {
-        allErrors[key] = errorValue.message;
+        allErrors[key] = errorValue.message
       }
-    });
+    })
   }
-  
+
   // Process server errors prop (from backend)
   if (serverErrors) {
-    Object.keys(serverErrors).forEach(key => {
-      const errorValue = serverErrors[key];
-      allErrors[key] = Array.isArray(errorValue) ? errorValue[0] : errorValue;
-    });
+    Object.keys(serverErrors).forEach((key) => {
+      const errorValue = serverErrors[key]
+      allErrors[key] = Array.isArray(errorValue) ? errorValue[0] : errorValue
+    })
   }
-  
+
   // Process page props errors (Inertia standard)
   if (pageErrors) {
-    Object.keys(pageErrors).forEach(key => {
-      const errorValue = pageErrors[key];
+    Object.keys(pageErrors).forEach((key) => {
+      const errorValue = pageErrors[key]
       if (!allErrors[key]) { // Don't override if already set
-        allErrors[key] = Array.isArray(errorValue) ? errorValue[0] : errorValue;
+        allErrors[key] = Array.isArray(errorValue) ? errorValue[0] : errorValue
       }
-    });
+    })
   }
 
   return (
@@ -203,7 +204,9 @@ export default function UserForm({ user, errors: serverErrors }) {
 
                 <div className="space-y-2">
                   <Label htmlFor="password">
-                    Password {isEdit ? '(leave blank to keep current password)' : '*'}
+                    Password
+                    {' '}
+                    {isEdit ? '(leave blank to keep current password)' : '*'}
                   </Label>
                   <Input
                     id="password"
@@ -234,6 +237,5 @@ export default function UserForm({ user, errors: serverErrors }) {
         </div>
       </DashboardLayout>
     </>
-  );
+  )
 }
-

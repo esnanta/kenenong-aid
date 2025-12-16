@@ -1,23 +1,24 @@
-import { Head, Link, usePage } from '@inertiajs/react';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Edit } from 'lucide-react';
+import { Head, Link, usePage } from '@inertiajs/react'
+import { ArrowLeft, Edit } from 'lucide-react'
+import DashboardLayout from '@/components/layouts/DashboardLayout'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function UserView({ user }) {
-  const { props } = usePage();
-  
+  const { props } = usePage()
+
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
+    if (!dateString)
+      return 'N/A'
     return new Date(dateString).toLocaleString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-    });
-  };
-  
+    })
+  }
+
   return (
     <>
       <Head title={`User: ${user.name}`} />
@@ -67,11 +68,13 @@ export default function UserView({ user }) {
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Email Verified</label>
                   <p className="text-sm font-medium">
-                    {user.email_verified_at ? (
-                      <span className="text-green-600">Verified</span>
-                    ) : (
-                      <span className="text-muted-foreground">Not verified</span>
-                    )}
+                    {user.email_verified_at
+                      ? (
+                          <span className="text-green-600">Verified</span>
+                        )
+                      : (
+                          <span className="text-muted-foreground">Not verified</span>
+                        )}
                   </p>
                 </div>
                 <div>
@@ -88,6 +91,5 @@ export default function UserView({ user }) {
         </div>
       </DashboardLayout>
     </>
-  );
+  )
 }
-

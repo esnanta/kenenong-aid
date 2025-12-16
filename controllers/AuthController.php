@@ -6,8 +6,12 @@ use Yii;
 use yii\web\Response;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\User;
+use Da\User\Form\LoginForm;
+use Da\User\Form\RegistrationForm;
+use Da\User\Model\User;
+use Da\User\Service\UserRegisterService;
+use Da\User\Helper\SecurityHelper;
+use Da\User\Factory\MailFactory;
 use Crenspire\Yii2Inertia\Inertia;
 use app\controllers\BaseController;
 
@@ -50,12 +54,19 @@ class AuthController extends BaseController
             return Inertia::location('/dashboard');
         }
 
-        $model = new LoginForm();
+        /** @var LoginForm $model */
+        $model = Yii::createObject(LoginForm::class);
 
         if (Yii::$app->request->isPost) {
             try {
                 if ($model->load(Yii::$app->request->post(), '')) {
                     if ($model->login()) {
+                        // Update last login info
+                        $model->getUser()->updateAttributes([
+                            'last_login_at' => time(),
+                            'last_login_ip' => Yii::$app->request->getUserIP(),
+                        ]);
+
                         // Login successful - redirect to dashboard
                         return Inertia::location('/dashboard');
                     }
@@ -64,13 +75,13 @@ class AuthController extends BaseController
             } catch (\Exception $e) {
                 // Catch any exceptions and add them as errors
                 Yii::error('Login error: ' . $e->getMessage(), 'application');
-                $model->addError('email', 'An error occurred during login. Please try again.');
+                $model->addError('login', 'An error occurred during login. Please try again.');
             }
             
             // If we get here, either load failed or login failed - return form with errors
             return Inertia::render('Auth/Login', [
                 'model' => [
-                    'email' => $model->email ?? '',
+                    'login' => $model->login ?? '',
                     'rememberMe' => $model->rememberMe ?? false,
                 ],
                 'errors' => $model->errors, // Pass validation errors
@@ -80,7 +91,7 @@ class AuthController extends BaseController
         // GET request - show empty form
         return Inertia::render('Auth/Login', [
             'model' => [
-                'email' => '',
+                'login' => '',
                 'rememberMe' => false,
             ],
             'errors' => [],
@@ -98,34 +109,66 @@ class AuthController extends BaseController
             return $this->redirect(['/dashboard']);
         }
 
-        $model = new User();
+        $module = Yii::$app->getModule('user');
+
+        /** @var RegistrationForm $form */
+        $form = Yii::createObject(RegistrationForm::class);
 
         if (Yii::$app->request->isPost) {
-            // Use 'create' scenario for POST requests
-            $model->scenario = 'create';
-            
-            if ($model->load(Yii::$app->request->post(), '')) {
-                // Name and email are required, no username generation needed
-                if ($model->validate() && $model->save()) {
-                    Yii::$app->user->login($model, 3600 * 24 * 30); // 30 days
-                    return Inertia::location('/dashboard');
+            if ($form->load(Yii::$app->request->post(), '') && $form->validate()) {
+                // Create user instance from form
+                /** @var User $user */
+                $user = Yii::createObject(User::class);
+
+                // Set user attributes from form
+                $user->username = $form->username;
+                $user->email = $form->email;
+                $user->password = $form->password; // Will be hashed by the service
+                $user->setScenario('register');
+
+                // Create mail service
+                $mailService = MailFactory::makeWelcomeMailerService($user);
+
+                // Create security helper
+                $securityHelper = Yii::createObject(SecurityHelper::class);
+
+                // Register user using yii2-usuario service
+                /** @var UserRegisterService $registerService */
+                $registerService = new UserRegisterService($user, $mailService, $securityHelper);
+
+                if ($registerService->run()) {
+                    // Auto-login if email confirmation is disabled
+                    if (!$module->enableEmailConfirmation) {
+                        Yii::$app->user->login($user, 3600 * 24 * 30); // 30 days
+                        return Inertia::location('/dashboard');
+                    }
+
+                    // Redirect to login with success message
+                    Yii::$app->session->setFlash(
+                        'success',
+                        Yii::t('usuario', 'Your account has been created. Please check your email for confirmation.')
+                    );
+                    return Inertia::location('/login');
                 }
+
+                // Registration failed
+                $form->addError('email', 'Registration failed. Please try again.');
             }
 
             // Return form with errors if validation failed
             return Inertia::render('Auth/Register', [
                 'model' => [
-                    'fullName' => $model->name ?? '',
-                    'email' => $model->email ?? '',
+                    'username' => $form->username ?? '',
+                    'email' => $form->email ?? '',
                 ],
-                'errors' => $model->errors,
+                'errors' => $form->errors,
             ]);
         }
 
         // GET request - show empty form
         return Inertia::render('Auth/Register', [
             'model' => [
-                'fullName' => '',
+                'username' => '',
                 'email' => '',
             ],
             'errors' => [],

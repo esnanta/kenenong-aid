@@ -1,1 +1,0 @@
-import{j as e}from"./app-BLAu0s-k.js";function r({children:s}){return e.jsx("div",{className:"min-h-screen flex items-center justify-center bg-background p-4",children:e.jsx("div",{className:"w-full max-w-md",children:s})})}export{r as A};

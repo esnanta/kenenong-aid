@@ -1,36 +1,8 @@
-import { Head, Link, router, usePage } from '@inertiajs/react';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Plus, Search, Edit, Trash2, Eye, ArrowUpDown, ArrowUp, ArrowDown, Filter, Columns2, X } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { Head, Link, router, usePage } from '@inertiajs/react'
+import { ArrowDown, ArrowUp, ArrowUpDown, CheckCircle2, Columns2, Edit, Eye, Filter, Plus, Search, Trash2, X, XCircle } from 'lucide-react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import DashboardLayout from '@/components/layouts/DashboardLayout'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,16 +12,43 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { CheckCircle2, XCircle } from 'lucide-react';
+} from '@/components/ui/alert-dialog'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 
 export default function UsersIndex({ users, pagination, filters, sort }) {
-  const { props } = usePage();
-  const [search, setSearch] = useState(filters?.search || '');
-  const [emailVerified, setEmailVerified] = useState(filters?.email_verified || '');
-  const [dateFrom, setDateFrom] = useState(filters?.date_from || '');
-  const [dateTo, setDateTo] = useState(filters?.date_to || '');
-  const [deleteId, setDeleteId] = useState(null);
+  const { props } = usePage()
+  const [search, setSearch] = useState(filters?.search || '')
+  const [emailVerified, setEmailVerified] = useState(filters?.email_verified || '')
+  const [dateFrom, setDateFrom] = useState(filters?.date_from || '')
+  const [dateTo, setDateTo] = useState(filters?.date_to || '')
+  const [deleteId, setDeleteId] = useState(null)
   const [columnVisibility, setColumnVisibility] = useState({
     id: true,
     name: true,
@@ -57,13 +56,13 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
     emailVerified: true,
     createdAt: true,
     actions: true,
-  });
+  })
 
-  const currentSortBy = sort?.sort_by || 'created_at';
-  const currentSortOrder = sort?.sort_order || 'desc';
+  const currentSortBy = sort?.sort_by || 'created_at'
+  const currentSortOrder = sort?.sort_order || 'desc'
 
   const handleSort = (column) => {
-    const newSortOrder = currentSortBy === column && currentSortOrder === 'asc' ? 'desc' : 'asc';
+    const newSortOrder = currentSortBy === column && currentSortOrder === 'asc' ? 'desc' : 'asc'
     router.get('/users', {
       ...filters,
       search,
@@ -73,8 +72,8 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
       sort_by: column,
       sort_order: newSortOrder,
       page: 1,
-    }, { preserveState: true });
-  };
+    }, { preserveState: true })
+  }
 
   const handleFilter = () => {
     router.get('/users', {
@@ -85,71 +84,73 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
       sort_by: currentSortBy,
       sort_order: currentSortOrder,
       page: 1,
-    }, { preserveState: true });
-  };
+    }, { preserveState: true })
+  }
 
   const handleClearFilters = () => {
-    setSearch('');
-    setEmailVerified('');
-    setDateFrom('');
-    setDateTo('');
+    setSearch('')
+    setEmailVerified('')
+    setDateFrom('')
+    setDateTo('')
     router.get('/users', {
       sort_by: currentSortBy,
       sort_order: currentSortOrder,
       page: 1,
-    }, { preserveState: true });
-  };
+    }, { preserveState: true })
+  }
 
   const handleDelete = (id) => {
     // Get CSRF token from meta tag or props
-    const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-    const metaParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute('content');
-    
-    const csrfToken = metaToken || props.csrfToken;
-    const csrfParam = metaParam || props.csrfParam;
-    
+    const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+    const metaParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute('content')
+
+    const csrfToken = metaToken || props.csrfToken
+    const csrfParam = metaParam || props.csrfParam
+
     if (!csrfToken || !csrfParam) {
-      toast.error('CSRF token missing. Please refresh the page.');
-      return;
+      toast.error('CSRF token missing. Please refresh the page.')
+      return
     }
 
     const formData = {
       [csrfParam]: csrfToken,
-    };
+    }
 
     router.post(`/users/${id}/delete`, formData, {
       onSuccess: () => {
-        setDeleteId(null);
+        setDeleteId(null)
       },
-    });
-  };
+    })
+  }
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
+    if (!dateString)
+      return 'N/A'
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
-    });
-  };
+    })
+  }
 
   const formatDateTime = (dateString) => {
-    if (!dateString) return 'N/A';
+    if (!dateString)
+      return 'N/A'
     return new Date(dateString).toLocaleString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-    });
-  };
+    })
+  }
 
   const SortableHeader = ({ column, children }) => {
-    const isSorted = currentSortBy === column;
-    const sortIcon = isSorted 
+    const isSorted = currentSortBy === column
+    const sortIcon = isSorted
       ? (currentSortOrder === 'asc' ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />)
-      : <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />;
-    
+      : <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
+
     return (
       <TableHead className="cursor-pointer hover:bg-muted/50" onClick={() => handleSort(column)}>
         <div className="flex items-center">
@@ -157,10 +158,10 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
           {sortIcon}
         </div>
       </TableHead>
-    );
-  };
+    )
+  }
 
-  const hasActiveFilters = search || emailVerified || dateFrom || dateTo;
+  const hasActiveFilters = search || emailVerified || dateFrom || dateTo
 
   return (
     <>
@@ -204,31 +205,31 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
                       <DropdownMenuSeparator />
                       <DropdownMenuCheckboxItem
                         checked={columnVisibility.id}
-                        onCheckedChange={(checked) => setColumnVisibility({ ...columnVisibility, id: checked })}
+                        onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, id: checked })}
                       >
                         ID
                       </DropdownMenuCheckboxItem>
                       <DropdownMenuCheckboxItem
                         checked={columnVisibility.name}
-                        onCheckedChange={(checked) => setColumnVisibility({ ...columnVisibility, name: checked })}
+                        onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, name: checked })}
                       >
                         Name
                       </DropdownMenuCheckboxItem>
                       <DropdownMenuCheckboxItem
                         checked={columnVisibility.email}
-                        onCheckedChange={(checked) => setColumnVisibility({ ...columnVisibility, email: checked })}
+                        onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, email: checked })}
                       >
                         Email
                       </DropdownMenuCheckboxItem>
                       <DropdownMenuCheckboxItem
                         checked={columnVisibility.emailVerified}
-                        onCheckedChange={(checked) => setColumnVisibility({ ...columnVisibility, emailVerified: checked })}
+                        onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, emailVerified: checked })}
                       >
                         Email Verified
                       </DropdownMenuCheckboxItem>
                       <DropdownMenuCheckboxItem
                         checked={columnVisibility.createdAt}
-                        onCheckedChange={(checked) => setColumnVisibility({ ...columnVisibility, createdAt: checked })}
+                        onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, createdAt: checked })}
                       >
                         Created At
                       </DropdownMenuCheckboxItem>
@@ -252,7 +253,7 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
                     </Button>
                   )}
                 </div>
-                
+
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                   {/* Search */}
                   <div className="space-y-2">
@@ -264,12 +265,12 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
                         type="search"
                         placeholder="Name or email..."
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={e => setSearch(e.target.value)}
                         className="pl-9"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') {
-                            e.preventDefault();
-                            handleFilter();
+                            e.preventDefault()
+                            handleFilter()
                           }
                         }}
                       />
@@ -279,7 +280,7 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
                   {/* Email Verified Filter */}
                   <div className="space-y-2">
                     <Label htmlFor="email-verified">Email Status</Label>
-                    <Select value={emailVerified || 'all'} onValueChange={(value) => setEmailVerified(value === 'all' ? '' : value)}>
+                    <Select value={emailVerified || 'all'} onValueChange={value => setEmailVerified(value === 'all' ? '' : value)}>
                       <SelectTrigger id="email-verified">
                         <SelectValue placeholder="All" />
                       </SelectTrigger>
@@ -298,7 +299,7 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
                       id="date-from"
                       type="date"
                       value={dateFrom}
-                      onChange={(e) => setDateFrom(e.target.value)}
+                      onChange={e => setDateFrom(e.target.value)}
                     />
                   </div>
 
@@ -309,7 +310,7 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
                       id="date-to"
                       type="date"
                       value={dateTo}
-                      onChange={(e) => setDateTo(e.target.value)}
+                      onChange={e => setDateTo(e.target.value)}
                     />
                   </div>
                 </div>
@@ -348,80 +349,84 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {users && users.length > 0 ? (
-                      users.map((user) => (
-                        <TableRow key={user.id}>
-                          {columnVisibility.id && (
-                            <TableCell className="font-medium">{user.id}</TableCell>
-                          )}
-                          {columnVisibility.name && (
-                            <TableCell className="font-medium">{user.name}</TableCell>
-                          )}
-                          {columnVisibility.email && (
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <span>{user.email}</span>
-                              </div>
-                            </TableCell>
-                          )}
-                          {columnVisibility.emailVerified && (
-                            <TableCell>
-                              {user.email_verified_at ? (
-                                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-400 dark:border-green-800">
-                                  <CheckCircle2 className="mr-1 h-3 w-3" />
-                                  Verified
-                                </Badge>
-                              ) : (
-                                <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-950 dark:text-gray-400 dark:border-gray-800">
-                                  <XCircle className="mr-1 h-3 w-3" />
-                                  Not Verified
-                                </Badge>
+                    {users && users.length > 0
+                      ? (
+                          users.map(user => (
+                            <TableRow key={user.id}>
+                              {columnVisibility.id && (
+                                <TableCell className="font-medium">{user.id}</TableCell>
                               )}
+                              {columnVisibility.name && (
+                                <TableCell className="font-medium">{user.name}</TableCell>
+                              )}
+                              {columnVisibility.email && (
+                                <TableCell>
+                                  <div className="flex items-center gap-2">
+                                    <span>{user.email}</span>
+                                  </div>
+                                </TableCell>
+                              )}
+                              {columnVisibility.emailVerified && (
+                                <TableCell>
+                                  {user.email_verified_at
+                                    ? (
+                                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-400 dark:border-green-800">
+                                          <CheckCircle2 className="mr-1 h-3 w-3" />
+                                          Verified
+                                        </Badge>
+                                      )
+                                    : (
+                                        <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-950 dark:text-gray-400 dark:border-gray-800">
+                                          <XCircle className="mr-1 h-3 w-3" />
+                                          Not Verified
+                                        </Badge>
+                                      )}
+                                </TableCell>
+                              )}
+                              {columnVisibility.createdAt && (
+                                <TableCell>
+                                  <div className="flex flex-col">
+                                    <span>{formatDate(user.created_at)}</span>
+                                    <span className="text-xs text-muted-foreground">
+                                      {formatDateTime(user.created_at).split(',')[1]?.trim()}
+                                    </span>
+                                  </div>
+                                </TableCell>
+                              )}
+                              {columnVisibility.actions && (
+                                <TableCell className="text-right">
+                                  <div className="flex justify-end gap-2">
+                                    <Link href={`/users/${user.id}`}>
+                                      <Button variant="ghost" size="sm" title="View">
+                                        <Eye className="h-4 w-4" />
+                                      </Button>
+                                    </Link>
+                                    <Link href={`/users/${user.id}/edit`}>
+                                      <Button variant="ghost" size="sm" title="Edit">
+                                        <Edit className="h-4 w-4" />
+                                      </Button>
+                                    </Link>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => setDeleteId(user.id)}
+                                      title="Delete"
+                                    >
+                                      <Trash2 className="h-4 w-4 text-destructive" />
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              )}
+                            </TableRow>
+                          ))
+                        )
+                      : (
+                          <TableRow>
+                            <TableCell colSpan={Object.values(columnVisibility).filter(Boolean).length} className="text-center text-muted-foreground py-8">
+                              No users found
                             </TableCell>
-                          )}
-                          {columnVisibility.createdAt && (
-                            <TableCell>
-                              <div className="flex flex-col">
-                                <span>{formatDate(user.created_at)}</span>
-                                <span className="text-xs text-muted-foreground">
-                                  {formatDateTime(user.created_at).split(',')[1]?.trim()}
-                                </span>
-                              </div>
-                            </TableCell>
-                          )}
-                          {columnVisibility.actions && (
-                            <TableCell className="text-right">
-                              <div className="flex justify-end gap-2">
-                                <Link href={`/users/${user.id}`}>
-                                  <Button variant="ghost" size="sm" title="View">
-                                    <Eye className="h-4 w-4" />
-                                  </Button>
-                                </Link>
-                                <Link href={`/users/${user.id}/edit`}>
-                                  <Button variant="ghost" size="sm" title="Edit">
-                                    <Edit className="h-4 w-4" />
-                                  </Button>
-                                </Link>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => setDeleteId(user.id)}
-                                  title="Delete"
-                                >
-                                  <Trash2 className="h-4 w-4 text-destructive" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          )}
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={Object.values(columnVisibility).filter(Boolean).length} className="text-center text-muted-foreground py-8">
-                          No users found
-                        </TableCell>
-                      </TableRow>
-                    )}
+                          </TableRow>
+                        )}
                   </TableBody>
                 </Table>
               </div>
@@ -430,7 +435,19 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
               {pagination && pagination.last_page > 1 && (
                 <div className="flex items-center justify-between mt-4">
                   <div className="text-sm text-muted-foreground">
-                    Showing {((pagination.current_page - 1) * pagination.per_page) + 1} to {Math.min(pagination.current_page * pagination.per_page, pagination.total)} of {pagination.total} users
+                    Showing
+                    {' '}
+                    {((pagination.current_page - 1) * pagination.per_page) + 1}
+                    {' '}
+                    to
+                    {' '}
+                    {Math.min(pagination.current_page * pagination.per_page, pagination.total)}
+                    {' '}
+                    of
+                    {' '}
+                    {pagination.total}
+                    {' '}
+                    users
                   </div>
                   <div className="flex gap-2">
                     {pagination.current_page > 1 && (
@@ -498,5 +515,5 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
         </AlertDialog>
       </DashboardLayout>
     </>
-  );
+  )
 }

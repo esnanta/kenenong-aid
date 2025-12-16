@@ -37,7 +37,7 @@ $config = [
             'class' => 'yii\rbac\DbManager',
         ],
         'user' => [
-            'identityClass' => Da\User\Model\User::class,
+            'identityClass' => app\models\User::class, // extend to Da\User\Model\User
             'enableAutoLogin' => true,
             'loginUrl' => ['/user/security/login'], // usuario's login route
         ],
