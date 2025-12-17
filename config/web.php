@@ -75,15 +75,15 @@ $config = [
                 'dashboard' => 'dashboard/index',
                 'dashboard/<action:\w+>' => 'dashboard/<action>',
                 'users' => 'user/index',
-                'users/create' => 'user/create',
-                'users/<id:\d+>' => 'user/view',
-                'users/<id:\d+>/edit' => 'user/update',
-                'users/<id:\d+>/delete' => 'user/delete',
-                'disasters' => 'disaster/index',
-                'disasters/create' => 'disaster/create',
-                'disasters/<id:\d+>' => 'disaster/view',
-                'disasters/<id:\d+>/edit' => 'disaster/update',
-                'disasters/<id:\d+>/delete' => 'disaster/delete',
+                'user/create' => 'user/create',
+                'user/<id:\d+>' => 'user/view',
+                'user/<id:\d+>/edit' => 'user/update',
+                'user/<id:\d+>/delete' => 'user/delete',
+                'disaster' => 'disaster/index',
+                'disaster/create' => 'disaster/create',
+                'disaster/<id:\d+>' => 'disaster/view',
+                'disaster/<id:\d+>/edit' => 'disaster/update',
+                'disaster/<id:\d+>/delete' => 'disaster/delete',
                 '<controller:\w+>/<id:\d+>' => '<controller>/view',
                 '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
@@ -98,17 +98,7 @@ $config = [
         ],
         */
     ],
-//    'modudles' => [
-//        'user' => [
-//            'class' => Da\User\Module::class,
-//            // Usuario configuration
-//            'administrators' => ['admin'], // usernames with admin privileges
-//            'enableEmailConfirmation' => false, // set to true if you want email confirmation
-//            'enablePasswordRecovery' => true,
-//            'enableRegistration' => true,
-//            'enableUnconfirmedLogin' => true,
-//        ],
-//    ],
+
     'modules' => [
         'user' => [
             'class' => 'Da\User\Module',
