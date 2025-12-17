@@ -11,6 +11,14 @@ use Da\User\Model\User as BaseUser;
 class User extends BaseUser
 {
     /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return '{{%user}}';
+    }
+
+    /**
      * @inheritdoc
      */
     public function rules()
