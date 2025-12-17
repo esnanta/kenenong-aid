@@ -33,5 +33,13 @@ class User extends BaseUser
             [['lock'], 'mootensai\components\OptimisticLockValidator']
         ]);
     }
-	
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProfile()
+    {
+        return $this->hasOne(Profile::class, ['user_id' => 'id']);
+    }
+
 }

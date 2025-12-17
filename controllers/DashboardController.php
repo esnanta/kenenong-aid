@@ -38,7 +38,7 @@ class DashboardController extends BaseController
         return Inertia::render('Dashboard/Index', [
             'user' => [
                 'id' => $identity->id,
-                'name' => $identity->name,
+                'name' => $identity->profile->name ?? $identity->username,
                 'email' => $identity->email,
             ],
             'stats' => [
@@ -58,14 +58,18 @@ class DashboardController extends BaseController
     public function actionProfile()
     {
         $user = Yii::$app->user->identity;
+        $profile = $user->profile;
 
         if (Yii::$app->request->isPost) {
             // Handle profile update
             $data = Yii::$app->request->post();
-            $user->name = $data['name'] ?? $user->name;
+
+            if ($profile) {
+                $profile->name = $data['name'] ?? $profile->name;
+            }
             $user->email = $data['email'] ?? $user->email;
             
-            if ($user->validate() && $user->save()) {
+            if ($user->validate() && $user->save() && (!$profile || $profile->save())) {
                 return Inertia::location('/dashboard/profile');
             }
         }
@@ -73,10 +77,10 @@ class DashboardController extends BaseController
         return Inertia::render('Dashboard/Profile', [
             'user' => [
                 'id' => $user->id,
-                'name' => $user->name,
+                'name' => $profile->name ?? $user->username,
                 'email' => $user->email,
             ],
-            'errors' => $user->errors ?? [],
+            'errors' => array_merge($user->errors ?? [], $profile ? $profile->errors : []),
         ]);
     }
 
@@ -91,7 +95,7 @@ class DashboardController extends BaseController
         return Inertia::render('Dashboard/Settings', [
             'user' => [
                 'id' => $identity->id,
-                'name' => $identity->name,
+                'name' => $identity->profile->name ?? $identity->username,
                 'email' => $identity->email,
             ],
         ]);
@@ -108,7 +112,7 @@ class DashboardController extends BaseController
         return Inertia::render('Dashboard/Billing', [
             'user' => [
                 'id' => $identity->id,
-                'name' => $identity->name,
+                'name' => $identity->profile->name ?? $identity->username,
                 'email' => $identity->email,
             ],
         ]);

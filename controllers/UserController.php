@@ -48,11 +48,15 @@ class UserController extends BaseController
 
         $query = User::find();
 
+        // Join with profile table for name search
+        $query->joinWith(['profile']);
+
         // Apply search filter
         if (!empty($search)) {
             $query->andWhere([
                 'or',
-                ['like', 'name', $search],
+                ['like', 't_profile.name', $search],
+                ['like', 'username', $search],
                 ['like', 'email', $search],
             ]);
         }
@@ -94,11 +98,11 @@ class UserController extends BaseController
         foreach ($users as $user) {
             $usersData[] = [
                 'id' => $user->id,
-                'name' => $user->name,
+                'name' => $user->profile->name ?? $user->username,
                 'email' => $user->email,
-                'email_verified_at' => $user->email_verified_at,
-                'created_at' => $user->created_at,
-                'updated_at' => $user->updated_at,
+                'email_verified_at' => $user->confirmed_at ? date('Y-m-d H:i:s', $user->confirmed_at) : null,
+                'created_at' => date('Y-m-d H:i:s', $user->created_at),
+                'updated_at' => date('Y-m-d H:i:s', $user->updated_at),
             ];
         }
 
@@ -137,11 +141,11 @@ class UserController extends BaseController
         return Inertia::render('Users/View', [
             'user' => [
                 'id' => $user->id,
-                'name' => $user->name,
+                'name' => $user->profile->name ?? $user->username,
                 'email' => $user->email,
-                'email_verified_at' => $user->email_verified_at,
-                'created_at' => $user->created_at,
-                'updated_at' => $user->updated_at,
+                'email_verified_at' => $user->confirmed_at ? date('Y-m-d H:i:s', $user->confirmed_at) : null,
+                'created_at' => date('Y-m-d H:i:s', $user->created_at),
+                'updated_at' => date('Y-m-d H:i:s', $user->updated_at),
             ],
         ]);
     }
@@ -157,8 +161,22 @@ class UserController extends BaseController
         $model->scenario = 'create';
 
         if (Yii::$app->request->isPost) {
-            if ($model->load(Yii::$app->request->post(), '')) {
+            $requestData = Yii::$app->request->post();
+
+            if ($model->load($requestData, '')) {
+                // Set required fields for yii2-usuario
+                $model->username = $requestData['email'] ?? '';
+                $model->email = $requestData['email'] ?? '';
+
                 if ($model->validate() && $model->save()) {
+                    // Create profile record with the name
+                    if (!empty($requestData['name'])) {
+                        $profile = new \app\models\Profile();
+                        $profile->user_id = $model->id;
+                        $profile->name = $requestData['name'];
+                        $profile->save();
+                    }
+
                     // For Inertia requests, directly render the index page
                     // This allows onSuccess callback to fire properly
                     if (Yii::$app->request->headers->get('X-Inertia')) {
@@ -173,7 +191,7 @@ class UserController extends BaseController
             // Inertia will handle this and show errors inline
             return Inertia::render('Users/Form', [
                 'user' => [
-                    'name' => $model->name ?? '',
+                    'name' => $requestData['name'] ?? '',
                     'email' => $model->email ?? '',
                     'password' => '',
                 ],
@@ -202,6 +220,7 @@ class UserController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $profile = $model->profile;
 
         // Handle both POST and PUT requests
         $isPost = Yii::$app->request->isPost;
@@ -224,14 +243,23 @@ class UserController extends BaseController
             }
             
             // Load the data
-            if ($model->load($requestData, '')) {
+            $userLoaded = $model->load($requestData, '');
+            $profileLoaded = $profile ? $profile->load($requestData, '') : false;
+
+            if ($userLoaded || $profileLoaded) {
                 // If password is empty, don't validate or save it
                 if (empty($requestData['password'])) {
-                    // Only validate and save name and email
+                    // Only validate and save name (in profile) and email (in user)
                     // Reset scenario to default before validating specific attributes
                     $model->scenario = \yii\base\Model::SCENARIO_DEFAULT;
-                    if ($model->validate(['name', 'email'])) {
-                        $model->save(false, ['name', 'email']);
+                    $userValid = $model->validate(['email']);
+                    $profileValid = $profile ? $profile->validate(['name']) : true;
+
+                    if ($userValid && $profileValid) {
+                        $model->save(false, ['email']);
+                        if ($profile) {
+                            $profile->save(false, ['name']);
+                        }
                         // For Inertia requests, directly render the index page
                         // This allows onSuccess callback to fire properly
                         if (Yii::$app->request->headers->get('X-Inertia')) {
@@ -243,7 +271,13 @@ class UserController extends BaseController
                     // Password is provided, validate everything
                     // Use default scenario - password validation rule applies to all scenarios
                     $model->scenario = \yii\base\Model::SCENARIO_DEFAULT;
-                    if ($model->validate() && $model->save()) {
+                    $userValid = $model->validate();
+                    $profileValid = $profile ? $profile->validate(['name']) : true;
+
+                    if ($userValid && $profileValid && $model->save()) {
+                        if ($profile) {
+                            $profile->save(false, ['name']);
+                        }
                         // For Inertia requests, directly render the index page
                         // This allows onSuccess callback to fire properly
                         if (Yii::$app->request->headers->get('X-Inertia')) {
@@ -260,11 +294,11 @@ class UserController extends BaseController
             return Inertia::render('Users/Form', [
                 'user' => [
                     'id' => $model->id,
-                    'name' => $model->name ?? '',
+                    'name' => $profile->name ?? $model->username,
                     'email' => $model->email ?? '',
                     'password' => '',
                 ],
-                'errors' => $model->errors,
+                'errors' => array_merge($model->errors, $profile ? $profile->errors : []),
             ]);
         }
 
@@ -272,7 +306,7 @@ class UserController extends BaseController
         return Inertia::render('Users/Form', [
             'user' => [
                 'id' => $model->id,
-                'name' => $model->name,
+                'name' => $profile->name ?? $model->username,
                 'email' => $model->email,
                 'password' => '',
             ],
