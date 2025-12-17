@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react'
+import { Head, Link, router } from '@inertiajs/react'
 import {
   Check,
   Code,
@@ -85,6 +85,15 @@ function CodeBlock() {
 }
 
 export default function Home({ title = 'Welcome', user }) {
+  const handleLogout = (e) => {
+    e.preventDefault()
+    router.post('/auth/logout', {}, {
+      onSuccess: () => {
+        // Opsi tambahan jika ingin melakukan sesuatu setelah berhasil
+      },
+    })
+  }
+
   const features = [
     {
       icon: Rocket,
@@ -164,16 +173,26 @@ export default function Home({ title = 'Welcome', user }) {
               <div className="hidden md:flex items-center gap-4">
                 {user
                   ? (
-                      <Button asChild variant="outline">
-                        <Link href="/dashboard">Dashboard</Link>
-                      </Button>
+                      <>
+                        <span className="text-sm text-muted-foreground">
+                          Hello,
+                          {' '}
+                          <span className="font-medium text-foreground">{user.name}</span>
+                        </span>
+                        <Button asChild variant="outline">
+                          <Link href="/dashboard">Dashboard</Link>
+                        </Button>
+                        <Button variant="default" onClick={handleLogout} type="button">
+                          Logout
+                        </Button>
+                      </>
                     )
                   : (
                       <>
                         <Button asChild variant="outline">
                           <Link href="/auth/login">Login</Link>
                         </Button>
-                        <Button asChild variant="outline">
+                        <Button asChild variant="default">
                           <Link href="/auth/register">Register</Link>
                         </Button>
                       </>
@@ -219,11 +238,22 @@ export default function Home({ title = 'Welcome', user }) {
                       </div>
                       {user
                         ? (
-                            <SheetClose asChild>
-                              <Button asChild variant="outline" className="w-full">
-                                <Link href="/dashboard">Dashboard</Link>
-                              </Button>
-                            </SheetClose>
+                            <>
+                              <div className="py-2 px-3 bg-muted rounded-md">
+                                <p className="text-xs text-muted-foreground">Logged in as</p>
+                                <p className="text-sm font-medium text-foreground">{user.name}</p>
+                              </div>
+                              <SheetClose asChild>
+                                <Button asChild variant="outline" className="w-full">
+                                  <Link href="/dashboard">Dashboard</Link>
+                                </Button>
+                              </SheetClose>
+                              <SheetClose asChild>
+                                <Button variant="default" className="w-full" onClick={handleLogout} type="button">
+                                  Logout
+                                </Button>
+                              </SheetClose>
+                            </>
                           )
                         : (
                             <>
@@ -233,7 +263,7 @@ export default function Home({ title = 'Welcome', user }) {
                                 </Button>
                               </SheetClose>
                               <SheetClose asChild>
-                                <Button asChild variant="outline" className="w-full">
+                                <Button asChild variant="default" className="w-full">
                                   <Link href="/auth/register">Register</Link>
                                 </Button>
                               </SheetClose>

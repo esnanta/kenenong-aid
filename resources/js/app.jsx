@@ -1,4 +1,5 @@
 import { createInertiaApp, router } from '@inertiajs/react'
+import axios from 'axios'
 import { lazy, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import { toast, Toaster } from 'sonner'
@@ -35,6 +36,12 @@ const DisastersIndex = lazy(() => import('./pages/Disasters/Index'))
 const DisastersForm = lazy(() => import('./pages/Disasters/Form'))
 const DisastersView = lazy(() => import('./pages/Disasters/View'))
 const NotFound = lazy(() => import('./pages/NotFound'))
+
+// Ambil token dari head meta atau dari global props yang dibagikan oleh InertiaBootstrap
+const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+if (token) {
+  axios.defaults.headers.common['X-CSRF-Token'] = token
+}
 
 createInertiaApp({
   resolve: (name) => {

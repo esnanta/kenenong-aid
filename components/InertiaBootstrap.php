@@ -34,7 +34,7 @@ class InertiaBootstrap implements BootstrapInterface
                 if ($user) {
                     return [
                         'id' => $user->id,
-                        'name' => $user->name,
+                        'name' => $user->username,
                         'email' => $user->email,
                     ];
                 }

@@ -182,21 +182,17 @@ class AuthController extends BaseController
      */
     public function actionLogout()
     {
-        // Destroy the user session (this also clears remember me cookies)
+        // 1. Logout user dari Yii
         Yii::$app->user->logout();
-        
-        // Explicitly destroy the session to ensure it's cleared
+
+        // 2. Hancurkan session secara total
         if (Yii::$app->has('session')) {
             Yii::$app->session->destroy();
         }
-        
-        // For Inertia requests, use Inertia::location which handles redirects properly
-        if (Yii::$app->request->headers->get('X-Inertia')) {
-            return Inertia::location('/');
-        }
-        
-        // Use regular redirect for non-Inertia requests
-        return $this->redirect(['/']);
+
+        // 3. SELALU gunakan Inertia::location untuk redirect ke luar
+        // atau redirect ke halaman login/home yang merupakan komponen Inertia
+        return Inertia::location('/');
     }
 
     /**
