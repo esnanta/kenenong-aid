@@ -106,7 +106,7 @@ class UserController extends BaseController
             ];
         }
 
-        return Inertia::render('Users/Index', [
+        return Inertia::render('User/Index', [
             'users' => $usersData,
             'pagination' => [
                 'current_page' => $page,
@@ -138,7 +138,7 @@ class UserController extends BaseController
     {
         $user = $this->findModel($id);
 
-        return Inertia::render('Users/View', [
+        return Inertia::render('User/View', [
             'user' => [
                 'id' => $user->id,
                 'name' => $user->profile->name ?? $user->username,
@@ -200,7 +200,7 @@ class UserController extends BaseController
         }
 
         // GET request - show empty form
-        return Inertia::render('Users/Form', [
+        return Inertia::render('User/Form', [
             'user' => [
                 'name' => '',
                 'email' => '',
@@ -291,7 +291,7 @@ class UserController extends BaseController
             // If we get here, validation failed - return form with errors
             // Return 200 status but include errors in props (similar to Login form)
             // Inertia will handle this and show errors inline
-            return Inertia::render('Users/Form', [
+            return Inertia::render('User/Form', [
                 'user' => [
                     'id' => $model->id,
                     'name' => $profile->name ?? $model->username,
@@ -303,7 +303,7 @@ class UserController extends BaseController
         }
 
         // GET request - show form with current data
-        return Inertia::render('Users/Form', [
+        return Inertia::render('User/Form', [
             'user' => [
                 'id' => $model->id,
                 'name' => $profile->name ?? $model->username,
