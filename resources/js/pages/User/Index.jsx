@@ -2,7 +2,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react'
 import { ArrowDown, ArrowUp, ArrowUpDown, CheckCircle2, Columns2, Edit, Eye, Filter, Plus, Search, Trash2, X, XCircle } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import DashboardLayout from '@/components/layouts/DashboardLayout'
+import DashboardLayout from '@/components/layouts/DashboardLayout.jsx'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,10 +12,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+} from '@/components/ui/alert-dialog.tsx'
+import { Badge } from '@/components/ui/badge.tsx'
+import { Button } from '@/components/ui/button.tsx'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -23,16 +23,16 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from '@/components/ui/dropdown-menu.tsx'
+import { Input } from '@/components/ui/input.tsx'
+import { Label } from '@/components/ui/label.tsx'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@/components/ui/select.tsx'
 import {
   Table,
   TableBody,
@@ -40,9 +40,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@/components/ui/table.tsx'
 
-export default function UsersIndex({ users, pagination, filters, sort }) {
+export default function UserIndex({ users, pagination, filters, sort }) {
   const { props } = usePage()
   const [search, setSearch] = useState(filters?.search || '')
   const [emailVerified, setEmailVerified] = useState(filters?.email_verified || '')
@@ -63,7 +63,7 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
 
   const handleSort = (column) => {
     const newSortOrder = currentSortBy === column && currentSortOrder === 'asc' ? 'desc' : 'asc'
-    router.get('/users', {
+    router.get('/user', {
       ...filters,
       search,
       email_verified: emailVerified,
@@ -76,7 +76,7 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
   }
 
   const handleFilter = () => {
-    router.get('/users', {
+    router.get('/user', {
       search,
       email_verified: emailVerified,
       date_from: dateFrom,
@@ -92,7 +92,7 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
     setEmailVerified('')
     setDateFrom('')
     setDateTo('')
-    router.get('/users', {
+    router.get('/user', {
       sort_by: currentSortBy,
       sort_order: currentSortOrder,
       page: 1,
@@ -116,7 +116,7 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
       [csrfParam]: csrfToken,
     }
 
-    router.post(`/users/${id}/delete`, formData, {
+    router.post(`/user/${id}/delete`, formData, {
       onSuccess: () => {
         setDeleteId(null)
       },
@@ -175,7 +175,7 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
                 Manage your users and their permissions
               </p>
             </div>
-            <Link href="/users/create">
+            <Link href="/user/create">
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
                 Add User
@@ -396,12 +396,12 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
                               {columnVisibility.actions && (
                                 <TableCell className="text-right">
                                   <div className="flex justify-end gap-2">
-                                    <Link href={`/users/${user.id}`}>
+                                    <Link href={`/user/${user.id}`}>
                                       <Button variant="ghost" size="sm" title="View">
                                         <Eye className="h-4 w-4" />
                                       </Button>
                                     </Link>
-                                    <Link href={`/users/${user.id}/edit`}>
+                                    <Link href={`/user/${user.id}/edit`}>
                                       <Button variant="ghost" size="sm" title="Edit">
                                         <Edit className="h-4 w-4" />
                                       </Button>
@@ -454,7 +454,7 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => router.get('/users', {
+                        onClick={() => router.get('/user', {
                           ...filters,
                           search,
                           email_verified: emailVerified,
@@ -472,7 +472,7 @@ export default function UsersIndex({ users, pagination, filters, sort }) {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => router.get('/users', {
+                        onClick={() => router.get('/user', {
                           ...filters,
                           search,
                           email_verified: emailVerified,

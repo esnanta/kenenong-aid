@@ -74,7 +74,7 @@ $config = [
                 'reset-password' => 'auth/reset-password',
                 'dashboard' => 'dashboard/index',
                 'dashboard/<action:\w+>' => 'dashboard/<action>',
-                'users' => 'user/index',
+                'user' => 'user/index',
                 'user/create' => 'user/create',
                 'user/<id:\d+>' => 'user/view',
                 'user/<id:\d+>/edit' => 'user/update',
@@ -89,14 +89,7 @@ $config = [
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ],
         ],
-        /*
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => [
-            ],
-        ],
-        */
+
     ],
 
     'modules' => [

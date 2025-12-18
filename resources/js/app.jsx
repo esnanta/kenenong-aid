@@ -29,12 +29,12 @@ const Dashboard = lazy(() => import('./pages/Dashboard/Index'))
 const Profile = lazy(() => import('./pages/Dashboard/Profile'))
 const Settings = lazy(() => import('./pages/Dashboard/Settings'))
 const Billing = lazy(() => import('./pages/Dashboard/Billing'))
-const UsersIndex = lazy(() => import('./pages/Users/Index'))
-const UsersForm = lazy(() => import('./pages/Users/Form'))
-const UsersView = lazy(() => import('./pages/Users/View'))
-const DisastersIndex = lazy(() => import('./pages/Disasters/Index'))
-const DisastersForm = lazy(() => import('./pages/Disasters/Form'))
-const DisastersView = lazy(() => import('./pages/Disasters/View'))
+const UserIndex = lazy(() => import('./pages/User/Index'))
+const UserForm = lazy(() => import('./pages/User/Form'))
+const UserView = lazy(() => import('./pages/User/View'))
+const DisasterIndex = lazy(() => import('./pages/Disaster/Index'))
+const DisasterForm = lazy(() => import('./pages/Disaster/Form'))
+const DisasterView = lazy(() => import('./pages/Disaster/View'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 // Ambil token dari head meta atau dari global props yang dibagikan oleh InertiaBootstrap
@@ -55,12 +55,12 @@ createInertiaApp({
       'Dashboard/Profile': Profile,
       'Dashboard/Settings': Settings,
       'Dashboard/Billing': Billing,
-      'Users/Index': UsersIndex,
-      'Users/Form': UsersForm,
-      'Users/View': UsersView,
-      'Disasters/Index': DisastersIndex,
-      'Disasters/Form': DisastersForm,
-      'Disasters/View': DisastersView,
+      'User/Index': UserIndex,
+      'User/Form': UserForm,
+      'User/View': UserView,
+      'Disaster/Index': DisasterIndex,
+      'Disaster/Form': DisasterForm,
+      'Disaster/View': DisasterView,
       'NotFound': NotFound,
     }
     return pages[name] || NotFound

@@ -4,11 +4,11 @@ import { ArrowLeft } from 'lucide-react'
 import { useForm as useHookForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import DashboardLayout from '@/components/layouts/DashboardLayout'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import DashboardLayout from '@/components/layouts/DashboardLayout.jsx'
+import { Button } from '@/components/ui/button.tsx'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Input } from '@/components/ui/input.tsx'
+import { Label } from '@/components/ui/label.tsx'
 
 // Validation schema - password validation is handled in onSubmit
 const userSchema = z.object({
@@ -66,7 +66,7 @@ export default function UserForm({ user, errors: serverErrors }) {
       delete formData.password
     }
 
-    const url = isEdit ? `/users/${user.id}/edit` : '/users/create'
+    const url = isEdit ? `/user/${user.id}/edit` : '/user/create'
     const method = isEdit ? 'put' : 'post'
 
     router[method](url, formData, {
@@ -148,7 +148,7 @@ export default function UserForm({ user, errors: serverErrors }) {
       <DashboardLayout user={props.user}>
         <div className="space-y-6">
           <div className="flex items-center gap-4">
-            <Link href="/users">
+            <Link href="/user">
               <Button variant="ghost" size="icon">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
@@ -225,7 +225,7 @@ export default function UserForm({ user, errors: serverErrors }) {
                   <Button type="submit" disabled={isSubmitting}>
                     {isSubmitting ? 'Saving...' : isEdit ? 'Update User' : 'Create User'}
                   </Button>
-                  <Link href="/users">
+                  <Link href="/user">
                     <Button type="button" variant="outline">
                       Cancel
                     </Button>

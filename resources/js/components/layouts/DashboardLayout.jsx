@@ -107,10 +107,10 @@ export default function DashboardLayout({ children, user }) {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    isActive={url === '/users' || url.startsWith('/users/')}
+                    isActive={url === '/user' || url.startsWith('/user/')}
                     tooltip="Users"
                   >
-                    <Link href="/users">
+                    <Link href="/user">
                       <Users />
                       <span>Users</span>
                     </Link>

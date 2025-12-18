@@ -63,7 +63,7 @@ function SortableHeader({ column, currentSortBy, currentSortOrder, onSort, child
   )
 }
 
-export default function DisastersIndex({ disasters, pagination, filters, sort, disasterTypes, disasterStatuses }) {
+export default function DisasterIndex({ disasters, pagination, filters, sort, disasterTypes, disasterStatuses }) {
   const { props } = usePage()
   const [search, setSearch] = useState(filters?.search || '')
   const [disasterType, setDisasterType] = useState(filters?.disaster_type?.toString() || '')
