@@ -16,6 +16,12 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+    'controllerMap' => [
+        'user' => 'app\controllers\UserController',
+        'role' => 'app\controllers\RoleController',
+        'permission' => 'app\controllers\PermissionController',
+        'rule' => 'app\controllers\RuleController',
+    ],
     'components' => [
          'view' => [
             'renderers' => [
