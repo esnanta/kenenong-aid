@@ -31,14 +31,7 @@ class Profile extends \yii\db\ActiveRecord
 
     public function __construct(){
         parent::__construct();
-        $this->_rt_softdelete = [
-            'deleted_by' => \Yii::$app->user->id,
-            'deleted_at' => date('Y-m-d H:i:s'),
-        ];
-        $this->_rt_softrestore = [
-            'deleted_by' => 0,
-            'deleted_at' => date('Y-m-d H:i:s'),
-        ];
+        // Note: Removed soft delete configuration because t_profile doesn't have deleted_by/deleted_at columns
     }
 
     /**
@@ -168,6 +161,7 @@ class Profile extends \yii\db\ActiveRecord
     public static function find()
     {
         $query = new \app\models\ProfileQuery(get_called_class());
-        return $query->where(['t_profile.deleted_by' => 0]);
+        // Note: Removed soft delete condition because t_profile doesn't have deleted_by column
+        return $query;
     }
 }

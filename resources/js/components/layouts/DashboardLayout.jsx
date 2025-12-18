@@ -10,8 +10,19 @@ import {
   User,
   Users,
 } from 'lucide-react'
+import { useState } from 'react'
 import { Logo } from '@/components/Logo'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -41,11 +52,10 @@ import { getCsrfParam, getCsrfToken } from '@/lib/csrf'
 
 export default function DashboardLayout({ children, user }) {
   const { url } = usePage()
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false)
 
   // Handle logout - use form submission to ensure full page reload
-  const handleLogout = (e) => {
-    e.preventDefault()
-
+  const handleLogout = () => {
     // Create a form and submit it to ensure full page reload
     // This is more reliable than Inertia for logout
     const form = document.createElement('form')
@@ -107,10 +117,10 @@ export default function DashboardLayout({ children, user }) {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    isActive={url === '/user' || url.startsWith('/user/')}
+                    isActive={url === '/user/admin' || url.startsWith('/user/admin/')}
                     tooltip="Users"
                   >
-                    <Link href="/user">
+                    <Link href="/user/admin">
                       <Users />
                       <span>Users</span>
                     </Link>
@@ -179,7 +189,7 @@ export default function DashboardLayout({ children, user }) {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+                  <DropdownMenuItem onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" />
                     Log out
                   </DropdownMenuItem>
@@ -256,7 +266,7 @@ export default function DashboardLayout({ children, user }) {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+                  <DropdownMenuItem onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" />
                     Log out
                   </DropdownMenuItem>
@@ -269,6 +279,22 @@ export default function DashboardLayout({ children, user }) {
         {/* Page Content */}
         <main className="p-4 sm:p-6 lg:p-8">{children}</main>
       </SidebarInset>
+
+      {/* Logout Confirmation Dialog */}
+      <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Konfirmasi Logout</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin keluar dari akun ini?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLogout}>Ya, Logout</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </SidebarProvider>
   )
 }

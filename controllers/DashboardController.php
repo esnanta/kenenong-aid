@@ -30,7 +30,7 @@ class DashboardController extends BaseController
     /**
      * Dashboard index action.
      *
-     * @return string
+     * @return \yii\web\Response
      */
     public function actionIndex()
     {
@@ -53,7 +53,7 @@ class DashboardController extends BaseController
     /**
      * Profile action.
      *
-     * @return string
+     * @return \yii\web\Response
      */
     public function actionProfile()
     {
@@ -87,7 +87,7 @@ class DashboardController extends BaseController
     /**
      * Settings action.
      *
-     * @return string
+     * @return \yii\web\Response
      */
     public function actionSettings()
     {
@@ -104,7 +104,7 @@ class DashboardController extends BaseController
     /**
      * Billing action.
      *
-     * @return string
+     * @return \yii\web\Response
      */
     public function actionBilling()
     {

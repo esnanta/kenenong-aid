@@ -17,6 +17,16 @@ import {
 import { useState } from 'react'
 import { Logo } from '@/components/Logo'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/sheet'
@@ -84,12 +94,13 @@ function CodeBlock() {
   )
 }
 
-export default function Home({ title = 'Welcome', user }) {
-  const handleLogout = (e) => {
-    e.preventDefault()
+export default function Home({ title: _title = 'Welcome', user }) {
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false)
+
+  const handleLogout = () => {
     router.post('/auth/logout', {}, {
       onSuccess: () => {
-        // Opsi tambahan jika ingin melakukan sesuatu setelah berhasil
+        setShowLogoutDialog(false)
       },
     })
   }
@@ -182,7 +193,7 @@ export default function Home({ title = 'Welcome', user }) {
                         <Button asChild variant="outline">
                           <Link href="/dashboard">Dashboard</Link>
                         </Button>
-                        <Button variant="default" onClick={handleLogout} type="button">
+                        <Button variant="default" onClick={() => setShowLogoutDialog(true)} type="button">
                           Logout
                         </Button>
                       </>
@@ -249,7 +260,7 @@ export default function Home({ title = 'Welcome', user }) {
                                 </Button>
                               </SheetClose>
                               <SheetClose asChild>
-                                <Button variant="default" className="w-full" onClick={handleLogout} type="button">
+                                <Button variant="default" className="w-full" onClick={() => setShowLogoutDialog(true)} type="button">
                                   Logout
                                 </Button>
                               </SheetClose>
@@ -421,6 +432,22 @@ export default function Home({ title = 'Welcome', user }) {
             </div>
           </div>
         </footer>
+
+        {/* Logout Confirmation Dialog */}
+        <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Konfirmasi Logout</AlertDialogTitle>
+              <AlertDialogDescription>
+                Apakah Anda yakin ingin keluar dari akun ini?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Batal</AlertDialogCancel>
+              <AlertDialogAction onClick={handleLogout}>Ya, Logout</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </>
   )
