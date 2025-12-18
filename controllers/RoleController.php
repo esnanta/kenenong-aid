@@ -13,8 +13,38 @@ use Crenspire\Yii2Inertia\Inertia;
 use yii\web\NotFoundHttpException;
 use app\controllers\BaseController;
 
-class RoleController extends AbstractAuthItemController
+class RoleController extends BaseController
 {
+    protected $authHelper;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct($id, $module, $config = [])
+    {
+        // Get AuthHelper instance
+        $this->authHelper = Yii::createObject(AuthHelper::class);
+        parent::__construct($id, $module, $config);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => \yii\filters\AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'], // Allow all authenticated users for now
+                    ],
+                ],
+            ],
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -29,6 +59,14 @@ class RoleController extends AbstractAuthItemController
     protected function getSearchModelClass()
     {
         return RoleSearch::class;
+    }
+
+    /**
+     * Helper method to create instances
+     */
+    protected function make($class, $params = [], $config = [])
+    {
+        return Yii::createObject(array_merge(['class' => $class], $config), $params);
     }
 
     /**

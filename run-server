@@ -1,0 +1,1 @@
+npx concurrently "php yii serve" "npm run dev"

@@ -28,17 +28,22 @@ class RuleController extends BaseController
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'ruleConfig' => [
-                    'class' => AccessRuleFilter::class,
-                ],
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['admin'],
+                        'roles' => ['@'], // Allow all authenticated users for now
                     ],
                 ],
             ],
         ];
+    }
+
+    /**
+     * Helper method to create instances
+     */
+    protected function make($class, $params = [], $config = [])
+    {
+        return Yii::createObject(array_merge(['class' => $class], $config), $params);
     }
 
     /**
