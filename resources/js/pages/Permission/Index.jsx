@@ -174,4 +174,3 @@ export default function PermissionIndex({ permissions, pagination }) {
     </DashboardLayout>
   )
 }
-

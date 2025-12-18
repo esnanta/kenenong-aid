@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
 import { Separator } from '@/components/ui/separator.tsx'
+
 export default function PermissionView({ permission }) {
   const { props } = usePage()
   const formatDateTime = (dateString) => {

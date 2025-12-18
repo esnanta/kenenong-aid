@@ -146,4 +146,3 @@ export default function PermissionForm({ permission, errors = {}, rules = [] }) 
     </DashboardLayout>
   )
 }
-

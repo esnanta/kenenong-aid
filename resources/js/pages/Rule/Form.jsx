@@ -129,7 +129,8 @@ export default function RuleForm({ rule, errors = {} }) {
           </CardHeader>
           <CardContent>
             <pre className="bg-muted p-4 rounded-md overflow-x-auto text-sm">
-              <code>{`<?php
+              <code>
+                {`<?php
 namespace app\\rbac;
 
 use yii\\rbac\\Rule;
@@ -153,4 +154,3 @@ class AuthorRule extends Rule
     </DashboardLayout>
   )
 }
-

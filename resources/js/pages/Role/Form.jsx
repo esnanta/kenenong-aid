@@ -146,4 +146,3 @@ export default function RoleForm({ role, errors = {}, rules = [] }) {
     </DashboardLayout>
   )
 }
-
