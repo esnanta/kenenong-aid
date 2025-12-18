@@ -3,10 +3,13 @@ import {
   AlertTriangle,
   Bell,
   ChevronDown,
+  FileText,
+  Key,
   LayoutDashboard,
   LogOut,
   Search,
   Settings,
+  Shield,
   User,
   Users,
 } from 'lucide-react'
@@ -117,10 +120,10 @@ export default function DashboardLayout({ children, user }) {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    isActive={url === '/user/admin' || url.startsWith('/user/admin/')}
+                    isActive={url === '/user' || url.startsWith('/user/')}
                     tooltip="Users"
                   >
-                    <Link href="/user/admin">
+                    <Link href="/user">
                       <Users />
                       <span>Users</span>
                     </Link>
@@ -129,10 +132,46 @@ export default function DashboardLayout({ children, user }) {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    isActive={url === '/disasters' || url.startsWith('/disasters/')}
+                    isActive={url === '/role' || url.startsWith('/role/')}
+                    tooltip="Roles"
+                  >
+                    <Link href="/role">
+                      <Shield />
+                      <span>Roles</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={url === '/permission' || url.startsWith('/permission/')}
+                    tooltip="Permissions"
+                  >
+                    <Link href="/permission">
+                      <Key />
+                      <span>Permissions</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={url === '/rule' || url.startsWith('/rule/')}
+                    tooltip="Rules"
+                  >
+                    <Link href="/rule">
+                      <FileText />
+                      <span>Rules</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={url === '/disaster' || url.startsWith('/disaster/')}
                     tooltip="Disasters"
                   >
-                    <Link href="/disasters">
+                    <Link href="/disaster">
                       <AlertTriangle />
                       <span>Disasters</span>
                     </Link>
