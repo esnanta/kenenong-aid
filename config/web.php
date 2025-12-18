@@ -11,16 +11,28 @@ $db = require __DIR__ . '/db.php';
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log', InertiaBootstrap::class, 'user'],
+    'bootstrap' => ['log', InertiaBootstrap::class],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
-    'controllerMap' => [
-        'user' => 'app\controllers\UserController',
-        'role' => 'app\controllers\RoleController',
-        'permission' => 'app\controllers\PermissionController',
-        'rule' => 'app\controllers\RuleController',
+    'modules' => [
+        'user' => [
+            'class' => 'Da\User\Module',
+            'administrators' => ['admin'],
+            'enableRegistration' => true,
+            'enableEmailConfirmation' => true,
+            // Override default controllers with our custom ones
+            'controllerMap' => [
+                'admin' => 'app\controllers\UserController',
+                'role' => 'app\controllers\RoleController',
+                'permission' => 'app\controllers\PermissionController',
+                'rule' => 'app\controllers\RuleController',
+                'security' => 'app\controllers\SecurityController',
+                'registration' => 'app\controllers\RegistrationController',
+                'recovery' => 'app\controllers\RecoveryController',
+            ],
+        ],
     ],
     'components' => [
          'view' => [
@@ -45,7 +57,7 @@ $config = [
         'user' => [
             'identityClass' => app\models\User::class, // extend to Da\User\Model\User
             'enableAutoLogin' => true,
-            'loginUrl' => ['/user/security/login'], // usuario's login route
+            'loginUrl' => ['/login'], // Custom login route
         ],
         'errorHandler' => [
             'class' => InertiaErrorHandler::class,
@@ -74,53 +86,62 @@ $config = [
             'enableStrictParsing' => false,
             'rules' => [
                 '' => 'home/index',
-                'login' => 'auth/login',
-                'register' => 'auth/register',
-                'logout' => 'auth/logout',
-                'forgot-password' => 'auth/forgot-password',
-                'reset-password' => 'auth/reset-password',
+
+                // Authentication routes (menggunakan module 'user')
+                'login' => 'user/security/login',
+                'logout' => 'user/security/logout',
+                'register' => 'user/registration/register',
+                'confirm/<id:\d+>/<code:[A-Za-z0-9_-]+>' => 'user/registration/confirm',
+                'resend' => 'user/registration/resend',
+                'forgot-password' => 'user/recovery/request',
+                'reset-password/<id:\d+>/<code:[A-Za-z0-9_-]+>' => 'user/recovery/reset',
+
+                // Dashboard routes
                 'dashboard' => 'dashboard/index',
                 'dashboard/<action:\w+>' => 'dashboard/<action>',
-                'user' => 'user/index',
-                'user/create' => 'user/create',
-                'user/<id:\d+>' => 'user/view',
-                'user/<id:\d+>/edit' => 'user/update',
-                'user/<id:\d+>/delete' => 'user/delete',
-                'role' => 'role/index',
-                'role/<name:.+>/update' => 'role/update',
-                'role/<name:.+>/delete' => 'role/delete',
-                'role/<name:.+>' => 'role/view',
-                'role/create' => 'role/create',
-                'permission' => 'permission/index',
-                'permission/<name:.+>/update' => 'permission/update',
-                'permission/<name:.+>/delete' => 'permission/delete',
-                'permission/<name:.+>' => 'permission/view',
-                'permission/create' => 'permission/create',
-                'rule' => 'rule/index',
-                'rule/<name:.+>/update' => 'rule/update',
-                'rule/<name:.+>/delete' => 'rule/delete',
-                'rule/<name:.+>' => 'rule/view',
-                'rule/create' => 'rule/create',
+
+                // User management routes (CRUD) - gunakan 'admin' sebagai controller name
+                'users' => 'user/admin/index',
+                'users/create' => 'user/admin/create',
+                'users/<id:\d+>' => 'user/admin/view',
+                'users/<id:\d+>/edit' => 'user/admin/update',
+                'users/<id:\d+>/delete' => 'user/admin/delete',
+
+                // Role management
+                'roles' => 'user/role/index',
+                'roles/create' => 'user/role/create',
+                'roles/<name:.+>' => 'user/role/view',
+                'roles/<name:.+>/edit' => 'user/role/update',
+                'roles/<name:.+>/delete' => 'user/role/delete',
+
+                // Permission management
+                'permissions' => 'user/permission/index',
+                'permissions/create' => 'user/permission/create',
+                'permissions/<name:.+>' => 'user/permission/view',
+                'permissions/<name:.+>/edit' => 'user/permission/update',
+                'permissions/<name:.+>/delete' => 'user/permission/delete',
+
+                // Rule management
+                'rules' => 'user/rule/index',
+                'rules/create' => 'user/rule/create',
+                'rules/<name:.+>' => 'user/rule/view',
+                'rules/<name:.+>/edit' => 'user/rule/update',
+                'rules/<name:.+>/delete' => 'user/rule/delete',
+
+                // Disaster routes
                 'disaster' => 'disaster/index',
                 'disaster/create' => 'disaster/create',
                 'disaster/<id:\d+>' => 'disaster/view',
                 'disaster/<id:\d+>/edit' => 'disaster/update',
                 'disaster/<id:\d+>/delete' => 'disaster/delete',
+
+                // Generic routes (fallback)
                 '<controller:\w+>/<id:\d+>' => '<controller>/view',
                 '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ],
         ],
 
-    ],
-
-    'modules' => [
-        'user' => [
-            'class' => 'Da\User\Module',
-            'administrators' => ['admin'],
-            'enableRegistration' => true,
-            'enableEmailConfirmation' => true,
-        ],
     ],
     'params' => $params,
 ];
