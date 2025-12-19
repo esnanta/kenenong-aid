@@ -76,14 +76,6 @@ export default function RoleForm({ role, errors = EMPTY_ERRORS, rules = EMPTY_RU
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              {isEdit ? 'Edit Role' : 'Create Role'}
-            </h1>
-            <p className="text-muted-foreground">
-              {isEdit ? 'Update role information' : 'Add a new role to the system'}
-            </p>
-          </div>
         </div>
 
         <Card>
