@@ -50,9 +50,12 @@ $config = [
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
+            //'class' => 'yii\redis\Cache',
         ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
+            'cache' => 'cache', // Menggunakan komponen cache aplikasi
+            'cacheDuration' => 3600, // Simpan di cache selama 1 jam
             'itemTable' => 't_auth_item',
             'itemChildTable' => 't_auth_item_child',
             'assignmentTable' => 't_auth_assignment',
@@ -114,9 +117,9 @@ $config = [
                 // Role management
                 'roles' => 'role/index',
                 'roles/create' => 'role/create',
-                'roles/<name:.+>' => 'role/view',
                 'roles/<name:.+>/edit' => 'role/update',
                 'roles/<name:.+>/delete' => 'role/delete',
+                'roles/<name:.+>' => 'role/view',
 
                 // Permission management
                 'permissions' => 'permission/index',
