@@ -37,10 +37,16 @@ const DisasterIndex = lazy(() => import('./pages/Disaster/Index'))
 const DisasterForm = lazy(() => import('./pages/Disaster/Form'))
 const DisasterView = lazy(() => import('./pages/Disaster/View'))
 const NotFound = lazy(() => import('./pages/NotFound'))
-// Tambahkan lazy load untuk Role pages
+// RBAC pages
 const RoleIndex = lazy(() => import('./pages/Role/Index'))
 const RoleForm = lazy(() => import('./pages/Role/Form'))
 const RoleView = lazy(() => import('./pages/Role/View'))
+const PermissionIndex = lazy(() => import('./pages/Permission/Index'))
+const PermissionForm = lazy(() => import('./pages/Permission/Form'))
+const PermissionView = lazy(() => import('./pages/Permission/View'))
+const RuleIndex = lazy(() => import('./pages/Rule/Index'))
+const RuleForm = lazy(() => import('./pages/Rule/Form'))
+const RuleView = lazy(() => import('./pages/Rule/View'))
 
 // Ambil token dari head meta atau dari global props yang dibagikan oleh InertiaBootstrap
 const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
@@ -64,6 +70,12 @@ createInertiaApp({
       'Role/Index': RoleIndex,
       'Role/Form': RoleForm,
       'Role/View': RoleView,
+      'Permission/Index': PermissionIndex,
+      'Permission/Form': PermissionForm,
+      'Permission/View': PermissionView,
+      'Rule/Index': RuleIndex,
+      'Rule/Form': RuleForm,
+      'Rule/View': RuleView,
       'User/Index': UserIndex,
       'User/Form': UserForm,
       'User/View': UserView,

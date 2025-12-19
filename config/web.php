@@ -126,11 +126,11 @@ $config = [
                 'permissions/<name:.+>/delete' => 'permission/delete',
 
                 // Rule management
-                'rules' => 'user/rule/index',
-                'rules/create' => 'user/rule/create',
-                'rules/<name:.+>' => 'user/rule/view',
-                'rules/<name:.+>/edit' => 'user/rule/update',
-                'rules/<name:.+>/delete' => 'user/rule/delete',
+                'rules' => 'rule/index',
+                'rules/create' => 'rule/create',
+                'rules/<name:.+>' => 'rule/view',
+                'rules/<name:.+>/edit' => 'rule/update',
+                'rules/<name:.+>/delete' => 'rule/delete',
 
                 // Disaster routes
                 'disaster' => 'disaster/index',
