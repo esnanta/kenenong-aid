@@ -3,6 +3,7 @@ import {
   AlertTriangle,
   Bell,
   ChevronDown,
+  ChevronRight,
   FileText,
   Key,
   LayoutDashboard,
@@ -11,6 +12,7 @@ import {
   Settings,
   Shield,
   User,
+  UserCog,
   Users,
 } from 'lucide-react'
 import { useState } from 'react'
@@ -28,6 +30,11 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,6 +55,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
@@ -56,6 +66,12 @@ import { getCsrfParam, getCsrfToken } from '@/lib/csrf'
 export default function DashboardLayout({ children, user }) {
   const { url } = usePage()
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(
+    url.startsWith('/users')
+    || url.startsWith('/roles')
+    || url.startsWith('/rules')
+    || url.startsWith('/permissions'),
+  )
 
   // Handle logout - use form submission to ensure full page reload
   const handleLogout = () => {
@@ -119,57 +135,9 @@ export default function DashboardLayout({ children, user }) {
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton
-                    asChild
-                    isActive={url === '/users' || url.startsWith('/users/')}
-                    tooltip="Users"
-                  >
-                    <Link href="/users">
-                      <Users />
-                      <span>Users</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={url === '/roles' || url.startsWith('/roles/')}
-                    tooltip="Roles"
-                  >
-                    <Link href="/roles">
-                      <Shield />
-                      <span>Roles</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={url === '/permissions' || url.startsWith('/permissions/')}
-                    tooltip="Permissions"
-                  >
-                    <Link href="/permissions">
-                      <Key />
-                      <span>Permissions</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={url === '/rules' || url.startsWith('/rules/')}
-                    tooltip="Rules"
-                  >
-                    <Link href="/rules">
-                      <FileText />
-                      <span>Rules</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={url === '/disaster' || url.startsWith('/disaster/')}
-                    tooltip="Disasters"
+                      asChild
+                      isActive={url === '/disaster' || url.startsWith('/disaster/')}
+                      tooltip="Disasters"
                   >
                     <Link href="/disaster">
                       <AlertTriangle />
@@ -177,6 +145,69 @@ export default function DashboardLayout({ children, user }) {
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
+                <Collapsible
+                  open={isUserMenuOpen}
+                  onOpenChange={setIsUserMenuOpen}
+                  className="group/collapsible"
+                >
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton tooltip="User Management">
+                        <UserCog />
+                        <span>User Management</span>
+                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={url === '/users' || url.startsWith('/users/')}
+                          >
+                            <Link href="/users">
+                              <Users />
+                              <span>Users</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={url === '/roles' || url.startsWith('/roles/')}
+                          >
+                            <Link href="/roles">
+                              <Shield />
+                              <span>Roles</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={url === '/rules' || url.startsWith('/rules/')}
+                          >
+                            <Link href="/rules">
+                              <FileText />
+                              <span>Rules</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={url === '/permissions' || url.startsWith('/permissions/')}
+                          >
+                            <Link href="/permissions">
+                              <Key />
+                              <span>Permissions</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
