@@ -36,16 +36,32 @@ class HomeController extends BaseController
 
         // For specific error codes, render React NotFound page
         if ($showNotFoundPage) {
-            $errorMessage = match($statusCode) {
-                401 => 'Unauthorized - Please log in to continue',
-                403 => 'Forbidden - You do not have permission to access this resource',
-                404 => 'Page not found',
-                500 => 'Internal server error',
-                502 => 'Bad gateway',
-                503 => 'Service unavailable',
-                504 => 'Gateway timeout',
-                default => 'An error occurred',
-            };
+            switch ($statusCode) {
+                case 401:
+                    $errorMessage = 'Unauthorized - Please log in to continue';
+                    break;
+                case 403:
+                    $errorMessage = 'Forbidden - You do not have permission to access this resource';
+                    break;
+                case 404:
+                    $errorMessage = 'Page not found';
+                    break;
+                case 500:
+                    $errorMessage = 'Internal server error';
+                    break;
+                case 502:
+                    $errorMessage = 'Bad gateway';
+                    break;
+                case 503:
+                    $errorMessage = 'Service unavailable';
+                    break;
+                case 504:
+                    $errorMessage = 'Gateway timeout';
+                    break;
+                default:
+                    $errorMessage = 'An error occurred';
+                    break;
+            }
 
             return Inertia::render('NotFound', [
                 'status' => $statusCode,
@@ -75,7 +91,7 @@ class HomeController extends BaseController
             $identity = Yii::$app->user->identity;
             $user = [
                 'id' => $identity->id,
-                'name' => $identity->name,
+                'name' => $identity->username,
                 'email' => $identity->email,
             ];
         }

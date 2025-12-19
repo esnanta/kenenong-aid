@@ -3,17 +3,38 @@ import {
   AlertTriangle,
   Bell,
   ChevronDown,
+  ChevronRight,
+  FileText,
+  Key,
   LayoutDashboard,
   LogOut,
   Search,
   Settings,
+  Shield,
   User,
+  UserCog,
   Users,
 } from 'lucide-react'
+import { useState } from 'react'
 import { Logo } from '@/components/Logo'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +55,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
@@ -41,16 +65,21 @@ import { getCsrfParam, getCsrfToken } from '@/lib/csrf'
 
 export default function DashboardLayout({ children, user }) {
   const { url } = usePage()
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(
+    url.startsWith('/users')
+    || url.startsWith('/roles')
+    || url.startsWith('/rules')
+    || url.startsWith('/permissions'),
+  )
 
   // Handle logout - use form submission to ensure full page reload
-  const handleLogout = (e) => {
-    e.preventDefault()
-
+  const handleLogout = () => {
     // Create a form and submit it to ensure full page reload
     // This is more reliable than Inertia for logout
     const form = document.createElement('form')
     form.method = 'POST'
-    form.action = '/auth/logout'
+    form.action = '/logout'
 
     // Add CSRF token using the utility function
     const csrfToken = getCsrfToken()
@@ -106,28 +135,79 @@ export default function DashboardLayout({ children, user }) {
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton
-                    asChild
-                    isActive={url === '/users' || url.startsWith('/users/')}
-                    tooltip="Users"
+                      asChild
+                      isActive={url === '/disaster' || url.startsWith('/disaster/')}
+                      tooltip="Disasters"
                   >
-                    <Link href="/users">
-                      <Users />
-                      <span>Users</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={url === '/disasters' || url.startsWith('/disasters/')}
-                    tooltip="Disasters"
-                  >
-                    <Link href="/disasters">
+                    <Link href="/disaster">
                       <AlertTriangle />
                       <span>Disasters</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
+                <Collapsible
+                  open={isUserMenuOpen}
+                  onOpenChange={setIsUserMenuOpen}
+                  className="group/collapsible"
+                >
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton tooltip="User Management">
+                        <UserCog />
+                        <span>User Management</span>
+                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={url === '/users' || url.startsWith('/users/')}
+                          >
+                            <Link href="/users">
+                              <Users />
+                              <span>Users</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={url === '/roles' || url.startsWith('/roles/')}
+                          >
+                            <Link href="/roles">
+                              <Shield />
+                              <span>Roles</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={url === '/rules' || url.startsWith('/rules/')}
+                          >
+                            <Link href="/rules">
+                              <FileText />
+                              <span>Rules</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={url === '/permissions' || url.startsWith('/permissions/')}
+                          >
+                            <Link href="/permissions">
+                              <Key />
+                              <span>Permissions</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -179,7 +259,7 @@ export default function DashboardLayout({ children, user }) {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+                  <DropdownMenuItem onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" />
                     Log out
                   </DropdownMenuItem>
@@ -256,7 +336,7 @@ export default function DashboardLayout({ children, user }) {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+                  <DropdownMenuItem onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" />
                     Log out
                   </DropdownMenuItem>
@@ -269,6 +349,22 @@ export default function DashboardLayout({ children, user }) {
         {/* Page Content */}
         <main className="p-4 sm:p-6 lg:p-8">{children}</main>
       </SidebarInset>
+
+      {/* Logout Confirmation Dialog */}
+      <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Konfirmasi Logout</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin keluar dari akun ini?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLogout}>Ya, Logout</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </SidebarProvider>
   )
 }

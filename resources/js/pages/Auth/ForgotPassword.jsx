@@ -1,88 +1,70 @@
-import { Link, useForm, Head, router, usePage } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import AuthLayout from '@/components/layouts/AuthLayout';
-import { ArrowLeft } from 'lucide-react';
-import { toast } from 'sonner';
-import { addCsrfToData } from '@/lib/csrf';
+import { Head, Link, router } from '@inertiajs/react'
+import { useState } from 'react'
+import { Button } from '@/components/ui/button.tsx'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Input } from '@/components/ui/input.tsx'
+import { Label } from '@/components/ui/label.tsx'
 
-export default function ForgotPassword() {
-  const { props } = usePage();
-  const { data, setData, post, processing } = useForm({
-    email: '',
-  });
+export default function ForgotPassword({ form, errors }) {
+  const [data, setData] = useState({
+    email: form?.email || '',
+  })
+  const [processing, setProcessing] = useState(false)
 
-  const submit = (e) => {
-    e.preventDefault();
-    
-    // Get CSRF token from Inertia shared props (more reliable than meta tags)
-    const csrfToken = props.csrfToken || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-    const csrfParam = props.csrfParam || document.querySelector('meta[name="csrf-param"]')?.getAttribute('content');
-    
-    const formData = {
-      ...data,
-      ...(csrfToken && csrfParam ? { [csrfParam]: csrfToken } : {}),
-    };
-    
-    router.post('/auth/forgot-password', formData, {
-      onSuccess: () => {
-        toast.success('Password reset link sent to your email');
-      },
-      onError: (errors) => {
-        Object.values(errors).forEach((error) => {
-          toast.error(error);
-        });
-      },
-    });
-  };
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setProcessing(true)
+
+    router.post('/forgot-password', data, {
+      onFinish: () => setProcessing(false),
+    })
+  }
 
   return (
     <>
-      <Head title="Forgot Password | Yii2 - Modern Starter Kit" />
-      <AuthLayout>
-      <Card className="border-0 shadow-none px-6">
-        <CardHeader className="space-y-1 px-0">
-          <CardTitle className="text-2xl font-semibold tracking-tight">Forgot password</CardTitle>
-          <CardDescription className="text-base">
-            Enter your email address and we'll send you a link to reset your password
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="px-0">
-          <form onSubmit={submit} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={data.email}
-                onChange={(e) => setData('email', e.target.value)}
-                disabled={processing}
-                autoFocus
-                required
-                placeholder="Enter your email"
-              />
+      <Head title="Forgot password" />
+      <div className="flex min-h-screen items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-2xl">Forgot password</CardTitle>
+            <CardDescription>
+              Enter your email address and we'll send you a link to reset your password
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  autoFocus
+                  placeholder="your@email.com"
+                  value={data.email}
+                  onChange={e => setData({ ...data, email: e.target.value })}
+                  className={errors?.email ? 'border-destructive' : ''}
+                />
+                {errors?.email && (
+                  <p className="text-sm text-destructive">{errors.email[0]}</p>
+                )}
+              </div>
+
+              <Button type="submit" className="w-full" disabled={processing}>
+                {processing ? 'Sending...' : 'Send recovery link'}
+              </Button>
+            </form>
+
+            <div className="mt-4 text-center text-sm">
+              <Link href="/login" className="text-primary hover:underline">
+                Back to sign in
+              </Link>
             </div>
-
-            <Button type="submit" variant="default" className="w-full" disabled={processing}>
-              {processing ? 'Sending...' : 'Send reset link'}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <Link
-              href="/auth/login"
-              className="text-sm text-primary hover:underline font-medium flex items-center justify-center"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to login
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
-    </AuthLayout>
+          </CardContent>
+        </Card>
+      </div>
     </>
-  );
+  )
 }
-

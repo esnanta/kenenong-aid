@@ -1,117 +1,87 @@
-import { Link, useForm, Head, router, usePage } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import AuthLayout from '@/components/layouts/AuthLayout';
-import { toast } from 'sonner';
-import { addCsrfToData } from '@/lib/csrf';
+import { Head, Link, router } from '@inertiajs/react'
+import { useState } from 'react'
+import { Button } from '@/components/ui/button.tsx'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Input } from '@/components/ui/input.tsx'
+import { Label } from '@/components/ui/label.tsx'
 
-export default function ResetPassword({ token }) {
-  const { props } = usePage();
-  const { data, setData, post, processing } = useForm({
-    token: token || '',
-    email: '',
+export default function ResetPassword({ errors, id, code }) {
+  const [data, setData] = useState({
     password: '',
-    passwordConfirm: '',
-  });
+    password_confirm: '',
+  })
+  const [processing, setProcessing] = useState(false)
 
-  const submit = (e) => {
-    e.preventDefault();
-    
-    if (data.password !== data.passwordConfirm) {
-      toast.error('Passwords do not match');
-      return;
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setProcessing(true)
 
-    // Get CSRF token from Inertia shared props (more reliable than meta tags)
-    const csrfToken = props.csrfToken || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-    const csrfParam = props.csrfParam || document.querySelector('meta[name="csrf-param"]')?.getAttribute('content');
-    
-    const formData = {
-      ...data,
-      ...(csrfToken && csrfParam ? { [csrfParam]: csrfToken } : {}),
-    };
-    
-    router.post('/auth/reset-password', formData, {
-      onSuccess: () => {
-        toast.success('Password reset successfully');
-      },
-      onError: (errors) => {
-        Object.values(errors).forEach((error) => {
-          toast.error(error);
-        });
-      },
-    });
-  };
+    router.post(`/reset-password/${id}/${code}`, data, {
+      onFinish: () => setProcessing(false),
+    })
+  }
+
+  const passwordsMatch = data.password === data.password_confirm || !data.password_confirm
 
   return (
     <>
-      <Head title="Reset Password | Yii2 - Modern Starter Kit" />
-      <AuthLayout>
-      <Card className="border-0 shadow-none">
-        <CardHeader className="space-y-1 px-0">
-          <CardTitle className="text-2xl font-semibold tracking-tight">Reset password</CardTitle>
-          <CardDescription className="text-base">
-            Enter your new password
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="px-0">
-          <form onSubmit={submit} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={data.email}
-                onChange={(e) => setData('email', e.target.value)}
-                disabled={processing}
-                required
-                autoFocus
-                placeholder="Enter your email"
-              />
+      <Head title="Reset password" />
+      <div className="flex min-h-screen items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-2xl">Reset password</CardTitle>
+            <CardDescription>Enter your new password</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="password">New Password</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  autoFocus
+                  value={data.password}
+                  onChange={e => setData({ ...data, password: e.target.value })}
+                  className={errors?.password ? 'border-destructive' : ''}
+                />
+                {errors?.password && (
+                  <p className="text-sm text-destructive">{errors.password[0]}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password_confirm">Confirm Password</Label>
+                <Input
+                  id="password_confirm"
+                  name="password_confirm"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  value={data.password_confirm}
+                  onChange={e => setData({ ...data, password_confirm: e.target.value })}
+                  className={!passwordsMatch ? 'border-destructive' : ''}
+                />
+                {!passwordsMatch && (
+                  <p className="text-sm text-destructive">Passwords do not match</p>
+                )}
+              </div>
+
+              <Button type="submit" className="w-full" disabled={processing || !passwordsMatch}>
+                {processing ? 'Resetting...' : 'Reset password'}
+              </Button>
+            </form>
+
+            <div className="mt-4 text-center text-sm">
+              <Link href="/login" className="text-primary hover:underline">
+                Back to sign in
+              </Link>
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium">New Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={data.password}
-                onChange={(e) => setData('password', e.target.value)}
-                disabled={processing}
-                required
-                placeholder="Enter your new password"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="passwordConfirm" className="text-sm font-medium">Confirm New Password</Label>
-              <Input
-                id="passwordConfirm"
-                type="password"
-                value={data.passwordConfirm}
-                onChange={(e) => setData('passwordConfirm', e.target.value)}
-                disabled={processing}
-                required
-                placeholder="Confirm your new password"
-              />
-            </div>
-
-            <Button type="submit" variant="default" className="w-full" disabled={processing}>
-              {processing ? 'Resetting...' : 'Reset password'}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center text-sm">
-            <Link href="/auth/login" className="text-primary hover:underline font-medium">
-              Back to login
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
-    </AuthLayout>
+          </CardContent>
+        </Card>
+      </div>
     </>
-  );
+  )
 }
-
