@@ -29,7 +29,7 @@ export default function RuleForm({ rule, errors = {} }) {
         onSuccess: () => {
           toast.success(isEdit ? 'Rule updated successfully' : 'Rule created successfully')
         },
-        onError: (errors) => {
+        onError: () => {
           toast.error('Please check the form for errors')
         },
       },
