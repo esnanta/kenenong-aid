@@ -1,12 +1,15 @@
 import { Head, Link, router, usePage } from '@inertiajs/react'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Lock, Shield } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import DashboardLayout from '@/components/layouts/DashboardLayout.jsx'
+import { Badge } from '@/components/ui/badge.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Checkbox } from '@/components/ui/checkbox.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Label } from '@/components/ui/label.tsx'
+import { ScrollArea } from '@/components/ui/scroll-area.tsx'
 import {
   Select,
   SelectContent,
@@ -16,14 +19,31 @@ import {
 } from '@/components/ui/select.tsx'
 import { Textarea } from '@/components/ui/textarea.tsx'
 
-export default function RoleForm({ role, errors = {}, rules = [] }) {
+const EMPTY_ERRORS = {}
+const EMPTY_RULES = []
+const EMPTY_ITEMS = []
+
+export default function RoleForm({ role, errors = EMPTY_ERRORS, rules = EMPTY_RULES, unassignedItems = EMPTY_ITEMS }) {
   const { props } = usePage()
   const isEdit = !!role?.old_name
   const [formData, setFormData] = useState({
     name: role?.name || '',
     description: role?.description || '',
-    ruleName: role?.rule_name || '',
+    ruleName: role?.rule_name || 'none',
+    children: role?.children || [],
   })
+
+  const handleChildToggle = (itemName) => {
+    setFormData((prev) => {
+      const isSelected = prev.children.includes(itemName)
+      return {
+        ...prev,
+        children: isSelected
+          ? prev.children.filter(c => c !== itemName)
+          : [...prev.children, itemName],
+      }
+    })
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -38,7 +58,7 @@ export default function RoleForm({ role, errors = {}, rules = [] }) {
         onSuccess: () => {
           toast.success(isEdit ? 'Role updated successfully' : 'Role created successfully')
         },
-        onError: (errors) => {
+        onError: () => {
           toast.error('Please check the form for errors')
         },
       },
@@ -126,6 +146,69 @@ export default function RoleForm({ role, errors = {}, rules = [] }) {
                 </Select>
                 {errors.ruleName && (
                   <p className="text-sm text-destructive">{errors.ruleName[0]}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label>Permissions & Roles</Label>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Select permissions and roles to assign to this role
+                </p>
+                <Card>
+                  <ScrollArea className="h-[300px] p-4">
+                    <div className="space-y-3">
+                      {unassignedItems.length > 0
+                        ? (
+                            unassignedItems.map(item => (
+                              <div
+                                key={item.name}
+                                className="flex items-start space-x-3 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+                              >
+                                <Checkbox
+                                  id={`child-${item.name}`}
+                                  checked={formData.children.includes(item.name)}
+                                  onCheckedChange={() => handleChildToggle(item.name)}
+                                />
+                                <div className="flex-1 space-y-1">
+                                  <label
+                                    htmlFor={`child-${item.name}`}
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex items-center gap-2"
+                                  >
+                                    {item.type === 'role'
+                                      ? (
+                                          <Shield className="h-4 w-4 text-blue-500" />
+                                        )
+                                      : (
+                                          <Lock className="h-4 w-4 text-green-500" />
+                                        )}
+                                    {item.name}
+                                    <Badge variant="outline" className="ml-auto">
+                                      {item.type}
+                                    </Badge>
+                                  </label>
+                                  {item.description && (
+                                    <p className="text-sm text-muted-foreground">
+                                      {item.description}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            ))
+                          )
+                        : (
+                            <p className="text-sm text-muted-foreground text-center py-4">
+                              No available permissions or roles to assign
+                            </p>
+                          )}
+                    </div>
+                  </ScrollArea>
+                </Card>
+                {formData.children.length > 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    {formData.children.length}
+                    {' '}
+                    item(s) selected
+                  </p>
                 )}
               </div>
 

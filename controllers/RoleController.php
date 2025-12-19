@@ -161,6 +161,11 @@ class RoleController extends BaseController
         if (Yii::$app->request->isPost) {
             $requestData = Yii::$app->request->post();
 
+            // Convert 'none' to empty string for ruleName
+            if (isset($requestData['ruleName']) && $requestData['ruleName'] === 'none') {
+                $requestData['ruleName'] = '';
+            }
+
             if ($model->load($requestData, '')) {
                 if ($this->make(AuthItemEditionService::class, [$model])->run()) {
                     // For Inertia requests, redirect to index
@@ -176,7 +181,7 @@ class RoleController extends BaseController
                 'role' => [
                     'name' => $model->name ?? '',
                     'description' => $model->description ?? '',
-                    'rule_name' => $model->ruleName ?? '',
+                    'rule_name' => $model->ruleName ?? 'none',
                 ],
                 'errors' => $model->errors,
                 'unassignedItems' => $this->formatUnassignedItems($this->authHelper->getUnassignedItems($model)),
@@ -189,7 +194,7 @@ class RoleController extends BaseController
             'role' => [
                 'name' => '',
                 'description' => '',
-                'rule_name' => '',
+                'rule_name' => 'none',
             ],
             'errors' => [],
             'unassignedItems' => $this->formatUnassignedItems($this->authHelper->getUnassignedItems($model)),
@@ -213,6 +218,11 @@ class RoleController extends BaseController
         if (Yii::$app->request->isPost || Yii::$app->request->isPut) {
             $requestData = Yii::$app->request->bodyParams ?: Yii::$app->request->post();
 
+            // Convert 'none' to empty string for ruleName
+            if (isset($requestData['ruleName']) && $requestData['ruleName'] === 'none') {
+                $requestData['ruleName'] = '';
+            }
+
             if ($model->load($requestData, '')) {
                 if ($this->make(AuthItemEditionService::class, [$model])->run()) {
                     // For Inertia requests, redirect to index
@@ -228,8 +238,9 @@ class RoleController extends BaseController
                 'role' => [
                     'name' => $model->name ?? '',
                     'description' => $model->description ?? '',
-                    'rule_name' => $model->ruleName ?? '',
+                    'rule_name' => $model->ruleName ?: 'none',
                     'old_name' => $name,
+                    'children' => $model->children ?? [],
                 ],
                 'errors' => $model->errors,
                 'unassignedItems' => $this->formatUnassignedItems($this->authHelper->getUnassignedItems($model)),
@@ -237,13 +248,21 @@ class RoleController extends BaseController
             ]);
         }
 
+        // Get assigned children
+        $assignedChildren = [];
+        $authManager = Yii::$app->authManager;
+        foreach ($authManager->getChildren($authItem->name) as $child) {
+            $assignedChildren[] = $child->name;
+        }
+
         // GET request - show form with current data
         return Inertia::render('Role/Form', [
             'role' => [
                 'name' => $model->name,
                 'description' => $model->description,
-                'rule_name' => $model->ruleName,
+                'rule_name' => $model->ruleName ?: 'none',
                 'old_name' => $name,
+                'children' => $assignedChildren,
             ],
             'errors' => [],
             'unassignedItems' => $this->formatUnassignedItems($this->authHelper->getUnassignedItems($model)),
@@ -274,19 +293,28 @@ class RoleController extends BaseController
     /**
      * Format unassigned items for frontend.
      *
-     * @param array $items
+     * @param array $items Array with format ['name' => 'label']
      * @return array
      */
     protected function formatUnassignedItems($items)
     {
         $formatted = [];
-        foreach ($items as $item) {
-            $formatted[] = [
-                'name' => $item->name,
-                'type' => $item->type === 1 ? 'role' : 'permission',
-                'description' => $item->description,
-            ];
+        $authManager = Yii::$app->authManager;
+
+        foreach ($items as $name => $label) {
+            // Get the actual item object from auth manager
+            $item = $authManager->getPermission($name) ?? $authManager->getRole($name);
+
+            if ($item !== null) {
+                $formatted[] = [
+                    'name' => $item->name,
+                    'type' => $item->type === 1 ? 'role' : 'permission',
+                    'description' => $item->description ?? '',
+                    'label' => $label,
+                ];
+            }
         }
+
         return $formatted;
     }
 
@@ -298,7 +326,7 @@ class RoleController extends BaseController
     protected function getRulesList()
     {
         $rules = Yii::$app->authManager->getRules();
-        $rulesList = [['value' => '', 'label' => 'No rule']];
+        $rulesList = [['value' => 'none', 'label' => 'No rule']];
         foreach ($rules as $rule) {
             $rulesList[] = [
                 'value' => $rule->name,

@@ -54,8 +54,6 @@ $config = [
         ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
-            'cache' => 'cache', // Menggunakan komponen cache aplikasi
-            'cacheDuration' => 3600, // Simpan di cache selama 1 jam
             'itemTable' => 't_auth_item',
             'itemChildTable' => 't_auth_item_child',
             'assignmentTable' => 't_auth_assignment',
