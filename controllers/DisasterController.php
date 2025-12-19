@@ -4,10 +4,13 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Disaster;
+use yii\db\Exception;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use Crenspire\Yii2Inertia\Inertia;
+use yii\web\Response;
 
 /**
  * DisasterController implements the CRUD actions for Disaster model.
@@ -19,31 +22,24 @@ class DisasterController extends BaseController
      */
     public function behaviors(): array
     {
-        return array_merge(parent::behaviors(), [
-            'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
+        return [
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['post'],
                 ],
             ],
-        ]);
+        ];
     }
 
     /**
      * Lists all Disaster models.
-     * @return mixed
+     * @return Response
+     * @throws ForbiddenHttpException
      */
-    public function actionIndex()
+    public function actionIndex(): Response
     {
+        $this->checkAccess('disaster.index');
         $request = Yii::$app->request;
 
         // Get filter parameters
@@ -140,12 +136,15 @@ class DisasterController extends BaseController
     /**
      * Displays a single Disaster model.
      * @param integer $id
-     * @return mixed
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws ForbiddenHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): Response
     {
         $model = $this->findModel($id);
-
+        $this->checkAccess('disaster.view', $model);
+        
         return Inertia::render('Disaster/View', [
             'disaster' => [
                 'id' => $model->id,
@@ -166,9 +165,11 @@ class DisasterController extends BaseController
      * Creates a new Disaster model.
      * If creation is successful, the browser will be redirected to the 'index' page.
      * @return mixed
+     * @throws ForbiddenHttpException|Exception
      */
     public function actionCreate()
     {
+        $this->checkAccess('disaster.create');
         $model = new Disaster();
 
         if (Yii::$app->request->isPost) {
@@ -205,13 +206,15 @@ class DisasterController extends BaseController
      * Updates an existing Disaster model.
      * If update is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
-     * @return mixed
+     * @return Response
      * @throws NotFoundHttpException
+     * @throws ForbiddenHttpException|Exception
      */
-    public function actionUpdate(int $id)
+    public function actionUpdate(int $id): Response
     {
         $model = $this->findModel($id);
-
+        $this->checkAccess('disaster.update', $model);
+        
         // Handle both POST and PUT requests
         $isPost = Yii::$app->request->isPost;
         $isPut = Yii::$app->request->isPut;
@@ -279,12 +282,15 @@ class DisasterController extends BaseController
      * Deletes an existing Disaster model (soft delete).
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
-     * @return mixed
+     * @return Response
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException|Exception
      */
-    public function actionDelete(int $id)
+    public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-
+        $this->checkAccess('disaster.delete', $model);
+        
         // Soft delete
         $model->is_deleted = 1;
         $model->deleted_at = date('Y-m-d H:i:s');
