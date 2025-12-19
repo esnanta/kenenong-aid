@@ -53,6 +53,10 @@ $config = [
         ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
+            'itemTable' => 't_auth_item',
+            'itemChildTable' => 't_auth_item_child',
+            'assignmentTable' => 't_auth_assignment',
+            'ruleTable' => 't_auth_rule',
         ],
         'user' => [
             'identityClass' => app\models\User::class, // extend to Da\User\Model\User
@@ -108,18 +112,18 @@ $config = [
                 'users/<id:\d+>/delete' => 'user/admin/delete',
 
                 // Role management
-                'roles' => 'user/role/index',
-                'roles/create' => 'user/role/create',
-                'roles/<name:.+>' => 'user/role/view',
-                'roles/<name:.+>/edit' => 'user/role/update',
-                'roles/<name:.+>/delete' => 'user/role/delete',
+                'roles' => 'role/index',
+                'roles/create' => 'role/create',
+                'roles/<name:.+>' => 'role/view',
+                'roles/<name:.+>/edit' => 'role/update',
+                'roles/<name:.+>/delete' => 'role/delete',
 
                 // Permission management
-                'permissions' => 'user/permission/index',
-                'permissions/create' => 'user/permission/create',
-                'permissions/<name:.+>' => 'user/permission/view',
-                'permissions/<name:.+>/edit' => 'user/permission/update',
-                'permissions/<name:.+>/delete' => 'user/permission/delete',
+                'permissions' => 'permission/index',
+                'permissions/create' => 'permission/create',
+                'permissions/<name:.+>' => 'permission/view',
+                'permissions/<name:.+>/edit' => 'permission/update',
+                'permissions/<name:.+>/delete' => 'permission/delete',
 
                 // Rule management
                 'rules' => 'user/rule/index',

@@ -1,11 +1,11 @@
 import { Head, Link, router } from '@inertiajs/react'
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button.tsx'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Input } from '@/components/ui/input.tsx'
+import { Label } from '@/components/ui/label.tsx'
 
-export default function ForgotPassword({ form, errors }) {
+export default function Resend({ form, errors }) {
   const [data, setData] = useState({
     email: form?.email || '',
   })
@@ -15,20 +15,20 @@ export default function ForgotPassword({ form, errors }) {
     e.preventDefault()
     setProcessing(true)
 
-    router.post('/forgot-password', data, {
+    router.post('/resend', data, {
       onFinish: () => setProcessing(false),
     })
   }
 
   return (
     <>
-      <Head title="Forgot password" />
+      <Head title="Resend confirmation" />
       <div className="flex min-h-screen items-center justify-center bg-background p-4">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle className="text-2xl">Forgot password</CardTitle>
+            <CardTitle className="text-2xl">Resend confirmation</CardTitle>
             <CardDescription>
-              Enter your email address and we'll send you a link to reset your password
+              Enter your email address to receive a new confirmation link
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -53,7 +53,7 @@ export default function ForgotPassword({ form, errors }) {
               </div>
 
               <Button type="submit" className="w-full" disabled={processing}>
-                {processing ? 'Sending...' : 'Send recovery link'}
+                {processing ? 'Sending...' : 'Resend confirmation'}
               </Button>
             </form>
 

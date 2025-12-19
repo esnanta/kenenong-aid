@@ -63,7 +63,7 @@ export default function DashboardLayout({ children, user }) {
     // This is more reliable than Inertia for logout
     const form = document.createElement('form')
     form.method = 'POST'
-    form.action = '/auth/logout'
+    form.action = '/logout'
 
     // Add CSRF token using the utility function
     const csrfToken = getCsrfToken()
@@ -120,10 +120,10 @@ export default function DashboardLayout({ children, user }) {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    isActive={url === '/user' || url.startsWith('/user/')}
+                    isActive={url === '/users' || url.startsWith('/users/')}
                     tooltip="Users"
                   >
-                    <Link href="/user">
+                    <Link href="/users">
                       <Users />
                       <span>Users</span>
                     </Link>
@@ -132,10 +132,10 @@ export default function DashboardLayout({ children, user }) {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    isActive={url === '/role' || url.startsWith('/role/')}
+                    isActive={url === '/roles' || url.startsWith('/roles/')}
                     tooltip="Roles"
                   >
-                    <Link href="/role">
+                    <Link href="/roles">
                       <Shield />
                       <span>Roles</span>
                     </Link>
@@ -144,10 +144,10 @@ export default function DashboardLayout({ children, user }) {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    isActive={url === '/permission' || url.startsWith('/permission/')}
+                    isActive={url === '/permissions' || url.startsWith('/permissions/')}
                     tooltip="Permissions"
                   >
-                    <Link href="/permission">
+                    <Link href="/permissions">
                       <Key />
                       <span>Permissions</span>
                     </Link>
@@ -156,10 +156,10 @@ export default function DashboardLayout({ children, user }) {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    isActive={url === '/rule' || url.startsWith('/rule/')}
+                    isActive={url === '/rules' || url.startsWith('/rules/')}
                     tooltip="Rules"
                   >
-                    <Link href="/rule">
+                    <Link href="/rules">
                       <FileText />
                       <span>Rules</span>
                     </Link>

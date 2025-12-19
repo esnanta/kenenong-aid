@@ -98,7 +98,7 @@ export default function Home({ title: _title = 'Welcome', user }) {
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
 
   const handleLogout = () => {
-    router.post('/auth/logout', {}, {
+    router.post('/logout', {}, {
       onSuccess: () => {
         setShowLogoutDialog(false)
       },
@@ -201,10 +201,10 @@ export default function Home({ title: _title = 'Welcome', user }) {
                   : (
                       <>
                         <Button asChild variant="outline">
-                          <Link href="/auth/login">Login</Link>
+                          <Link href="/login">Login</Link>
                         </Button>
                         <Button asChild variant="default">
-                          <Link href="/auth/register">Register</Link>
+                          <Link href="/register">Register</Link>
                         </Button>
                       </>
                     )}
@@ -270,12 +270,12 @@ export default function Home({ title: _title = 'Welcome', user }) {
                             <>
                               <SheetClose asChild>
                                 <Button asChild variant="outline" className="w-full">
-                                  <Link href="/auth/login">Login</Link>
+                                  <Link href="/login">Login</Link>
                                 </Button>
                               </SheetClose>
                               <SheetClose asChild>
                                 <Button asChild variant="default" className="w-full">
-                                  <Link href="/auth/register">Register</Link>
+                                  <Link href="/register">Register</Link>
                                 </Button>
                               </SheetClose>
                             </>
@@ -323,7 +323,7 @@ export default function Home({ title: _title = 'Welcome', user }) {
               {/* CTA Buttons */}
               <div className="mt-10 flex items-center justify-center gap-x-4">
                 <Button variant="default" className="px-8" asChild>
-                  <Link href="/auth/register">View Demo</Link>
+                  <Link href="/register">View Demo</Link>
                 </Button>
                 <Button variant="outline" className="px-8" asChild>
                   <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">

@@ -25,6 +25,7 @@ const Login = lazy(() => import('./pages/Auth/Login'))
 const Register = lazy(() => import('./pages/Auth/Register'))
 const ForgotPassword = lazy(() => import('./pages/Auth/ForgotPassword'))
 const ResetPassword = lazy(() => import('./pages/Auth/ResetPassword'))
+const Resend = lazy(() => import('./pages/Auth/Resend'))
 const Dashboard = lazy(() => import('./pages/Dashboard/Index'))
 const Profile = lazy(() => import('./pages/Dashboard/Profile'))
 const Settings = lazy(() => import('./pages/Dashboard/Settings'))
@@ -36,6 +37,10 @@ const DisasterIndex = lazy(() => import('./pages/Disaster/Index'))
 const DisasterForm = lazy(() => import('./pages/Disaster/Form'))
 const DisasterView = lazy(() => import('./pages/Disaster/View'))
 const NotFound = lazy(() => import('./pages/NotFound'))
+// Tambahkan lazy load untuk Role pages
+const RoleIndex = lazy(() => import('./pages/Role/Index'))
+const RoleForm = lazy(() => import('./pages/Role/Form'))
+const RoleView = lazy(() => import('./pages/Role/View'))
 
 // Ambil token dari head meta atau dari global props yang dibagikan oleh InertiaBootstrap
 const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
@@ -51,10 +56,14 @@ createInertiaApp({
       'Auth/Register': Register,
       'Auth/ForgotPassword': ForgotPassword,
       'Auth/ResetPassword': ResetPassword,
+      'Auth/Resend': Resend,
       'Dashboard/Index': Dashboard,
       'Dashboard/Profile': Profile,
       'Dashboard/Settings': Settings,
       'Dashboard/Billing': Billing,
+      'Role/Index': RoleIndex,
+      'Role/Form': RoleForm,
+      'Role/View': RoleView,
       'User/Index': UserIndex,
       'User/Form': UserForm,
       'User/View': UserView,
@@ -99,7 +108,7 @@ createInertiaApp({
             console.warn('Removed CSRF token from URL query params')
           }
         }
-        catch (e) {
+        catch {
           // URL parsing failed, ignore
         }
       }

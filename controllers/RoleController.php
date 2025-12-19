@@ -3,15 +3,12 @@
 namespace app\controllers;
 
 use Yii;
-use Da\User\Controller\AbstractAuthItemController;
 use Da\User\Model\Role;
 use Da\User\Search\RoleSearch;
 use Da\User\Helper\AuthHelper;
 use Da\User\Service\AuthItemEditionService;
-use Da\User\Validator\AjaxRequestModelValidator;
 use Crenspire\Yii2Inertia\Inertia;
 use yii\web\NotFoundHttpException;
-use app\controllers\BaseController;
 
 class RoleController extends BaseController
 {
@@ -77,7 +74,6 @@ class RoleController extends BaseController
     protected function getItem($name)
     {
         $authItem = $this->authHelper->getRole($name);
-
         if ($authItem !== null) {
             return $authItem;
         }
@@ -99,11 +95,11 @@ class RoleController extends BaseController
         $roles = [];
         foreach ($dataProvider->getModels() as $role) {
             $roles[] = [
-                'name' => $role->name,
-                'description' => $role->description,
-                'rule_name' => $role->ruleName,
-                'created_at' => $role->createdAt ? date('Y-m-d H:i:s', $role->createdAt) : null,
-                'updated_at' => $role->updatedAt ? date('Y-m-d H:i:s', $role->updatedAt) : null,
+                'name' => $role['name'],
+                'description' => $role['description'],
+                'rule_name' => $role['rule_name'],
+                'created_at' => isset($role['created_at']) ? date('Y-m-d H:i:s', $role['created_at']) : null,
+                'updated_at' => isset($role['updated_at']) ? date('Y-m-d H:i:s', $role['updated_at']) : null,
             ];
         }
 
@@ -312,4 +308,3 @@ class RoleController extends BaseController
         return $rulesList;
     }
 }
-
