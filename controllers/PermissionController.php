@@ -3,15 +3,12 @@
 namespace app\controllers;
 
 use Yii;
-use Da\User\Controller\AbstractAuthItemController;
 use Da\User\Model\Permission;
 use Da\User\Search\PermissionSearch;
 use Da\User\Helper\AuthHelper;
 use Da\User\Service\AuthItemEditionService;
-use Da\User\Validator\AjaxRequestModelValidator;
 use Crenspire\Yii2Inertia\Inertia;
 use yii\web\NotFoundHttpException;
-use app\controllers\BaseController;
 
 class PermissionController extends BaseController
 {
