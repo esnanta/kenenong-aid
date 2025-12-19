@@ -70,28 +70,19 @@ export default function RoleForm({ role, errors = EMPTY_ERRORS, rules = EMPTY_RU
       <Head title={isEdit ? 'Edit Role' : 'Create Role'} />
 
       <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Link href="/role">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          </Link>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              {isEdit ? 'Edit Role' : 'Create Role'}
-            </h1>
-            <p className="text-muted-foreground">
-              {isEdit ? 'Update role information' : 'Add a new role to the system'}
-            </p>
-          </div>
-        </div>
-
         <Card>
-          <CardHeader>
-            <CardTitle>Role Information</CardTitle>
-            <CardDescription>
-              Enter the details for the role
-            </CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <div className="space-y-1.5">
+              <CardTitle>Role Information</CardTitle>
+              <CardDescription>
+                Enter the details for the role
+              </CardDescription>
+            </div>
+            <Link href="/role">
+              <Button variant="ghost" size="icon">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">

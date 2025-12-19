@@ -135,11 +135,11 @@ export default function DashboardLayout({ children, user }) {
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton
-                      asChild
-                      isActive={url === '/disaster' || url.startsWith('/disaster/')}
-                      tooltip="Disasters"
+                    asChild
+                    isActive={url === '/disasters' || url.startsWith('/disasters/')}
+                    tooltip="Disasters"
                   >
-                    <Link href="/disaster">
+                    <Link href="/disasters">
                       <AlertTriangle />
                       <span>Disasters</span>
                     </Link>

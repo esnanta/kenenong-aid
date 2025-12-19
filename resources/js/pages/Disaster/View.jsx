@@ -89,7 +89,7 @@ export default function DisasterView({ disaster }) {
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Disaster Type</label>
                   <div className="mt-1">
-                    <Badge variant="outline" className={getTypeBadgeColor(disaster.disaster_type)}>
+                    <Badge variant="outline" className={getTypeBadgeColor(disaster.disaster_type_id)}>
                       {disaster.disaster_type_label}
                     </Badge>
                   </div>
@@ -97,7 +97,7 @@ export default function DisasterView({ disaster }) {
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Status</label>
                   <div className="mt-1">
-                    <Badge variant={getStatusBadgeVariant(disaster.disaster_status)}>
+                    <Badge variant={getStatusBadgeVariant(disaster.disaster_status_id)}>
                       {disaster.disaster_status_label}
                     </Badge>
                   </div>

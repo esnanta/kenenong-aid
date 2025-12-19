@@ -3,15 +3,12 @@
 namespace app\controllers;
 
 use Yii;
-use Da\User\Controller\AbstractAuthItemController;
 use Da\User\Model\Permission;
 use Da\User\Search\PermissionSearch;
 use Da\User\Helper\AuthHelper;
 use Da\User\Service\AuthItemEditionService;
-use Da\User\Validator\AjaxRequestModelValidator;
 use Crenspire\Yii2Inertia\Inertia;
 use yii\web\NotFoundHttpException;
-use app\controllers\BaseController;
 
 class PermissionController extends BaseController
 {
@@ -165,6 +162,11 @@ class PermissionController extends BaseController
         if (Yii::$app->request->isPost) {
             $requestData = Yii::$app->request->post();
 
+            // Convert 'none' to empty string for ruleName
+            if (isset($requestData['ruleName']) && $requestData['ruleName'] === 'none') {
+                $requestData['ruleName'] = '';
+            }
+
             if ($model->load($requestData, '')) {
                 if ($this->make(AuthItemEditionService::class, [$model])->run()) {
                     // For Inertia requests, redirect to index
@@ -180,7 +182,7 @@ class PermissionController extends BaseController
                 'permission' => [
                     'name' => $model->name ?? '',
                     'description' => $model->description ?? '',
-                    'rule_name' => $model->ruleName ?? '',
+                    'rule_name' => $model->ruleName ?: 'none',
                 ],
                 'errors' => $model->errors,
                 'unassignedItems' => $this->formatUnassignedItems($this->authHelper->getUnassignedItems($model)),
@@ -193,7 +195,7 @@ class PermissionController extends BaseController
             'permission' => [
                 'name' => '',
                 'description' => '',
-                'rule_name' => '',
+                'rule_name' => 'none',
             ],
             'errors' => [],
             'unassignedItems' => $this->formatUnassignedItems($this->authHelper->getUnassignedItems($model)),
@@ -217,6 +219,11 @@ class PermissionController extends BaseController
         if (Yii::$app->request->isPost || Yii::$app->request->isPut) {
             $requestData = Yii::$app->request->bodyParams ?: Yii::$app->request->post();
 
+            // Convert 'none' to empty string for ruleName
+            if (isset($requestData['ruleName']) && $requestData['ruleName'] === 'none') {
+                $requestData['ruleName'] = '';
+            }
+
             if ($model->load($requestData, '')) {
                 if ($this->make(AuthItemEditionService::class, [$model])->run()) {
                     // For Inertia requests, redirect to index
@@ -232,7 +239,7 @@ class PermissionController extends BaseController
                 'permission' => [
                     'name' => $model->name ?? '',
                     'description' => $model->description ?? '',
-                    'rule_name' => $model->ruleName ?? '',
+                    'rule_name' => $model->ruleName ?: 'none',
                     'old_name' => $name,
                 ],
                 'errors' => $model->errors,
@@ -246,7 +253,7 @@ class PermissionController extends BaseController
             'permission' => [
                 'name' => $model->name,
                 'description' => $model->description,
-                'rule_name' => $model->ruleName,
+                'rule_name' => $model->ruleName ?: 'none',
                 'old_name' => $name,
             ],
             'errors' => [],
@@ -302,7 +309,7 @@ class PermissionController extends BaseController
     protected function getRulesList()
     {
         $rules = Yii::$app->authManager->getRules();
-        $rulesList = [['value' => '', 'label' => 'No rule']];
+        $rulesList = [['value' => 'none', 'label' => 'No rule']];
         foreach ($rules as $rule) {
             $rulesList[] = [
                 'value' => $rule->name,
