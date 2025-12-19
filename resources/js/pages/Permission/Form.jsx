@@ -22,7 +22,7 @@ export default function PermissionForm({ permission, errors = {}, rules = [] }) 
   const [formData, setFormData] = useState({
     name: permission?.name || '',
     description: permission?.description || '',
-    ruleName: permission?.rule_name || '',
+    ruleName: permission?.rule_name || 'none',
   })
 
   const handleSubmit = (e) => {
@@ -38,7 +38,7 @@ export default function PermissionForm({ permission, errors = {}, rules = [] }) 
         onSuccess: () => {
           toast.success(isEdit ? 'Permission updated successfully' : 'Permission created successfully')
         },
-        onError: (errors) => {
+        onError: () => {
           toast.error('Please check the form for errors')
         },
       },
