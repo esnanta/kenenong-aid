@@ -41,28 +41,21 @@ export default function RuleForm({ rule, errors = {} }) {
       <Head title={isEdit ? 'Edit Rule' : 'Create Rule'} />
 
       <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Link href="/rule">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          </Link>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              {isEdit ? 'Edit Rule' : 'Create Rule'}
-            </h1>
-            <p className="text-muted-foreground">
-              {isEdit ? 'Update rule information' : 'Add a new authorization rule'}
-            </p>
-          </div>
-        </div>
-
         <Card>
-          <CardHeader>
-            <CardTitle>Rule Information</CardTitle>
-            <CardDescription>
-              Enter the details for the authorization rule
-            </CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <div className="space-y-1.5">
+              <CardTitle>
+                {isEdit ? 'Edit Rule' : 'Create Rule'}
+              </CardTitle>
+              <CardDescription>
+                {isEdit ? 'Update rule information' : 'Add a new authorization rule'}
+              </CardDescription>
+            </div>
+            <Link href="/rule">
+              <Button variant="ghost" size="icon">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
