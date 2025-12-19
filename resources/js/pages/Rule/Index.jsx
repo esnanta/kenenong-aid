@@ -25,7 +25,7 @@ import {
   TableRow,
 } from '@/components/ui/table.tsx'
 
-export default function RuleIndex({ rules, pagination }) {
+export default function RuleIndex({ rules, pagination: _pagination }) {
   const { props } = usePage()
   const [deleteName, setDeleteName] = useState(null)
 
@@ -46,27 +46,22 @@ export default function RuleIndex({ rules, pagination }) {
       <Head title="Rule Management" />
 
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Rule Management</h1>
-            <p className="text-muted-foreground">
-              Manage authorization rules for roles and permissions
-            </p>
-          </div>
-          <Link href="/rule/create">
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Create Rule
-            </Button>
-          </Link>
-        </div>
-
         <Card>
           <CardHeader>
-            <CardTitle>Rules</CardTitle>
-            <CardDescription>
-              A list of all authorization rules in the system
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Rules</CardTitle>
+                <CardDescription>
+                  A list of all authorization rules in the system
+                </CardDescription>
+              </div>
+              <Link href="/rule/create">
+                <Button size="sm">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Rule
+                </Button>
+              </Link>
+            </div>
           </CardHeader>
           <CardContent>
             <Table>

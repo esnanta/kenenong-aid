@@ -25,7 +25,7 @@ import {
   TableRow,
 } from '@/components/ui/table.tsx'
 
-export default function PermissionIndex({ permissions, pagination }) {
+export default function PermissionIndex({ permissions, pagination: _pagination }) {
   const { props } = usePage()
   const [deleteName, setDeleteName] = useState(null)
 
@@ -58,27 +58,22 @@ export default function PermissionIndex({ permissions, pagination }) {
       <Head title="Permission Management" />
 
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Permission Management</h1>
-            <p className="text-muted-foreground">
-              Manage system permissions
-            </p>
-          </div>
-          <Link href="/permission/create">
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Create Permission
-            </Button>
-          </Link>
-        </div>
-
         <Card>
           <CardHeader>
-            <CardTitle>Permissions</CardTitle>
-            <CardDescription>
-              A list of all permissions in the system
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Permissions</CardTitle>
+                <CardDescription>
+                  A list of all permissions in the system
+                </CardDescription>
+              </div>
+              <Link href="/permission/create">
+                <Button size="sm">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Permission
+                </Button>
+              </Link>
+            </div>
           </CardHeader>
           <CardContent>
             <Table>

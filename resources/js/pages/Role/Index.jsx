@@ -25,7 +25,7 @@ import {
   TableRow,
 } from '@/components/ui/table.tsx'
 
-export default function RoleIndex({ roles, pagination }) {
+export default function RoleIndex({ roles, pagination: _pagination }) {
   const { props } = usePage()
   const [deleteName, setDeleteName] = useState(null)
 
@@ -58,27 +58,22 @@ export default function RoleIndex({ roles, pagination }) {
       <Head title="Role Management" />
 
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Role Management</h1>
-            <p className="text-muted-foreground">
-              Manage system roles and their permissions
-            </p>
-          </div>
-          <Link href="/role/create">
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Create Role
-            </Button>
-          </Link>
-        </div>
-
         <Card>
           <CardHeader>
-            <CardTitle>Roles</CardTitle>
-            <CardDescription>
-              A list of all roles in the system
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Roles</CardTitle>
+                <CardDescription>
+                  A list of all roles in the system
+                </CardDescription>
+              </div>
+              <Link href="/role/create">
+                <Button size="sm">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Role
+                </Button>
+              </Link>
+            </div>
           </CardHeader>
           <CardContent>
             <Table>
