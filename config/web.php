@@ -134,11 +134,11 @@ $config = [
                 'rules/<name:.+>/delete' => 'rule/delete',
 
                 // Disaster routes
-                'disaster' => 'disaster/index',
-                'disaster/create' => 'disaster/create',
-                'disaster/<id:\d+>' => 'disaster/view',
-                'disaster/<id:\d+>/edit' => 'disaster/update',
-                'disaster/<id:\d+>/delete' => 'disaster/delete',
+                'disasters' => 'disaster/index',
+                'disasters/create' => 'disaster/create',
+                'disasters/<id:\d+>' => 'disaster/view',
+                'disasters/<id:\d+>/edit' => 'disaster/update',
+                'disasters/<id:\d+>/delete' => 'disaster/delete',
 
                 // Generic routes (fallback)
                 '<controller:\w+>/<id:\d+>' => '<controller>/view',

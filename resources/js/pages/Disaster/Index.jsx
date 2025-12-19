@@ -66,8 +66,8 @@ function SortableHeader({ column, currentSortBy, currentSortOrder, onSort, child
 export default function DisasterIndex({ disasters, pagination, filters, sort, disasterTypes, disasterStatuses }) {
   const { props } = usePage()
   const [search, setSearch] = useState(filters?.search || '')
-  const [disasterType, setDisasterType] = useState(filters?.disaster_type?.toString() || '')
-  const [disasterStatus, setDisasterStatus] = useState(filters?.disaster_status?.toString() || '')
+  const [disasterTypeId, setDisasterTypeId] = useState(filters?.disaster_type_id?.toString() || '')
+  const [disasterStatusId, setDisasterStatusId] = useState(filters?.disaster_status_id?.toString() || '')
   const [dateFrom, setDateFrom] = useState(filters?.date_from || '')
   const [dateTo, setDateTo] = useState(filters?.date_to || '')
   const [deleteId, setDeleteId] = useState(null)
@@ -90,8 +90,8 @@ export default function DisasterIndex({ disasters, pagination, filters, sort, di
     router.get('/disasters', {
       ...filters,
       search,
-      disaster_type: disasterType || undefined,
-      disaster_status: disasterStatus || undefined,
+      disaster_type_id: disasterTypeId || undefined,
+      disaster_status_id: disasterStatusId || undefined,
       date_from: dateFrom || undefined,
       date_to: dateTo || undefined,
       sort_by: column,
@@ -103,8 +103,8 @@ export default function DisasterIndex({ disasters, pagination, filters, sort, di
   const handleFilter = () => {
     router.get('/disasters', {
       search: search || undefined,
-      disaster_type: disasterType || undefined,
-      disaster_status: disasterStatus || undefined,
+      disaster_type_id: disasterTypeId || undefined,
+      disaster_status_id: disasterStatusId || undefined,
       date_from: dateFrom || undefined,
       date_to: dateTo || undefined,
       sort_by: currentSortBy,
@@ -115,8 +115,8 @@ export default function DisasterIndex({ disasters, pagination, filters, sort, di
 
   const handleClearFilters = () => {
     setSearch('')
-    setDisasterType('')
-    setDisasterStatus('')
+    setDisasterTypeId('')
+    setDisasterStatusId('')
     setDateFrom('')
     setDateTo('')
     router.get('/disasters', {
@@ -188,7 +188,7 @@ export default function DisasterIndex({ disasters, pagination, filters, sort, di
     return colors[typeNum] || 'bg-gray-100 text-gray-800'
   }
 
-  const hasActiveFilters = search || disasterType || disasterStatus || dateFrom || dateTo
+  const hasActiveFilters = search || disasterTypeId || disasterStatusId || dateFrom || dateTo
   return (
     <>
       <Head title="Disasters | Yii2 - Modern Starter Kit" />
@@ -208,7 +208,7 @@ export default function DisasterIndex({ disasters, pagination, filters, sort, di
                     Filters
                     {hasActiveFilters && (
                       <Badge variant="secondary" className="ml-2">
-                        {[search, disasterType, disasterStatus, dateFrom, dateTo].filter(Boolean).length}
+                        {[search, disasterTypeId, disasterStatusId, dateFrom, dateTo].filter(Boolean).length}
                       </Badge>
                     )}
                   </Button>
@@ -313,7 +313,7 @@ export default function DisasterIndex({ disasters, pagination, filters, sort, di
                       {/* Disaster Type Filter */}
                       <div className="space-y-2">
                         <Label htmlFor="disaster-type">Disaster Type</Label>
-                        <Select value={disasterType || 'all'} onValueChange={value => setDisasterType(value === 'all' ? '' : value)}>
+                        <Select value={disasterTypeId || 'all'} onValueChange={value => setDisasterTypeId(value === 'all' ? '' : value)}>
                           <SelectTrigger id="disaster-type">
                             <SelectValue placeholder="All" />
                           </SelectTrigger>
@@ -329,7 +329,7 @@ export default function DisasterIndex({ disasters, pagination, filters, sort, di
                       {/* Disaster Status Filter */}
                       <div className="space-y-2">
                         <Label htmlFor="disaster-status">Status</Label>
-                        <Select value={disasterStatus || 'all'} onValueChange={value => setDisasterStatus(value === 'all' ? '' : value)}>
+                        <Select value={disasterStatusId || 'all'} onValueChange={value => setDisasterStatusId(value === 'all' ? '' : value)}>
                           <SelectTrigger id="disaster-status">
                             <SelectValue placeholder="All" />
                           </SelectTrigger>
@@ -413,14 +413,14 @@ export default function DisasterIndex({ disasters, pagination, filters, sort, di
                               )}
                               {columnVisibility.type && (
                                 <TableCell>
-                                  <Badge variant="outline" className={getTypeBadgeColor(disaster.disaster_type)}>
+                                  <Badge variant="outline" className={getTypeBadgeColor(disaster.disaster_type_id)}>
                                     {disaster.disaster_type_label}
                                   </Badge>
                                 </TableCell>
                               )}
                               {columnVisibility.status && (
                                 <TableCell>
-                                  <Badge variant={getStatusBadgeVariant(disaster.disaster_status)}>
+                                  <Badge variant={getStatusBadgeVariant(disaster.disaster_status_id)}>
                                     {disaster.disaster_status_label}
                                   </Badge>
                                 </TableCell>
@@ -501,8 +501,8 @@ export default function DisasterIndex({ disasters, pagination, filters, sort, di
                         size="sm"
                         onClick={() => router.get('/disasters', {
                           search: search || undefined,
-                          disaster_type: disasterType || undefined,
-                          disaster_status: disasterStatus || undefined,
+                          disaster_type_id: disasterTypeId || undefined,
+                          disaster_status_id: disasterStatusId || undefined,
                           date_from: dateFrom || undefined,
                           date_to: dateTo || undefined,
                           sort_by: currentSortBy,
@@ -519,8 +519,8 @@ export default function DisasterIndex({ disasters, pagination, filters, sort, di
                         size="sm"
                         onClick={() => router.get('/disasters', {
                           search: search || undefined,
-                          disaster_type: disasterType || undefined,
-                          disaster_status: disasterStatus || undefined,
+                          disaster_type_id: disasterTypeId || undefined,
+                          disaster_status_id: disasterStatusId || undefined,
                           date_from: dateFrom || undefined,
                           date_to: dateTo || undefined,
                           sort_by: currentSortBy,

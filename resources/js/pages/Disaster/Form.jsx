@@ -19,8 +19,8 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 
 const disasterSchema = z.object({
-  disaster_type: z.string().min(1, 'Disaster type is required'),
-  disaster_status: z.string().min(1, 'Disaster status is required'),
+  disaster_type_id: z.string().min(1, 'Disaster type is required'),
+  disaster_status_id: z.string().min(1, 'Disaster status is required'),
   start_date: z.string().min(1, 'Start date is required'),
   end_date: z.string().optional().nullable(),
   description: z.string().min(1, 'Description is required').min(10, 'Description must be at least 10 characters'),
@@ -39,8 +39,8 @@ export default function DisasterForm({ disaster, errors: serverErrors, disasterT
   } = useHookForm({
     resolver: zodResolver(disasterSchema),
     defaultValues: {
-      disaster_type: disaster?.disaster_type?.toString() || '',
-      disaster_status: disaster?.disaster_status?.toString() || '',
+      disaster_type_id: disaster?.disaster_type_id?.toString() || '',
+      disaster_status_id: disaster?.disaster_status_id?.toString() || '',
       start_date: disaster?.start_date || '',
       end_date: disaster?.end_date || '',
       description: disaster?.description || '',
@@ -59,10 +59,10 @@ export default function DisasterForm({ disaster, errors: serverErrors, disasterT
       return
     }
 
-    // Convert string values to numbers for disaster_type and disaster_status
+    // Convert string values to numbers for disaster_type_id and disaster_status_id
     const formData = {
-      disaster_type: Number.parseInt(data.disaster_type),
-      disaster_status: Number.parseInt(data.disaster_status),
+      disaster_type_id: Number.parseInt(data.disaster_type_id),
+      disaster_status_id: Number.parseInt(data.disaster_status_id),
       start_date: data.start_date,
       end_date: data.end_date || null,
       description: data.description,
@@ -75,7 +75,7 @@ export default function DisasterForm({ disaster, errors: serverErrors, disasterT
     router[method](url, formData, {
       preserveScroll: true,
       onSuccess: (page) => {
-        const isOnDisastersList = page?.component === 'Disasters/Index'
+        const isOnDisastersList = page?.component === 'Disaster/Index'
 
         if (isOnDisastersList) {
           toast.success(isEdit ? 'Disaster updated successfully' : 'Disaster created successfully')
@@ -147,12 +147,12 @@ export default function DisasterForm({ disaster, errors: serverErrors, disasterT
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="disaster_type">Disaster Type *</Label>
+                    <Label htmlFor="disaster_type_id">Disaster Type *</Label>
                     <Select
-                      value={watch('disaster_type')}
-                      onValueChange={value => setValue('disaster_type', value)}
+                      value={watch('disaster_type_id')}
+                      onValueChange={value => setValue('disaster_type_id', value)}
                     >
-                      <SelectTrigger id="disaster_type" className={allErrors.disaster_type ? 'border-destructive' : ''}>
+                      <SelectTrigger id="disaster_type_id" className={allErrors.disaster_type_id ? 'border-destructive' : ''}>
                         <SelectValue placeholder="Select disaster type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -161,20 +161,20 @@ export default function DisasterForm({ disaster, errors: serverErrors, disasterT
                         ))}
                       </SelectContent>
                     </Select>
-                    {allErrors.disaster_type && (
+                    {allErrors.disaster_type_id && (
                       <p className="text-sm text-destructive">
-                        {allErrors.disaster_type}
+                        {allErrors.disaster_type_id}
                       </p>
                     )}
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="disaster_status">Status *</Label>
+                    <Label htmlFor="disaster_status_id">Status *</Label>
                     <Select
-                      value={watch('disaster_status')}
-                      onValueChange={value => setValue('disaster_status', value)}
+                      value={watch('disaster_status_id')}
+                      onValueChange={value => setValue('disaster_status_id', value)}
                     >
-                      <SelectTrigger id="disaster_status" className={allErrors.disaster_status ? 'border-destructive' : ''}>
+                      <SelectTrigger id="disaster_status_id" className={allErrors.disaster_status_id ? 'border-destructive' : ''}>
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                       <SelectContent>
@@ -183,9 +183,9 @@ export default function DisasterForm({ disaster, errors: serverErrors, disasterT
                         ))}
                       </SelectContent>
                     </Select>
-                    {allErrors.disaster_status && (
+                    {allErrors.disaster_status_id && (
                       <p className="text-sm text-destructive">
-                        {allErrors.disaster_status}
+                        {allErrors.disaster_status_id}
                       </p>
                     )}
                   </div>

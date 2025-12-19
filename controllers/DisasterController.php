@@ -17,7 +17,7 @@ class DisasterController extends BaseController
     /**
      * @inheritdoc
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return array_merge(parent::behaviors(), [
             'access' => [
@@ -48,8 +48,8 @@ class DisasterController extends BaseController
 
         // Get filter parameters
         $search = $request->get('search');
-        $disasterType = $request->get('disaster_type');
-        $disasterStatus = $request->get('disaster_status');
+        $disasterTypeId = $request->get('disaster_type_id');
+        $disasterStatusId = $request->get('disaster_status_id');
         $dateFrom = $request->get('date_from');
         $dateTo = $request->get('date_to');
 
@@ -69,12 +69,12 @@ class DisasterController extends BaseController
             $query->andWhere(['like', 'description', $search]);
         }
 
-        if ($disasterType !== null && $disasterType !== '') {
-            $query->andWhere(['disaster_type' => (int)$disasterType]);
+        if ($disasterTypeId !== null && $disasterTypeId !== '') {
+            $query->andWhere(['disaster_type_id' => (int)$disasterTypeId]);
         }
 
-        if ($disasterStatus !== null && $disasterStatus !== '') {
-            $query->andWhere(['disaster_status' => (int)$disasterStatus]);
+        if ($disasterStatusId !== null && $disasterStatusId !== '') {
+            $query->andWhere(['disaster_status_id' => (int)$disasterStatusId]);
         }
 
         if ($dateFrom) {
@@ -101,9 +101,9 @@ class DisasterController extends BaseController
         $disastersData = array_map(function ($disaster) {
             return [
                 'id' => $disaster->id,
-                'disaster_type' => (int)$disaster->disaster_type,
+                'disaster_type_id' => (int)$disaster->disaster_type_id,
                 'disaster_type_label' => $disaster->getDisasterTypeLabel(),
-                'disaster_status' => (int)$disaster->disaster_status,
+                'disaster_status_id' => (int)$disaster->disaster_status_id,
                 'disaster_status_label' => $disaster->getDisasterStatusLabel(),
                 'start_date' => $disaster->start_date,
                 'end_date' => $disaster->end_date,
@@ -113,7 +113,7 @@ class DisasterController extends BaseController
             ];
         }, $disasters);
 
-        return Inertia::render('Disasters/Index', [
+        return Inertia::render('Disaster/Index', [
             'disasters' => $disastersData,
             'pagination' => [
                 'total' => $totalCount,
@@ -123,8 +123,8 @@ class DisasterController extends BaseController
             ],
             'filters' => [
                 'search' => $search,
-                'disaster_type' => $disasterType !== null && $disasterType !== '' ? (int)$disasterType : null,
-                'disaster_status' => $disasterStatus !== null && $disasterStatus !== '' ? (int)$disasterStatus : null,
+                'disaster_type_id' => $disasterTypeId !== null && $disasterTypeId !== '' ? (int)$disasterTypeId : null,
+                'disaster_status_id' => $disasterStatusId !== null && $disasterStatusId !== '' ? (int)$disasterStatusId : null,
                 'date_from' => $dateFrom,
                 'date_to' => $dateTo,
             ],
@@ -146,12 +146,12 @@ class DisasterController extends BaseController
     {
         $model = $this->findModel($id);
 
-        return Inertia::render('Disasters/View', [
+        return Inertia::render('Disaster/View', [
             'disaster' => [
                 'id' => $model->id,
-                'disaster_type' => (int)$model->disaster_type,
+                'disaster_type_id' => (int)$model->disaster_type_id,
                 'disaster_type_label' => $model->getDisasterTypeLabel(),
-                'disaster_status' => (int)$model->disaster_status,
+                'disaster_status_id' => (int)$model->disaster_status_id,
                 'disaster_status_label' => $model->getDisasterStatusLabel(),
                 'start_date' => $model->start_date,
                 'end_date' => $model->end_date,
@@ -179,12 +179,12 @@ class DisasterController extends BaseController
                     if (Yii::$app->request->headers->get('X-Inertia')) {
                         return $this->actionIndex();
                     }
-                    return $this->redirect(['index']);
+                    return $this->redirect(['/disasters']);
                 }
             }
 
             // If we get here, validation failed - return form with errors
-            return Inertia::render('Disasters/Form', [
+            return Inertia::render('Disaster/Form', [
                 'disaster' => null,
                 'errors' => $model->errors,
                 'disasterTypes' => Disaster::getDisasterTypes(),
@@ -193,7 +193,7 @@ class DisasterController extends BaseController
         }
 
         // GET request - show empty form
-        return Inertia::render('Disasters/Form', [
+        return Inertia::render('Disaster/Form', [
             'disaster' => null,
             'errors' => [],
             'disasterTypes' => Disaster::getDisasterTypes(),
@@ -206,8 +206,9 @@ class DisasterController extends BaseController
      * If update is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
 
@@ -238,16 +239,16 @@ class DisasterController extends BaseController
                     if (Yii::$app->request->headers->get('X-Inertia')) {
                         return $this->actionIndex();
                     }
-                    return $this->redirect(['index']);
+                    return $this->redirect(['/disasters']);
                 }
             }
 
             // If we get here, validation failed - return form with errors
-            return Inertia::render('Disasters/Form', [
+            return Inertia::render('Disaster/Form', [
                 'disaster' => [
                     'id' => $model->id,
-                    'disaster_type' => (int)$model->disaster_type,
-                    'disaster_status' => (int)$model->disaster_status,
+                    'disaster_type_id' => (int)$model->disaster_type_id,
+                    'disaster_status_id' => (int)$model->disaster_status_id,
                     'start_date' => $model->start_date,
                     'end_date' => $model->end_date,
                     'description' => $model->description,
@@ -259,11 +260,11 @@ class DisasterController extends BaseController
         }
 
         // GET request - show form with current data
-        return Inertia::render('Disasters/Form', [
+        return Inertia::render('Disaster/Form', [
             'disaster' => [
                 'id' => $model->id,
-                'disaster_type' => (int)$model->disaster_type,
-                'disaster_status' => (int)$model->disaster_status,
+                'disaster_type_id' => (int)$model->disaster_type_id,
+                'disaster_status_id' => (int)$model->disaster_status_id,
                 'start_date' => $model->start_date,
                 'end_date' => $model->end_date,
                 'description' => $model->description,
@@ -280,7 +281,7 @@ class DisasterController extends BaseController
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id)
     {
         $model = $this->findModel($id);
 
@@ -305,7 +306,7 @@ class DisasterController extends BaseController
      * @return Disaster the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): Disaster
     {
         if (($model = Disaster::findOne(['id' => $id, 'is_deleted' => 0])) !== null) {
             return $model;
