@@ -40,9 +40,19 @@ class DisasterTypeController extends BaseController
         $this->checkAccess('disasterType.index');
         $searchModel = new DisasterTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $types = $dataProvider->getModels();
+
+        $typesData = array_map(function ($type) {
+            return [
+                'id' => $type->id,
+                'code' => $type->code,
+                'title' => $type->title,
+                'description' => $type->description,
+            ];
+        }, $types);
 
         return Inertia::render('DisasterType/Index', [
-            'types' => $dataProvider->getModels(),
+            'types' => $typesData,
             'pagination' => [
                 'total' => (int) $dataProvider->getPagination()->totalCount,
                 'per_page' => (int) $dataProvider->getPagination()->pageSize,

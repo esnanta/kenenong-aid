@@ -41,9 +41,19 @@ class DisasterStatusController extends BaseController
         $this->checkAccess('disasterStatus.index');
         $searchModel = new DisasterStatusSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $statuses = $dataProvider->getModels();
+
+        $statusesData = array_map(function ($status) {
+            return [
+                'id' => $status->id,
+                'code' => $status->code,
+                'title' => $status->title,
+                'description' => $status->description,
+            ];
+        }, $statuses);
 
         return Inertia::render('DisasterStatus/Index', [
-            'statuses' => $dataProvider->getModels(),
+            'statuses' => $statusesData,
             'pagination' => [
                 'total' => (int) $dataProvider->getPagination()->totalCount,
                 'per_page' => (int) $dataProvider->getPagination()->pageSize,
