@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model app\models\AccessRouteVehicles */
+/* @var $model app\models\AccessRouteVehicle */
 
 $this->title = Yii::t('app', 'Create Access Route Vehicles');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Access Route Vehicles'), 'url' => ['index']];

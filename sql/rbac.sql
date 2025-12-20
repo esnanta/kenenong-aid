@@ -78,12 +78,12 @@ VALUES ('accessRouteStatus.index', 2, 'Index Access Status', UNIX_TIMESTAMP(), U
 
 INSERT INTO t_auth_item
 (name, type, description, created_at, updated_at)
-VALUES ('accessRouteVehicles.index', 2, 'Index Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-       ('accessRouteVehicles.create', 2, 'Create Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-       ('accessRouteVehicles.update', 2, 'Update Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-       ('accessRouteVehicles.view', 2, 'View Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-       ('accessRouteVehicles.delete', 2, 'Delete Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-       ('accessRouteVehicles.report', 2, 'Report Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+VALUES ('accessRouteVehicle.index', 2, 'Index Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteVehicle.create', 2, 'Create Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteVehicle.update', 2, 'Update Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteVehicle.view', 2, 'View Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteVehicle.delete', 2, 'Delete Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteVehicle.report', 2, 'Report Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
 
 
 /* PERMISSION: DISASTER (MASTER DETAIL) */
@@ -178,12 +178,12 @@ VALUES ('transaction.index', 'accessRouteStatus.index'),
 
 INSERT INTO t_auth_item_child
 (parent, child)
-VALUES ('transaction.index', 'accessRouteVehicles.index'),
-       ('transaction.create', 'accessRouteVehicles.create'),
-       ('transaction.update', 'accessRouteVehicles.update'),
-       ('transaction.view', 'accessRouteVehicles.view'),
-       ('transaction.delete', 'accessRouteVehicles.delete'),
-       ('transaction.report', 'accessRouteVehicles.report');
+VALUES ('transaction.index', 'accessRouteVehicle.index'),
+       ('transaction.create', 'accessRouteVehicle.create'),
+       ('transaction.update', 'accessRouteVehicle.update'),
+       ('transaction.view', 'accessRouteVehicle.view'),
+       ('transaction.delete', 'accessRouteVehicle.delete'),
+       ('transaction.report', 'accessRouteVehicle.report');
 
 
 

@@ -5,7 +5,7 @@ namespace app\models;
 /**
  * This is the ActiveQuery class for [[AccessRouteShelters]].
  *
- * @see AccessRouteShelters
+ * @see AccessRouteShelter
  */
 class AccessRouteSheltersQuery extends \yii\db\ActiveQuery
 {
@@ -17,7 +17,7 @@ class AccessRouteSheltersQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return AccessRouteShelters[]|array
+     * @return AccessRouteShelter[]|array
      */
     public function all($db = null)
     {
@@ -26,7 +26,7 @@ class AccessRouteSheltersQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return AccessRouteShelters|array|null
+     * @return AccessRouteShelter|array|null
      */
     public function one($db = null)
     {

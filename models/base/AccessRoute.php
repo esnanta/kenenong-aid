@@ -31,8 +31,8 @@ use mootensai\behaviors\UUIDBehavior;
  *
  * @property \app\models\Disaster $disaster
  * @property \app\models\AccessRouteStatus $accessRouteStatus
- * @property \app\models\AccessRouteShelters[] $accessRouteShelters
- * @property \app\models\AccessRouteVehicles[] $accessRouteVehicles
+ * @property \app\models\AccessRouteShelter[] $accessRouteShelters
+ * @property \app\models\AccessRouteVehicle[] $accessRouteVehicles
  */
 class AccessRoute extends \yii\db\ActiveRecord
 {
@@ -145,7 +145,7 @@ class AccessRoute extends \yii\db\ActiveRecord
      */
     public function getAccessRouteShelters()
     {
-        return $this->hasMany(\app\models\AccessRouteShelters::class, ['access_route_id' => 'id']);
+        return $this->hasMany(\app\models\AccessRouteShelter::class, ['access_route_id' => 'id']);
     }
         
     /**
@@ -153,7 +153,7 @@ class AccessRoute extends \yii\db\ActiveRecord
      */
     public function getAccessRouteVehicles()
     {
-        return $this->hasMany(\app\models\AccessRouteVehicles::class, ['access_route_id' => 'id']);
+        return $this->hasMany(\app\models\AccessRouteVehicle::class, ['access_route_id' => 'id']);
     }
     
     /**

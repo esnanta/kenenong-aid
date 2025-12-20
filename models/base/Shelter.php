@@ -29,7 +29,7 @@ use mootensai\behaviors\UUIDBehavior;
  * @property integer $verlock
  * @property string $uuid
  *
- * @property \app\models\AccessRouteShelters[] $accessRouteShelters
+ * @property \app\models\AccessRouteShelter[] $accessRouteShelters
  * @property \app\models\AidDistribution[] $aidDistributions
  * @property \app\models\AidPlan[] $aidPlans
  * @property \app\models\Disaster $disaster
@@ -129,7 +129,7 @@ class Shelter extends \yii\db\ActiveRecord
      */
     public function getAccessRouteShelters()
     {
-        return $this->hasMany(\app\models\AccessRouteShelters::class, ['shelter_id' => 'id']);
+        return $this->hasMany(\app\models\AccessRouteShelter::class, ['shelter_id' => 'id']);
     }
         
     /**

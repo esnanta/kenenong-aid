@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\AccessRouteShelters;
+use app\models\AccessRouteShelter;
 
 /**
  * app\models\AccessRouteSheltersSearch represents the model behind the search form about `app\models\AccessRouteShelters`.
  */
- class AccessRouteSheltersSearch extends AccessRouteShelters
+ class AccessRouteSheltersSearch extends AccessRouteShelter
 {
     /**
      * @inheritdoc
@@ -41,7 +41,7 @@ use app\models\AccessRouteShelters;
      */
     public function search($params)
     {
-        $query = AccessRouteShelters::find();
+        $query = AccessRouteShelter::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

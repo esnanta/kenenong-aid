@@ -3,12 +3,12 @@
 namespace app\models;
 
 use Yii;
-use \app\models\base\AccessRouteVehicles as BaseAccessRouteVehicles;
+use \app\models\base\AccessRouteShelter as BaseAccessRouteShelters;
 
 /**
- * This is the model class for table "t_access_route_vehicles".
+ * This is the model class for table "t_access_route_shelters".
  */
-class AccessRouteVehicles extends BaseAccessRouteVehicles
+class AccessRouteShelter extends BaseAccessRouteShelters
 {
     /**
      * @inheritdoc
@@ -17,10 +17,9 @@ class AccessRouteVehicles extends BaseAccessRouteVehicles
     {
         return array_replace_recursive(parent::rules(),
 	    [
-            [['access_route_id', 'vehicle_type_id', 'created_by', 'updated_by', 'verlock'], 'integer'],
+            [['access_route_id', 'shelter_id', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
             [['created_at', 'updated_at', 'deleted_at'], 'safe'],
             [['is_deleted'], 'integer'],
-            [['deleted_by'], 'string', 'max' => 255],
             [['uuid'], 'string', 'max' => 36],
             [['verlock'], 'default', 'value' => '0'],
             [['verlock'], 'mootensai\components\OptimisticLockValidator']
@@ -35,7 +34,7 @@ class AccessRouteVehicles extends BaseAccessRouteVehicles
         return [
             'id' => Yii::t('app', 'ID'),
             'access_route_id' => Yii::t('app', 'Access Route ID'),
-            'vehicle_type_id' => Yii::t('app', 'Vehicle Type ID'),
+            'shelter_id' => Yii::t('app', 'Shelter ID'),
             'is_deleted' => Yii::t('app', 'Is Deleted'),
             'verlock' => Yii::t('app', 'Verlock'),
             'uuid' => Yii::t('app', 'Uuid'),

@@ -5,7 +5,7 @@ namespace app\models;
 /**
  * This is the ActiveQuery class for [[AccessRouteVehicles]].
  *
- * @see AccessRouteVehicles
+ * @see AccessRouteVehicle
  */
 class AccessRouteVehiclesQuery extends \yii\db\ActiveQuery
 {
@@ -17,7 +17,7 @@ class AccessRouteVehiclesQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return AccessRouteVehicles[]|array
+     * @return AccessRouteVehicle[]|array
      */
     public function all($db = null)
     {
@@ -26,7 +26,7 @@ class AccessRouteVehiclesQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return AccessRouteVehicles|array|null
+     * @return AccessRouteVehicle|array|null
      */
     public function one($db = null)
     {

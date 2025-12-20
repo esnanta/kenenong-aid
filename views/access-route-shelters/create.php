@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model app\models\AccessRouteShelters */
+/* @var $model app\models\AccessRouteShelter */
 
 $this->title = Yii::t('app', 'Create Access Route Shelters');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Access Route Shelters'), 'url' => ['index']];

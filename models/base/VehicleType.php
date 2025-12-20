@@ -24,7 +24,7 @@ use mootensai\behaviors\UUIDBehavior;
  * @property integer $verlock
  * @property string $uuid
  *
- * @property \app\models\AccessRouteVehicles[] $accessRouteVehicles
+ * @property \app\models\AccessRouteVehicle[] $accessRouteVehicles
  */
 class VehicleType extends \yii\db\ActiveRecord
 {
@@ -115,7 +115,7 @@ class VehicleType extends \yii\db\ActiveRecord
      */
     public function getAccessRouteVehicles()
     {
-        return $this->hasMany(\app\models\AccessRouteVehicles::class, ['vehicle_type_id' => 'id']);
+        return $this->hasMany(\app\models\AccessRouteVehicle::class, ['vehicle_type_id' => 'id']);
     }
     
     /**
