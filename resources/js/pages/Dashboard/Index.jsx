@@ -1,7 +1,7 @@
 import { Head, usePage } from '@inertiajs/react'
 import { Activity, DollarSign, TrendingUp, Users } from 'lucide-react'
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import DashboardLayout from '@/components/layouts/DashboardLayout'
+import {DashboardLayout} from '@/components/layouts/DashboardLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function Dashboard({ user, stats }) {

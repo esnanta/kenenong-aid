@@ -2,7 +2,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react'
 import { Edit, Eye, Key, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import DashboardLayout from '@/components/layouts/DashboardLayout.jsx'
+import {DashboardLayout} from '@/components/layouts/DashboardLayout.jsx'
 import {
   AlertDialog,
   AlertDialogAction,

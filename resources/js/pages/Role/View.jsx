@@ -1,6 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react'
 import { ArrowLeft, Edit, Shield } from 'lucide-react'
-import DashboardLayout from '@/components/layouts/DashboardLayout.jsx'
+import {DashboardLayout} from '@/components/layouts/DashboardLayout.jsx'
 import { Badge } from '@/components/ui/badge.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
