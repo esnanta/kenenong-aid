@@ -20,7 +20,8 @@ VALUES ('admin', 1, 'Administrator', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
        ('guest', 1, 'Guest', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
 
 /* ROLE INHERITANCE */
-INSERT INTO t_auth_item_child (parent, child)
+INSERT INTO t_auth_item_child
+    (parent, child)
 VALUES ('admin', 'coordinator'),
        ('coordinator', 'regular');
 
@@ -68,9 +69,10 @@ VALUES ('disaster.index', 2, 'Index Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(
        ('disaster.delete', 2, 'Delete Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
        ('disaster.report', 2, 'Report Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
 
-/* HUBUNGKAN MASTER → DETAIL */
+/* MASTER → DETAIL */
 /* MASTER → ACCESS ROUTE */
-INSERT INTO t_auth_item_child (parent, child)
+INSERT INTO t_auth_item_child
+    (parent, child)
 VALUES ('master.index', 'accessRoute.index'),
        ('master.create', 'accessRoute.create'),
        ('master.update', 'accessRoute.update'),
@@ -79,7 +81,8 @@ VALUES ('master.index', 'accessRoute.index'),
        ('master.report', 'accessRoute.report');
 
 /* MASTER → DISASTER */
-INSERT INTO t_auth_item_child (parent, child)
+INSERT INTO t_auth_item_child
+    (parent, child)
 VALUES ('master.index', 'disaster.index'),
        ('master.create', 'disaster.create'),
        ('master.update', 'disaster.update'),
@@ -89,7 +92,8 @@ VALUES ('master.index', 'disaster.index'),
 
 /* ASSIGN MASTER & TRANSACTION KE ROLE */
 /* ADMIN */
-INSERT INTO t_auth_item_child (parent, child)
+INSERT INTO t_auth_item_child
+    (parent, child)
 VALUES ('admin', 'master.index'),
        ('admin', 'master.create'),
        ('admin', 'master.update'),
@@ -103,13 +107,15 @@ VALUES ('admin', 'master.index'),
        ('admin', 'transaction.delete'),
        ('admin', 'transaction.report');
 
-/* REGULAR → TRANSACTION SAJA */
-INSERT INTO t_auth_item_child (parent, child)
+/* REGULAR → TRANSACTION */
+INSERT INTO t_auth_item_child
+    (parent, child)
 VALUES ('regular', 'transaction.index'),
        ('regular', 'transaction.create'),
        ('regular', 'transaction.update'),
        ('regular', 'transaction.view');
 
 /* ASSIGN USER KE ROLE */
-INSERT INTO t_auth_assignment (item_name, user_id, created_at)
+INSERT INTO t_auth_assignment
+    (item_name, user_id, created_at)
 VALUES ('admin', 1, UNIX_TIMESTAMP());
