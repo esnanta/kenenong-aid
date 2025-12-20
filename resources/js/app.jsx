@@ -4,7 +4,6 @@ import { lazy, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import { toast, Toaster } from 'sonner'
 import ErrorBoundary from './components/ErrorBoundary'
-import { LoadingIndicator } from './components/LoadingIndicator'
 import { ThemeProvider } from './components/ThemeProvider'
 import '../css/app.css'
 
@@ -54,13 +53,19 @@ const RuleIndex = lazy(() => import('./pages/Rule/Index'))
 const RuleForm = lazy(() => import('./pages/Rule/Form'))
 const RuleView = lazy(() => import('./pages/Rule/View'))
 
-// Ambil token dari head meta atau dari global props yang dibagikan oleh InertiaBootstrap
+// CSRF Header setup
 const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
 if (token) {
   axios.defaults.headers.common['X-CSRF-Token'] = token
 }
 
 createInertiaApp({
+  progress: {
+    delay: 250,
+    color: '#29d',
+    includeCSS: true,
+    showSpinner: true,
+  },
   resolve: (name) => {
     const pages = {
       'Home': Home,
@@ -219,7 +224,6 @@ createInertiaApp({
     root.render(
       <ErrorBoundary>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <LoadingIndicator />
           <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
             <App {...props} />
           </Suspense>
