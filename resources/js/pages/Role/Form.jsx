@@ -21,9 +21,41 @@ import { Textarea } from '@/components/ui/textarea.tsx'
 import { addCsrfToData } from '@/lib/csrf' // Import addCsrfToData
 
 const EMPTY_ERRORS = {}
+/** @type {RuleOption[]} */
 const EMPTY_RULES = []
+/** @type {UnassignedItem[]} */
 const EMPTY_ITEMS = []
 
+/**
+ * @typedef {object} Role
+ * @property {string} name - The name of the role.
+ * @property {string} description - The description of the role.
+ * @property {string} rule_name - The name of the rule associated with the role.
+ * @property {string | null} old_name - The original name of the role, if it was edited.
+ * @property {string[]} children - An array of child permissions or roles.
+ */
+
+/**
+ * @typedef {object} RuleOption
+ * @property {string} value - The value of the rule option.
+ * @property {string} label - The label of the rule option.
+ */
+
+/**
+ * @typedef {object} UnassignedItem
+ * @property {string} name - The name of the unassigned item.
+ * @property {'role' | 'permission'} type - The type of the unassigned item (role or permission).
+ * @property {string} description - The description of the unassigned item.
+ * @property {string} label - The label of the unassigned item.
+ */
+
+/**
+ * @param {object} props
+ * @param {Role} [props.role] - The role object.
+ * @param {{[key: string]: string[]}} [props.errors] - An object containing form errors.
+ * @param {RuleOption[]} [props.rules] - An array of available rule options.
+ * @param {UnassignedItem[]} [props.unassignedItems] - An array of unassigned items (permissions or roles).
+ */
 export default function RoleForm({ role, errors = EMPTY_ERRORS, rules = EMPTY_RULES, unassignedItems = EMPTY_ITEMS }) {
   const { props } = usePage()
   const isEdit = !!role?.old_name

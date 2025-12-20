@@ -10,6 +10,7 @@ use Da\User\Service\AuthRuleEditionService;
 use Da\User\Traits\AuthManagerAwareTrait;
 use Da\User\Traits\ContainerAwareTrait;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 
@@ -21,7 +22,7 @@ class RuleController extends BaseController
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'access' => [
@@ -38,8 +39,9 @@ class RuleController extends BaseController
 
     /**
      * Helper method to create instances
+     * @throws InvalidConfigException
      */
-    protected function make($class, $params = [], $config = [])
+    protected function make($class, $params = [], $config = []): object
     {
         return Yii::createObject(array_merge(['class' => $class], $config), $params);
     }
