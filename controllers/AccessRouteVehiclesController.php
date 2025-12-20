@@ -7,6 +7,7 @@ use app\models\AccessRouteVehicles;
 use app\models\AccessRouteVehiclesSearch;
 use Yii;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\db\Exception;
@@ -28,9 +29,12 @@ class AccessRouteVehiclesController extends BaseController
     /**
      * Lists all AccessRouteVehicles models.
      * @return string
+     * @throws ForbiddenHttpException
      */
     public function actionIndex(): string
     {
+        $this->checkAccess('accessRouteVehicles.index');
+
         $searchModel = new AccessRouteVehiclesSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -45,10 +49,13 @@ class AccessRouteVehiclesController extends BaseController
      * @param int $id
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws ForbiddenHttpException
      */
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
+        $this->checkAccess('accessRouteVehicles.view',$model);
+
         return $this->render('view', [
             'model' => $model,
         ]);
@@ -62,6 +69,7 @@ class AccessRouteVehiclesController extends BaseController
      */
     public function actionCreate()
     {
+        $this->checkAccess('accessRouteVehicles.create');
         $model = new AccessRouteVehicles();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -80,10 +88,12 @@ class AccessRouteVehiclesController extends BaseController
      * @return Response|string
      * @throws NotFoundHttpException if the model cannot be found
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('accessRouteVehicles.update',$model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -101,11 +111,13 @@ class AccessRouteVehiclesController extends BaseController
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
-
+        $model = $this->findModel($id);
+        $this->checkAccess('accessRouteVehicles.delete', $model);
+        $model->deleteWithRelated();
         return $this->redirect(['index']);
     }
 

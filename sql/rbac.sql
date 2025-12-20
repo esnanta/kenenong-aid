@@ -58,10 +58,37 @@ VALUES ('accessRoute.index', 2, 'Index Access Route', UNIX_TIMESTAMP(), UNIX_TIM
        ('accessRoute.delete', 2, 'Delete Access Route', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
        ('accessRoute.report', 2, 'Report Access Route', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
 
+INSERT INTO t_auth_item
+    (name, type, description, created_at, updated_at)
+VALUES ('accessRouteShelter.index', 2, 'Index Access Route', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteShelter.create', 2, 'Create Access Route', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteShelter.update', 2, 'Update Access Route', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteShelter.view', 2, 'View Access Route', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteShelter.delete', 2, 'Delete Access Route', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteShelter.report', 2, 'Report Access Route', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('accessRouteStatus.index', 2, 'Index Access Status', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteStatus.create', 2, 'Create Access Status', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteStatus.update', 2, 'Update Access Status', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteStatus.view', 2, 'View Access Status', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteStatus.delete', 2, 'Delete Access Status', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteStatus.report', 2, 'Report Access Status', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('accessRouteVehicles.index', 2, 'Index Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteVehicles.create', 2, 'Create Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteVehicles.update', 2, 'Update Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteVehicles.view', 2, 'View Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteVehicles.delete', 2, 'Delete Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('accessRouteVehicles.report', 2, 'Report Access Vehicle', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
 
 /* PERMISSION: DISASTER (MASTER DETAIL) */
 INSERT INTO t_auth_item
-(name, type, description, created_at, updated_at)
+    (name, type, description, created_at, updated_at)
 VALUES ('disasterType.index', 2, 'Index Type Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
        ('disasterType.create', 2, 'Create Type Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
        ('disasterType.update', 2, 'Update Type Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
@@ -70,7 +97,7 @@ VALUES ('disasterType.index', 2, 'Index Type Disaster', UNIX_TIMESTAMP(), UNIX_T
        ('disasterType.report', 2, 'Report Type Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
 
 INSERT INTO t_auth_item
-(name, type, description, created_at, updated_at)
+    (name, type, description, created_at, updated_at)
 VALUES ('disasterStatus.index', 2, 'Index Status Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
        ('disasterStatus.create', 2, 'Create Status Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
        ('disasterStatus.update', 2, 'Update Status Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
@@ -87,6 +114,9 @@ VALUES ('disaster.index', 2, 'Index Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(
        ('disaster.delete', 2, 'Delete Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
        ('disaster.report', 2, 'Report Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
 
+
+
+
 /* MASTER → DETAIL */
 /* MASTER → ACCESS ROUTE */
 INSERT INTO t_auth_item_child
@@ -100,7 +130,7 @@ VALUES ('master.index', 'accessRoute.index'),
 
 /* MASTER → DISASTER */
 INSERT INTO t_auth_item_child
-(parent, child)
+    (parent, child)
 VALUES ('master.index', 'disasterType.index'),
        ('master.create', 'disasterType.create'),
        ('master.update', 'disasterType.update'),
@@ -109,7 +139,7 @@ VALUES ('master.index', 'disasterType.index'),
        ('master.report', 'disasterType.report');
 
 INSERT INTO t_auth_item_child
-(parent, child)
+    (parent, child)
 VALUES ('master.index', 'disasterStatus.index'),
        ('master.create', 'disasterStatus.create'),
        ('master.update', 'disasterStatus.update'),
@@ -125,6 +155,37 @@ VALUES ('master.index', 'disaster.index'),
        ('master.view', 'disaster.view'),
        ('master.delete', 'disaster.delete'),
        ('master.report', 'disaster.report');
+
+/* TRANSACTION → DETAIL */
+/* TRANSACTION → ACCESS ROUTE SHELTER*/
+INSERT INTO t_auth_item_child
+    (parent, child)
+VALUES ('transaction.index', 'accessRouteShelter.index'),
+       ('transaction.create', 'accessRouteShelter.create'),
+       ('transaction.update', 'accessRouteShelter.update'),
+       ('transaction.view', 'accessRouteShelter.view'),
+       ('transaction.delete', 'accessRouteShelter.delete'),
+       ('transaction.report', 'accessRouteShelter.report');
+
+INSERT INTO t_auth_item_child
+(parent, child)
+VALUES ('transaction.index', 'accessRouteStatus.index'),
+       ('transaction.create', 'accessRouteStatus.create'),
+       ('transaction.update', 'accessRouteStatus.update'),
+       ('transaction.view', 'accessRouteStatus.view'),
+       ('transaction.delete', 'accessRouteStatus.delete'),
+       ('transaction.report', 'accessRouteStatus.report');
+
+INSERT INTO t_auth_item_child
+(parent, child)
+VALUES ('transaction.index', 'accessRouteVehicles.index'),
+       ('transaction.create', 'accessRouteVehicles.create'),
+       ('transaction.update', 'accessRouteVehicles.update'),
+       ('transaction.view', 'accessRouteVehicles.view'),
+       ('transaction.delete', 'accessRouteVehicles.delete'),
+       ('transaction.report', 'accessRouteVehicles.report');
+
+
 
 /* ASSIGN MASTER & TRANSACTION KE ROLE */
 /* ADMIN */

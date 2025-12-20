@@ -8,6 +8,7 @@ use app\models\AccessRouteSheltersSearch;
 use Yii;
 use yii\db\Exception;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -31,9 +32,11 @@ class AccessRouteSheltersController extends BaseController
     /**
      * Lists all AccessRouteShelters models.
      * @return string
+     * @throws ForbiddenHttpException
      */
     public function actionIndex(): string
     {
+        $this->checkAccess('accessRouteShelter.index');
         $searchModel = new AccessRouteSheltersSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -48,10 +51,13 @@ class AccessRouteSheltersController extends BaseController
      * @param integer $id
      * @return string
      * @throws NotFoundHttpException
+     * @throws ForbiddenHttpException
      */
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
+        $this->checkAccess('accessRouteShelter.view', $model);
+
         return $this->render('view', [
             'model' => $model,
         ]);
@@ -62,9 +68,11 @@ class AccessRouteSheltersController extends BaseController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionCreate()
     {
+        $this->checkAccess('accessRouteShelter.create');
         $model = new AccessRouteShelters();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -83,10 +91,12 @@ class AccessRouteSheltersController extends BaseController
      * @return string|Response
      * @throws NotFoundHttpException
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('accessRouteShelter.update', $model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -104,11 +114,13 @@ class AccessRouteSheltersController extends BaseController
      * @return Response
      * @throws NotFoundHttpException
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
-
+        $model = $this->findModel($id);
+        $this->checkAccess('accessRouteShelter.delete', $model);
+        $model->deleteWithRelated();
         return $this->redirect(['index']);
     }
 
