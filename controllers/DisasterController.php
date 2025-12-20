@@ -302,7 +302,11 @@ class DisasterController extends BaseController
             Yii::$app->session->setFlash('error', 'Failed to delete disaster');
         }
 
-        return Inertia::location('/disasters');
+        if (Yii::$app->request->headers->get('X-Inertia')) {
+            return $this->actionIndex();
+        }
+
+        return $this->redirect(['/disasters']);
     }
 
     /**

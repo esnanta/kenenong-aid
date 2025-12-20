@@ -126,22 +126,7 @@ export default function DisasterIndex({ disasters, pagination, filters, sort, di
   }
 
   const handleDelete = (id) => {
-    const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-    const metaParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute('content')
-
-    const csrfToken = metaToken || props.csrfToken
-    const csrfParam = metaParam || props.csrfParam
-
-    if (!csrfToken || !csrfParam) {
-      toast.error('CSRF token missing. Please refresh the page.')
-      return
-    }
-
-    const formData = {
-      [csrfParam]: csrfToken,
-    }
-
-    router.post(`/disasters/${id}/delete`, formData, {
+    router.post(`/disasters/${id}/delete`, {}, {
       onSuccess: () => {
         setDeleteId(null)
         toast.success('Disaster deleted successfully')
