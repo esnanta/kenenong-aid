@@ -121,7 +121,7 @@ class VerificationVote extends \yii\db\ActiveRecord
      */
     public function getVerificationAction()
     {
-        return $this->hasOne(\app\models\VerificationAction::className(), ['id' => 'verification_action_id']);
+        return $this->hasOne(\app\models\VerificationAction::class, ['id' => 'verification_action_id']);
     }
         
     /**
@@ -129,7 +129,7 @@ class VerificationVote extends \yii\db\ActiveRecord
      */
     public function getVerification()
     {
-        return $this->hasOne(\app\models\Verification::className(), ['id' => 'verification_id']);
+        return $this->hasOne(\app\models\Verification::class, ['id' => 'verification_id']);
     }
         
     /**
@@ -137,7 +137,7 @@ class VerificationVote extends \yii\db\ActiveRecord
      */
     public function getVotedBy()
     {
-        return $this->hasOne(\app\models\Users::className(), ['id' => 'voted_by']);
+        return $this->hasOne(\app\models\Users::class, ['id' => 'voted_by']);
     }
     
     /**
@@ -148,18 +148,18 @@ class VerificationVote extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -194,6 +194,6 @@ class VerificationVote extends \yii\db\ActiveRecord
     public static function find()
     {
         $query = new \app\models\VerificationVoteQuery(get_called_class());
-        return $query->where(['t_verification_vote.deleted_by' => 0]);
+        return $query->where(['t_verification_vote.is_deleted' => 0]);
     }
 }

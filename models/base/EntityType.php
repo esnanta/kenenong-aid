@@ -24,7 +24,7 @@ use mootensai\behaviors\UUIDBehavior;
  * @property integer $verlock
  * @property string $uuid
  *
- * @property \app\models\MediaFiles[] $mediaFiles
+ * @property \app\models\MediaFile[] $mediaFiles
  * @property \app\models\Verification[] $verifications
  */
 class EntityType extends \yii\db\ActiveRecord
@@ -117,7 +117,7 @@ class EntityType extends \yii\db\ActiveRecord
      */
     public function getMediaFiles()
     {
-        return $this->hasMany(\app\models\MediaFiles::className(), ['entity_type_id' => 'id']);
+        return $this->hasMany(\app\models\MediaFile::class, ['entity_type_id' => 'id']);
     }
         
     /**
@@ -125,7 +125,7 @@ class EntityType extends \yii\db\ActiveRecord
      */
     public function getVerifications()
     {
-        return $this->hasMany(\app\models\Verification::className(), ['entity_type_id' => 'id']);
+        return $this->hasMany(\app\models\Verification::class, ['entity_type_id' => 'id']);
     }
     
     /**
@@ -136,18 +136,18 @@ class EntityType extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -182,6 +182,6 @@ class EntityType extends \yii\db\ActiveRecord
     public static function find()
     {
         $query = new \app\models\EntityTypeQuery(get_called_class());
-        return $query->where(['t_entity_type.deleted_by' => 0]);
+        return $query->where(['t_entity_type.is_deleted' => 0]);
     }
 }

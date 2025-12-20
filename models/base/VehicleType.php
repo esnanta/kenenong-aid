@@ -115,7 +115,7 @@ class VehicleType extends \yii\db\ActiveRecord
      */
     public function getAccessRouteVehicles()
     {
-        return $this->hasMany(\app\models\AccessRouteVehicles::className(), ['vehicle_type_id' => 'id']);
+        return $this->hasMany(\app\models\AccessRouteVehicles::class, ['vehicle_type_id' => 'id']);
     }
     
     /**
@@ -126,18 +126,18 @@ class VehicleType extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -172,6 +172,6 @@ class VehicleType extends \yii\db\ActiveRecord
     public static function find()
     {
         $query = new \app\models\VehicleTypeQuery(get_called_class());
-        return $query->where(['t_vehicle_type.deleted_by' => 0]);
+        return $query->where(['t_vehicle_type.is_deleted' => 0]);
     }
 }

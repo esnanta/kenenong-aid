@@ -147,7 +147,7 @@ class DisasterStatusController extends BaseController
      * @return DisasterStatus the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): DisasterStatus
     {
         if (($model = DisasterStatus::findOne($id)) !== null) {
             return $model;

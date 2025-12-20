@@ -129,7 +129,7 @@ class Shelter extends \yii\db\ActiveRecord
      */
     public function getAccessRouteShelters()
     {
-        return $this->hasMany(\app\models\AccessRouteShelters::className(), ['shelter_id' => 'id']);
+        return $this->hasMany(\app\models\AccessRouteShelters::class, ['shelter_id' => 'id']);
     }
         
     /**
@@ -137,7 +137,7 @@ class Shelter extends \yii\db\ActiveRecord
      */
     public function getAidDistributions()
     {
-        return $this->hasMany(\app\models\AidDistribution::className(), ['shelter_id' => 'id']);
+        return $this->hasMany(\app\models\AidDistribution::class, ['shelter_id' => 'id']);
     }
         
     /**
@@ -145,7 +145,7 @@ class Shelter extends \yii\db\ActiveRecord
      */
     public function getAidPlans()
     {
-        return $this->hasMany(\app\models\AidPlan::className(), ['shelter_id' => 'id']);
+        return $this->hasMany(\app\models\AidPlan::class, ['shelter_id' => 'id']);
     }
         
     /**
@@ -153,7 +153,7 @@ class Shelter extends \yii\db\ActiveRecord
      */
     public function getDisaster()
     {
-        return $this->hasOne(\app\models\Disaster::className(), ['id' => 'disaster_id']);
+        return $this->hasOne(\app\models\Disaster::class, ['id' => 'disaster_id']);
     }
     
     /**
@@ -164,18 +164,18 @@ class Shelter extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -210,6 +210,6 @@ class Shelter extends \yii\db\ActiveRecord
     public static function find()
     {
         $query = new \app\models\ShelterQuery(get_called_class());
-        return $query->where(['t_shelter.deleted_by' => 0]);
+        return $query->where(['t_shelter.is_deleted' => 0]);
     }
 }

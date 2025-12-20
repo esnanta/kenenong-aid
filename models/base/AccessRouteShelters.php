@@ -2,6 +2,7 @@
 
 namespace app\models\base;
 
+use app\models\AccessRouteSheltersQuery;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
@@ -111,7 +112,7 @@ class AccessRouteShelters extends \yii\db\ActiveRecord
      */
     public function getAccessRoute()
     {
-        return $this->hasOne(\app\models\AccessRoute::className(), ['id' => 'access_route_id']);
+        return $this->hasOne(\app\models\AccessRoute::class, ['id' => 'access_route_id']);
     }
         
     /**
@@ -119,7 +120,7 @@ class AccessRouteShelters extends \yii\db\ActiveRecord
      */
     public function getShelter()
     {
-        return $this->hasOne(\app\models\Shelter::className(), ['id' => 'shelter_id']);
+        return $this->hasOne(\app\models\Shelter::class, ['id' => 'shelter_id']);
     }
     
     /**
@@ -130,18 +131,18 @@ class AccessRouteShelters extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -171,11 +172,11 @@ class AccessRouteShelters extends \yii\db\ActiveRecord
 
     /**
      * @inheritdoc
-     * @return \app\models\AccessRouteSheltersQuery the active query used by this AR class.
+     * @return AccessRouteSheltersQuery the active query used by this AR class.
      */
     public static function find()
     {
-        $query = new \app\models\AccessRouteSheltersQuery(get_called_class());
-        return $query->where(['t_access_route_shelters.deleted_by' => 0]);
+        $query = new AccessRouteSheltersQuery(get_called_class());
+        return $query->where(['t_access_route_shelters.is_deleted' => 0]);
     }
 }

@@ -117,7 +117,7 @@ class Unit extends \yii\db\ActiveRecord
      */
     public function getAidDistributionDetails()
     {
-        return $this->hasMany(\app\models\AidDistributionDetails::className(), ['unit_id' => 'id']);
+        return $this->hasMany(\app\models\AidDistributionDetails::class, ['unit_id' => 'id']);
     }
         
     /**
@@ -125,7 +125,7 @@ class Unit extends \yii\db\ActiveRecord
      */
     public function getAidPlanDetails()
     {
-        return $this->hasMany(\app\models\AidPlanDetails::className(), ['unit_id' => 'id']);
+        return $this->hasMany(\app\models\AidPlanDetails::class, ['unit_id' => 'id']);
     }
     
     /**
@@ -136,18 +136,18 @@ class Unit extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -182,6 +182,6 @@ class Unit extends \yii\db\ActiveRecord
     public static function find()
     {
         $query = new \app\models\UnitQuery(get_called_class());
-        return $query->where(['t_unit.deleted_by' => 0]);
+        return $query->where(['t_unit.is_deleted' => 0]);
     }
 }

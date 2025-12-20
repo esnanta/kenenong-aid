@@ -2,6 +2,7 @@
 
 namespace app\models\base;
 
+use app\models\AccessRouteQuery;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
@@ -128,7 +129,7 @@ class AccessRoute extends \yii\db\ActiveRecord
      */
     public function getDisaster()
     {
-        return $this->hasOne(\app\models\Disaster::className(), ['id' => 'disaster_id']);
+        return $this->hasOne(\app\models\Disaster::class, ['id' => 'disaster_id']);
     }
         
     /**
@@ -136,7 +137,7 @@ class AccessRoute extends \yii\db\ActiveRecord
      */
     public function getAccessRouteStatus()
     {
-        return $this->hasOne(\app\models\AccessRouteStatus::className(), ['id' => 'access_route_status_id']);
+        return $this->hasOne(\app\models\AccessRouteStatus::class, ['id' => 'access_route_status_id']);
     }
         
     /**
@@ -144,7 +145,7 @@ class AccessRoute extends \yii\db\ActiveRecord
      */
     public function getAccessRouteShelters()
     {
-        return $this->hasMany(\app\models\AccessRouteShelters::className(), ['access_route_id' => 'id']);
+        return $this->hasMany(\app\models\AccessRouteShelters::class, ['access_route_id' => 'id']);
     }
         
     /**
@@ -152,7 +153,7 @@ class AccessRoute extends \yii\db\ActiveRecord
      */
     public function getAccessRouteVehicles()
     {
-        return $this->hasMany(\app\models\AccessRouteVehicles::className(), ['access_route_id' => 'id']);
+        return $this->hasMany(\app\models\AccessRouteVehicles::class, ['access_route_id' => 'id']);
     }
     
     /**
@@ -163,18 +164,18 @@ class AccessRoute extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -204,11 +205,11 @@ class AccessRoute extends \yii\db\ActiveRecord
 
     /**
      * @inheritdoc
-     * @return \app\models\AccessRouteQuery the active query used by this AR class.
+     * @return AccessRouteQuery the active query used by this AR class.
      */
     public static function find()
     {
-        $query = new \app\models\AccessRouteQuery(get_called_class());
-        return $query->where(['t_access_route.deleted_by' => 0]);
+        $query = new AccessRouteQuery(get_called_class());
+        return $query->where(['t_access_route.is_deleted' => 0]);
     }
 }

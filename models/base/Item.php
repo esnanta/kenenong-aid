@@ -118,7 +118,7 @@ class Item extends \yii\db\ActiveRecord
      */
     public function getAidDistributionDetails()
     {
-        return $this->hasMany(\app\models\AidDistributionDetails::className(), ['item_id' => 'id']);
+        return $this->hasMany(\app\models\AidDistributionDetails::class, ['item_id' => 'id']);
     }
         
     /**
@@ -126,7 +126,7 @@ class Item extends \yii\db\ActiveRecord
      */
     public function getAidPlanDetails()
     {
-        return $this->hasMany(\app\models\AidPlanDetails::className(), ['item_id' => 'id']);
+        return $this->hasMany(\app\models\AidPlanDetails::class, ['item_id' => 'id']);
     }
         
     /**
@@ -134,7 +134,7 @@ class Item extends \yii\db\ActiveRecord
      */
     public function getItemCategory()
     {
-        return $this->hasOne(\app\models\ItemCategory::className(), ['id' => 'item_category_id']);
+        return $this->hasOne(\app\models\ItemCategory::class, ['id' => 'item_category_id']);
     }
     
     /**
@@ -145,18 +145,18 @@ class Item extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -191,6 +191,6 @@ class Item extends \yii\db\ActiveRecord
     public static function find()
     {
         $query = new \app\models\ItemQuery(get_called_class());
-        return $query->where(['t_item.deleted_by' => 0]);
+        return $query->where(['t_item.is_deleted' => 0]);
     }
 }

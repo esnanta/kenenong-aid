@@ -24,7 +24,7 @@ use mootensai\behaviors\UUIDBehavior;
  * @property string $uuid
  *
  * @property \app\models\AccessRoute $accessRoute
- * @property \app\models\VehicleTypes $vehicleType
+ * @property \app\models\VehicleType $vehicleType
  */
 class AccessRouteVehicles extends \yii\db\ActiveRecord
 {
@@ -112,7 +112,7 @@ class AccessRouteVehicles extends \yii\db\ActiveRecord
      */
     public function getAccessRoute()
     {
-        return $this->hasOne(\app\models\AccessRoute::className(), ['id' => 'access_route_id']);
+        return $this->hasOne(\app\models\AccessRoute::class, ['id' => 'access_route_id']);
     }
         
     /**
@@ -120,7 +120,7 @@ class AccessRouteVehicles extends \yii\db\ActiveRecord
      */
     public function getVehicleType()
     {
-        return $this->hasOne(\app\models\VehicleTypes::className(), ['id' => 'vehicle_type_id']);
+        return $this->hasOne(\app\models\VehicleType::class, ['id' => 'vehicle_type_id']);
     }
     
     /**
@@ -131,18 +131,18 @@ class AccessRouteVehicles extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -177,6 +177,6 @@ class AccessRouteVehicles extends \yii\db\ActiveRecord
     public static function find()
     {
         $query = new \app\models\AccessRouteVehiclesQuery(get_called_class());
-        return $query->where(['t_access_route_vehicles.deleted_by' => 0]);
+        return $query->where(['t_access_route_vehicles.is_deleted' => 0]);
     }
 }

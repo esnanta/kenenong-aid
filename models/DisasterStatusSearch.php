@@ -13,13 +13,18 @@ use app\models\DisasterStatus;
  class DisasterStatusSearch extends DisasterStatus
 {
     /**
+     * @var string
+     */
+    public $search;
+
+    /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
             [['id', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
-            [['code', 'title', 'description', 'created_at', 'updated_at', 'is_deleted', 'deleted_at', 'uuid'], 'safe'],
+            [['code', 'title', 'description', 'created_at', 'updated_at', 'is_deleted', 'deleted_at', 'uuid', 'search'], 'safe'],
         ];
     }
 
@@ -47,13 +52,19 @@ use app\models\DisasterStatus;
             'query' => $query,
         ]);
 
-        $this->load($params);
+        $this->load($params, '');
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
+
+        $query->andFilterWhere(['or',
+            ['like', 'code', $this->search],
+            ['like', 'title', $this->search],
+            ['like', 'description', $this->search],
+        ]);
 
         $query->andFilterWhere([
             'id' => $this->id,
@@ -71,6 +82,13 @@ use app\models\DisasterStatus;
             ->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'is_deleted', $this->is_deleted])
             ->andFilterWhere(['like', 'uuid', $this->uuid]);
+
+        $sortBy = $params['sort_by'] ?? 'id';
+        if (!$this->hasAttribute($sortBy) && !in_array($sortBy, ['id', 'code', 'title', 'description'])) {
+            $sortBy = 'id';
+        }
+        $sortOrder = ($params['sort_order'] ?? 'asc') === 'asc' ? SORT_ASC : SORT_DESC;
+        $query->orderBy([$sortBy => $sortOrder]);
 
         return $dataProvider;
     }

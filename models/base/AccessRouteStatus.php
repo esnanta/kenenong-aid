@@ -2,6 +2,7 @@
 
 namespace app\models\base;
 
+use app\models\AccessRouteStatusQuery;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
@@ -115,7 +116,7 @@ class AccessRouteStatus extends \yii\db\ActiveRecord
      */
     public function getAccessRoutes()
     {
-        return $this->hasMany(\app\models\AccessRoute::className(), ['access_route_status_id' => 'id']);
+        return $this->hasMany(\app\models\AccessRoute::class, ['access_route_status_id' => 'id']);
     }
     
     /**
@@ -126,18 +127,18 @@ class AccessRouteStatus extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -167,11 +168,11 @@ class AccessRouteStatus extends \yii\db\ActiveRecord
 
     /**
      * @inheritdoc
-     * @return \app\models\AccessRouteStatusQuery the active query used by this AR class.
+     * @return AccessRouteStatusQuery the active query used by this AR class.
      */
     public static function find()
     {
-        $query = new \app\models\AccessRouteStatusQuery(get_called_class());
-        return $query->where(['t_access_route_status.deleted_by' => 0]);
+        $query = new AccessRouteStatusQuery(get_called_class());
+        return $query->where(['t_access_route_status.is_deleted' => 0]);
     }
 }

@@ -125,7 +125,7 @@ class MediaFile extends \yii\db\ActiveRecord
      */
     public function getEntityType()
     {
-        return $this->hasOne(\app\models\EntityType::className(), ['id' => 'entity_type_id']);
+        return $this->hasOne(\app\models\EntityType::class, ['id' => 'entity_type_id']);
     }
     
     /**
@@ -136,18 +136,18 @@ class MediaFile extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -182,6 +182,6 @@ class MediaFile extends \yii\db\ActiveRecord
     public static function find()
     {
         $query = new \app\models\MediaFileQuery(get_called_class());
-        return $query->where(['t_media_file.deleted_by' => 0]);
+        return $query->where(['t_media_file.is_deleted' => 0]);
     }
 }
