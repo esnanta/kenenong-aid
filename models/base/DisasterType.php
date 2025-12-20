@@ -115,7 +115,7 @@ class DisasterType extends \yii\db\ActiveRecord
      */
     public function getDisasters()
     {
-        return $this->hasMany(\app\models\Disaster::className(), ['disaster_type_id' => 'id']);
+        return $this->hasMany(\app\models\Disaster::class, ['disaster_type_id' => 'id']);
     }
     
     /**
@@ -126,18 +126,18 @@ class DisasterType extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -172,6 +172,6 @@ class DisasterType extends \yii\db\ActiveRecord
     public static function find()
     {
         $query = new \app\models\DisasterTypeQuery(get_called_class());
-        return $query->where(['t_disaster_type.deleted_by' => 0]);
+        return $query->where(['t_disaster_type.is_deleted' => 0]);
     }
 }
