@@ -12,13 +12,13 @@ use yii\filters\VerbFilter;
 /**
  * ShelterController implements the CRUD actions for Shelter model.
  */
-class ShelterController extends Controller
+class ShelterController extends BaseController
 {
     public function behaviors()
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                 ],

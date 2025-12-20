@@ -5,20 +5,20 @@ namespace app\controllers;
 use Yii;
 use app\models\AccessRouteShelters;
 use app\models\AccessRouteSheltersSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * AccessRouteSheltersController implements the CRUD actions for AccessRouteShelters model.
  */
-class AccessRouteSheltersController extends Controller
+class AccessRouteSheltersController extends BaseController
 {
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                 ],
@@ -44,9 +44,10 @@ class AccessRouteSheltersController extends Controller
     /**
      * Displays a single AccessRouteShelters model.
      * @param integer $id
-     * @return mixed
+     * @return string
+     * @throws NotFoundHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         $model = $this->findModel($id);
         return $this->render('view', [
@@ -57,7 +58,7 @@ class AccessRouteSheltersController extends Controller
     /**
      * Creates a new AccessRouteShelters model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return string|Response
      */
     public function actionCreate()
     {

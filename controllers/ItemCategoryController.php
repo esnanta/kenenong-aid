@@ -12,13 +12,13 @@ use yii\filters\VerbFilter;
 /**
  * ItemCategoryController implements the CRUD actions for ItemCategory model.
  */
-class ItemCategoryController extends Controller
+class ItemCategoryController extends BaseController
 {
     public function behaviors()
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                 ],

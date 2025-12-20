@@ -12,13 +12,13 @@ use yii\filters\VerbFilter;
 /**
  * VehicleTypeController implements the CRUD actions for VehicleType model.
  */
-class VehicleTypeController extends Controller
+class VehicleTypeController extends BaseController
 {
     public function behaviors()
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                 ],

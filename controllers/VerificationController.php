@@ -12,13 +12,13 @@ use yii\filters\VerbFilter;
 /**
  * VerificationController implements the CRUD actions for Verification model.
  */
-class VerificationController extends Controller
+class VerificationController extends BaseController
 {
     public function behaviors()
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                 ],

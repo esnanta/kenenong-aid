@@ -12,13 +12,13 @@ use yii\filters\VerbFilter;
 /**
  * AccessRouteStatusController implements the CRUD actions for AccessRouteStatus model.
  */
-class AccessRouteStatusController extends Controller
+class AccessRouteStatusController extends BaseController
 {
     public function behaviors()
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                 ],

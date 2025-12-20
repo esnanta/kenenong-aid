@@ -12,13 +12,13 @@ use yii\filters\VerbFilter;
 /**
  * EntityTypeController implements the CRUD actions for EntityType model.
  */
-class EntityTypeController extends Controller
+class EntityTypeController extends BaseController
 {
     public function behaviors()
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                 ],

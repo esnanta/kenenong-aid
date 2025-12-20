@@ -12,13 +12,13 @@ use yii\filters\VerbFilter;
 /**
  * DisasterStatusController implements the CRUD actions for DisasterStatus model.
  */
-class DisasterStatusController extends Controller
+class DisasterStatusController extends BaseController
 {
     public function behaviors()
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                 ],

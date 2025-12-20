@@ -12,13 +12,13 @@ use yii\filters\VerbFilter;
 /**
  * MediaFileController implements the CRUD actions for MediaFile model.
  */
-class MediaFileController extends Controller
+class MediaFileController extends BaseController
 {
     public function behaviors()
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                 ],

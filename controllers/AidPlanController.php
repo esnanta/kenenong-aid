@@ -12,13 +12,13 @@ use yii\filters\VerbFilter;
 /**
  * AidPlanController implements the CRUD actions for AidPlan model.
  */
-class AidPlanController extends Controller
+class AidPlanController extends BaseController
 {
     public function behaviors()
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                 ],
