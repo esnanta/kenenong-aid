@@ -20,7 +20,7 @@ class VerificationVote extends BaseVerificationVote
             [['verification_id', 'verification_action_id', 'voted_by', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
             [['notes'], 'string'],
             [['voted_at', 'created_at', 'updated_at', 'deleted_at'], 'safe'],
-            [['is_deleted'], 'string', 'max' => 1],
+            [['is_deleted'], 'integer'],
             [['uuid'], 'string', 'max' => 36],
             [['verification_id', 'voted_by'], 'unique', 'targetAttribute' => ['verification_id', 'voted_by'], 'message' => 'The combination of Verification ID and Voted By has already been taken.'],
             [['verlock'], 'default', 'value' => '0'],

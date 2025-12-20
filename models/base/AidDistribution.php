@@ -73,7 +73,7 @@ class AidDistribution extends \yii\db\ActiveRecord
             [['aid_plan_id', 'shelter_id', 'distributed_by', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
             [['distribution_date', 'created_at', 'updated_at', 'deleted_at'], 'safe'],
             [['notes'], 'string'],
-            [['is_deleted'], 'string', 'max' => 1],
+            [['is_deleted'], 'integer'],
             [['uuid'], 'string', 'max' => 36],
             [['verlock'], 'default', 'value' => '0'],
             [['verlock'], 'mootensai\components\OptimisticLockValidator']

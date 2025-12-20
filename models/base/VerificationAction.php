@@ -68,7 +68,7 @@ class VerificationAction extends \yii\db\ActiveRecord
             [['created_at', 'updated_at', 'deleted_at'], 'safe'],
             [['code'], 'string', 'max' => 50],
             [['title'], 'string', 'max' => 255],
-            [['is_deleted'], 'string', 'max' => 1],
+            [['is_deleted'], 'integer'],
             [['uuid'], 'string', 'max' => 36],
             [['code'], 'unique'],
             [['verlock'], 'default', 'value' => '0'],

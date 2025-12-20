@@ -22,7 +22,7 @@ class AccessRoute extends BaseAccessRoute
             [['route_length_km'], 'number'],
             [['geometry_updated_at', 'created_at', 'updated_at', 'deleted_at'], 'safe'],
             [['route_name'], 'string', 'max' => 255],
-            [['is_deleted'], 'string', 'max' => 1],
+            [['is_deleted'], 'integer'],
             [['uuid'], 'string', 'max' => 36],
             [['verlock'], 'default', 'value' => '0'],
             [['verlock'], 'mootensai\components\OptimisticLockValidator']

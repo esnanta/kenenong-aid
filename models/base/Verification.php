@@ -66,7 +66,7 @@ class Verification extends \yii\db\ActiveRecord
         return [
             [['entity_type_id', 'entity_id', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
             [['created_at', 'updated_at', 'last_activity_at', 'deleted_at'], 'safe'],
-            [['is_deleted'], 'string', 'max' => 1],
+            [['is_deleted'], 'integer'],
             [['uuid'], 'string', 'max' => 36],
             [['entity_type_id', 'entity_id'], 'unique', 'targetAttribute' => ['entity_type_id', 'entity_id'], 'message' => 'The combination of Entity Type ID and Entity ID has already been taken.'],
             [['verlock'], 'default', 'value' => '0'],
