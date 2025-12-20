@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.36, for Linux (x86_64)
 --
--- Host: localhost    Database: kenenong_aid
+-- Host: localhost    Database: kenenong-aid
 -- ------------------------------------------------------
 -- Server version	8.0.44-0ubuntu0.24.04.1
 
@@ -35,7 +35,7 @@ CREATE TABLE `t_access_route` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` tinyint(1) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -72,7 +72,7 @@ CREATE TABLE `t_access_route_shelters` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` tinyint(1) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -110,7 +110,7 @@ CREATE TABLE `t_access_route_status` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` tinyint(1) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -144,7 +144,7 @@ CREATE TABLE `t_access_route_vehicles` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` tinyint(1) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` varchar(255) DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -184,7 +184,7 @@ CREATE TABLE `t_aid_distribution` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` tinyint(1) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -259,7 +259,7 @@ CREATE TABLE `t_aid_plan` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` int DEFAULT NULL,
+  `is_deleted` int DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -321,13 +321,13 @@ DROP TABLE IF EXISTS `t_auth_assignment`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `t_auth_assignment` (
-  `item_name` varchar(64) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `user_id` varchar(64) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `item_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `user_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `created_at` int DEFAULT NULL,
   PRIMARY KEY (`item_name`,`user_id`),
   KEY `t_idx-auth_assignment-user_id` (`user_id`),
   CONSTRAINT `t_auth_assignment_ibfk_1` FOREIGN KEY (`item_name`) REFERENCES `t_auth_item` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -336,7 +336,7 @@ CREATE TABLE `t_auth_assignment` (
 
 LOCK TABLES `t_auth_assignment` WRITE;
 /*!40000 ALTER TABLE `t_auth_assignment` DISABLE KEYS */;
-INSERT INTO `t_auth_assignment` VALUES ('admin','1',1765965246),('admin','2',1765883710);
+INSERT INTO `t_auth_assignment` VALUES ('admin','1',1766213419);
 /*!40000 ALTER TABLE `t_auth_assignment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -348,10 +348,10 @@ DROP TABLE IF EXISTS `t_auth_item`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `t_auth_item` (
-  `name` varchar(64) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `type` smallint NOT NULL,
-  `description` text COLLATE utf8mb3_unicode_ci,
-  `rule_name` varchar(64) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `rule_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `data` blob,
   `created_at` int DEFAULT NULL,
   `updated_at` int DEFAULT NULL,
@@ -359,7 +359,7 @@ CREATE TABLE `t_auth_item` (
   KEY `rule_name` (`rule_name`),
   KEY `t_idx-auth_item-type` (`type`),
   CONSTRAINT `t_auth_item_ibfk_1` FOREIGN KEY (`rule_name`) REFERENCES `t_auth_rule` (`name`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -368,7 +368,7 @@ CREATE TABLE `t_auth_item` (
 
 LOCK TABLES `t_auth_item` WRITE;
 /*!40000 ALTER TABLE `t_auth_item` DISABLE KEYS */;
-INSERT INTO `t_auth_item` VALUES ('admin',1,'Administrator',NULL,NULL,1765883710,1765883710);
+INSERT INTO `t_auth_item` VALUES ('accessRoute.create',2,'Create Access Route',NULL,NULL,1766213419,1766213419),('accessRoute.delete',2,'Delete Access Route',NULL,NULL,1766213419,1766213419),('accessRoute.index',2,'Index Access Route',NULL,NULL,1766213419,1766213419),('accessRoute.report',2,'Report Access Route',NULL,NULL,1766213419,1766213419),('accessRoute.update',2,'Update Access Route',NULL,NULL,1766213419,1766213419),('accessRoute.view',2,'View Access Route',NULL,NULL,1766213419,1766213419),('admin',1,'Administrator',NULL,NULL,1766213419,1766213419),('coordinator',1,'Coordinator',NULL,NULL,1766213419,1766213419),('disaster.create',2,'Create Disaster',NULL,NULL,1766213419,1766213419),('disaster.delete',2,'Delete Disaster',NULL,NULL,1766213419,1766213419),('disaster.index',2,'Index Disaster',NULL,NULL,1766213419,1766213419),('disaster.report',2,'Report Disaster',NULL,NULL,1766213419,1766213419),('disaster.update',2,'Update Disaster',NULL,NULL,1766213419,1766213419),('disaster.view',2,'View Disaster',NULL,NULL,1766213419,1766213419),('disasterStatus.create',2,'Create Status Disaster',NULL,NULL,1766213419,1766213419),('disasterStatus.delete',2,'Delete Status Disaster',NULL,NULL,1766213419,1766213419),('disasterStatus.index',2,'Index Status Disaster',NULL,NULL,1766213419,1766213419),('disasterStatus.report',2,'Report Status Disaster',NULL,NULL,1766213419,1766213419),('disasterStatus.update',2,'Update Status Disaster',NULL,NULL,1766213419,1766213419),('disasterStatus.view',2,'View Status Disaster',NULL,NULL,1766213419,1766213419),('disasterType.create',2,'Create Type Disaster',NULL,NULL,1766213419,1766213419),('disasterType.delete',2,'Delete Type Disaster',NULL,NULL,1766213419,1766213419),('disasterType.index',2,'Index Type Disaster',NULL,NULL,1766213419,1766213419),('disasterType.report',2,'Report Type Disaster',NULL,NULL,1766213419,1766213419),('disasterType.update',2,'Update Type Disaster',NULL,NULL,1766213419,1766213419),('disasterType.view',2,'View Type Disaster',NULL,NULL,1766213419,1766213419),('guest',1,'Guest',NULL,NULL,1766213419,1766213419),('master.create',2,'Create Master',NULL,NULL,1766213419,1766213419),('master.delete',2,'Delete Master',NULL,NULL,1766213419,1766213419),('master.index',2,'Index Master',NULL,NULL,1766213419,1766213419),('master.report',2,'Report Master',NULL,NULL,1766213419,1766213419),('master.update',2,'Update Master',NULL,NULL,1766213419,1766213419),('master.view',2,'View Master',NULL,NULL,1766213419,1766213419),('regular',1,'Regular User',NULL,NULL,1766213419,1766213419),('transaction.create',2,'Create Transaction',NULL,NULL,1766213419,1766213419),('transaction.delete',2,'Delete Transaction',NULL,NULL,1766213419,1766213419),('transaction.index',2,'Index Transaction',NULL,NULL,1766213419,1766213419),('transaction.report',2,'Report Transaction',NULL,NULL,1766213419,1766213419),('transaction.update',2,'Update Transaction',NULL,NULL,1766213419,1766213419),('transaction.view',2,'View Transaction',NULL,NULL,1766213419,1766213419);
 /*!40000 ALTER TABLE `t_auth_item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -380,13 +380,13 @@ DROP TABLE IF EXISTS `t_auth_item_child`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `t_auth_item_child` (
-  `parent` varchar(64) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `child` varchar(64) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `parent` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `child` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   PRIMARY KEY (`parent`,`child`),
   KEY `child` (`child`),
   CONSTRAINT `t_auth_item_child_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `t_auth_item` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `t_auth_item_child_ibfk_2` FOREIGN KEY (`child`) REFERENCES `t_auth_item` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -395,6 +395,7 @@ CREATE TABLE `t_auth_item_child` (
 
 LOCK TABLES `t_auth_item_child` WRITE;
 /*!40000 ALTER TABLE `t_auth_item_child` DISABLE KEYS */;
+INSERT INTO `t_auth_item_child` VALUES ('master.create','accessRoute.create'),('master.delete','accessRoute.delete'),('master.index','accessRoute.index'),('master.report','accessRoute.report'),('master.update','accessRoute.update'),('master.view','accessRoute.view'),('admin','coordinator'),('master.create','disaster.create'),('master.delete','disaster.delete'),('master.index','disaster.index'),('master.report','disaster.report'),('master.update','disaster.update'),('master.view','disaster.view'),('master.create','disasterStatus.create'),('master.delete','disasterStatus.delete'),('master.index','disasterStatus.index'),('master.report','disasterStatus.report'),('master.update','disasterStatus.update'),('master.view','disasterStatus.view'),('master.create','disasterType.create'),('master.delete','disasterType.delete'),('master.index','disasterType.index'),('master.report','disasterType.report'),('master.update','disasterType.update'),('master.view','disasterType.view'),('admin','master.create'),('admin','master.delete'),('admin','master.index'),('admin','master.report'),('admin','master.update'),('admin','master.view'),('coordinator','regular'),('admin','transaction.create'),('regular','transaction.create'),('admin','transaction.delete'),('admin','transaction.index'),('regular','transaction.index'),('admin','transaction.report'),('admin','transaction.update'),('regular','transaction.update'),('admin','transaction.view'),('regular','transaction.view');
 /*!40000 ALTER TABLE `t_auth_item_child` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -406,12 +407,12 @@ DROP TABLE IF EXISTS `t_auth_rule`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `t_auth_rule` (
-  `name` varchar(64) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `data` blob,
   `created_at` int DEFAULT NULL,
   `updated_at` int DEFAULT NULL,
   PRIMARY KEY (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -442,7 +443,7 @@ CREATE TABLE `t_disaster` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` tinyint(1) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -480,7 +481,7 @@ CREATE TABLE `t_disaster_status` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` tinyint(1) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -515,7 +516,7 @@ CREATE TABLE `t_disaster_type` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` tinyint(1) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -550,7 +551,7 @@ CREATE TABLE `t_entity_type` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` tinyint(1) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -586,7 +587,7 @@ CREATE TABLE `t_item` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` int DEFAULT NULL,
+  `is_deleted` int DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -622,7 +623,7 @@ CREATE TABLE `t_item_category` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` tinyint(1) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -662,7 +663,7 @@ CREATE TABLE `t_media_file` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` tinyint(1) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -739,17 +740,17 @@ DROP TABLE IF EXISTS `t_profile`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `t_profile` (
   `user_id` int NOT NULL,
-  `name` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `public_email` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `gravatar_email` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `gravatar_id` varchar(32) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `location` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `website` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `timezone` varchar(40) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `bio` text COLLATE utf8mb3_unicode_ci,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `public_email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `gravatar_email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `gravatar_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `location` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `website` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `timezone` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `bio` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   PRIMARY KEY (`user_id`),
   CONSTRAINT `fk_profile_user` FOREIGN KEY (`user_id`) REFERENCES `t_user` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -783,7 +784,7 @@ CREATE TABLE `t_shelter` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` int DEFAULT NULL,
+  `is_deleted` int DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -814,19 +815,19 @@ DROP TABLE IF EXISTS `t_social_account`;
 CREATE TABLE `t_social_account` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,
-  `provider` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `client_id` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `code` varchar(32) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `email` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `username` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `data` text COLLATE utf8mb3_unicode_ci,
+  `provider` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `client_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `created_at` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_social_account_provider_client_id` (`provider`,`client_id`),
   UNIQUE KEY `idx_social_account_code` (`code`),
   KEY `fk_social_account_user` (`user_id`),
   CONSTRAINT `fk_social_account_user` FOREIGN KEY (`user_id`) REFERENCES `t_user` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -847,12 +848,12 @@ DROP TABLE IF EXISTS `t_token`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `t_token` (
   `user_id` int DEFAULT NULL,
-  `code` varchar(32) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `type` smallint NOT NULL,
   `created_at` int NOT NULL,
   UNIQUE KEY `idx_token_user_id_code_type` (`user_id`,`code`,`type`),
   CONSTRAINT `fk_token_user` FOREIGN KEY (`user_id`) REFERENCES `t_user` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -880,7 +881,7 @@ CREATE TABLE `t_unit` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` tinyint(1) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -908,33 +909,33 @@ DROP TABLE IF EXISTS `t_user`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `t_user` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `password_hash` varchar(60) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `auth_key` varchar(32) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `unconfirmed_email` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `registration_ip` varchar(45) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `password_hash` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `auth_key` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `unconfirmed_email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `registration_ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `flags` int NOT NULL DEFAULT '0',
   `confirmed_at` int DEFAULT NULL,
   `blocked_at` int DEFAULT NULL,
   `updated_at` int NOT NULL,
   `created_at` int NOT NULL,
   `last_login_at` int DEFAULT NULL,
-  `last_login_ip` varchar(45) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `auth_tf_key` varchar(16) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `last_login_ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `auth_tf_key` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `auth_tf_enabled` tinyint(1) DEFAULT '0',
-  `auth_tf_type` varchar(20) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `auth_tf_mobile_phone` varchar(20) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `auth_tf_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `auth_tf_mobile_phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `password_changed_at` int DEFAULT NULL,
   `gdpr_consent` tinyint(1) DEFAULT '0',
   `gdpr_consent_date` int DEFAULT NULL,
   `gdpr_deleted` tinyint(1) DEFAULT '0',
-  `uuid` varchar(36) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `uuid` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `verlock` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_user_username` (`username`),
   UNIQUE KEY `idx_user_email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -963,7 +964,7 @@ CREATE TABLE `t_vehicle_type` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` tinyint(1) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -998,7 +999,7 @@ CREATE TABLE `t_verification` (
   `last_activity_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` tinyint(1) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -1037,7 +1038,7 @@ CREATE TABLE `t_verification_action` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` tinyint(1) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -1074,7 +1075,7 @@ CREATE TABLE `t_verification_vote` (
   `updated_at` datetime DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `updated_by` int DEFAULT NULL,
-  `is_deleted` tinyint(1) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
   `deleted_at` datetime DEFAULT NULL,
   `deleted_by` int DEFAULT NULL,
   `verlock` int DEFAULT NULL,
@@ -1108,4 +1109,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-17 22:05:07
+-- Dump completed on 2025-12-20 13:51:14
