@@ -65,20 +65,21 @@ export default function DisasterView({ disaster }) {
         <div className="space-y-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-              <div className="flex items-center gap-3">
+              <CardTitle>{disaster.disaster_type_label}</CardTitle>
+              <div className="flex items-center gap-2">
                 <Link href="/disasters">
-                  <Button variant="ghost" size="icon">
-                    <ArrowLeft className="h-4 w-4" />
+                  <Button variant="outline" size="sm">
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Back
                   </Button>
                 </Link>
-                <CardTitle>{disaster.disaster_type_label}</CardTitle>
+                <Link href={`/disasters/${disaster.id}/edit`}>
+                  <Button size="sm">
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit
+                  </Button>
+                </Link>
               </div>
-              <Link href={`/disasters/${disaster.id}/edit`}>
-                <Button>
-                  <Edit className="mr-2 h-4 w-4" />
-                  Edit
-                </Button>
-              </Link>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">

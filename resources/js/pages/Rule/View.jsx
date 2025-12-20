@@ -1,9 +1,9 @@
 import { Head, Link, usePage } from '@inertiajs/react'
-import { ArrowLeft, FileText } from 'lucide-react'
+import { ArrowLeft, Edit, FileText } from 'lucide-react'
 import DashboardLayout from '@/components/layouts/DashboardLayout.jsx'
 import { Badge } from '@/components/ui/badge.tsx'
 import { Button } from '@/components/ui/button.tsx'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
 import { Separator } from '@/components/ui/separator.tsx'
 
 export default function RuleView({ rule }) {
@@ -14,28 +14,26 @@ export default function RuleView({ rule }) {
       <Head title={`Rule: ${rule.name}`} />
 
       <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Link href="/rule">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          </Link>
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
-              <FileText className="h-8 w-8 text-purple-500" />
-              {rule.name}
-            </h1>
-            <p className="text-muted-foreground">Authorization rule details</p>
-          </div>
-          <Link href={`/rule/${rule.name}/update`}>
-            <Button>Edit Rule</Button>
-          </Link>
-        </div>
-
         <Card>
-          <CardHeader>
-            <CardTitle>Rule Information</CardTitle>
-            <CardDescription>Details about this authorization rule</CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-6 w-6 text-purple-500" />
+              {rule.name}
+            </CardTitle>
+            <div className="flex items-center gap-2">
+              <Link href="/rule">
+                <Button variant="outline" size="sm">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back
+                </Button>
+              </Link>
+              <Link href={`/rule/${rule.name}/update`}>
+                <Button size="sm">
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit
+                </Button>
+              </Link>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>

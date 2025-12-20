@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import DashboardLayout from '@/components/layouts/DashboardLayout.jsx'
 import { Button } from '@/components/ui/button.tsx'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Label } from '@/components/ui/label.tsx'
 
@@ -25,8 +25,6 @@ export default function UserForm({ user, errors: serverErrors }) {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    watch,
-    setValue,
   } = useHookForm({
     resolver: zodResolver(userSchema),
     defaultValues: {
@@ -75,13 +73,6 @@ export default function UserForm({ user, errors: serverErrors }) {
         // Check if we navigated to the users list page (success)
         // Inertia::location() causes a full page reload, so we check the component
         const isOnUsersList = page?.component === 'Users/Index'
-
-        // Check if we're still on the form page (validation failed)
-        const isStillOnForm = page?.component === 'Users/Form'
-
-        // Check for errors in props
-        const hasErrors = (page?.props?.errors && Object.keys(page.props.errors).length > 0)
-          || (page?.props?.serverErrors && Object.keys(page.props.serverErrors).length > 0)
 
         // Only show success toast if we navigated to users list (success)
         if (isOnUsersList) {
@@ -147,28 +138,15 @@ export default function UserForm({ user, errors: serverErrors }) {
       <Head title={isEdit ? 'Edit User' : 'Create User'} />
       <DashboardLayout user={props.user}>
         <div className="space-y-6">
-          <div className="flex items-center gap-4">
-            <Link href="/user">
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">
-                {isEdit ? 'Edit User' : 'Create User'}
-              </h1>
-              <p className="text-muted-foreground">
-                {isEdit ? 'Update user information' : 'Add a new user to the system'}
-              </p>
-            </div>
-          </div>
-
           <Card>
-            <CardHeader>
-              <CardTitle>User Information</CardTitle>
-              <CardDescription>
-                Enter the user's details below
-              </CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+              <CardTitle>{isEdit ? 'Edit User' : 'Create User'}</CardTitle>
+              <Link href="/user">
+                <Button variant="outline" size="sm">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back
+                </Button>
+              </Link>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

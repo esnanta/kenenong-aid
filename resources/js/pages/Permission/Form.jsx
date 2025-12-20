@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import DashboardLayout from '@/components/layouts/DashboardLayout.jsx'
 import { Button } from '@/components/ui/button.tsx'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Label } from '@/components/ui/label.tsx'
 import {
@@ -50,28 +50,15 @@ export default function PermissionForm({ permission, errors = {}, rules = [] }) 
       <Head title={isEdit ? 'Edit Permission' : 'Create Permission'} />
 
       <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Link href="/permission">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          </Link>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              {isEdit ? 'Edit Permission' : 'Create Permission'}
-            </h1>
-            <p className="text-muted-foreground">
-              {isEdit ? 'Update permission information' : 'Add a new permission to the system'}
-            </p>
-          </div>
-        </div>
-
         <Card>
-          <CardHeader>
-            <CardTitle>Permission Information</CardTitle>
-            <CardDescription>
-              Enter the details for the permission
-            </CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle>{isEdit ? 'Edit Permission' : 'Create Permission'}</CardTitle>
+            <Link href="/permission">
+              <Button variant="outline" size="sm">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
+              </Button>
+            </Link>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">

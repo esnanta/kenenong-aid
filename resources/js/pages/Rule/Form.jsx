@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import DashboardLayout from '@/components/layouts/DashboardLayout.jsx'
 import { Button } from '@/components/ui/button.tsx'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Label } from '@/components/ui/label.tsx'
 
@@ -42,18 +42,14 @@ export default function RuleForm({ rule, errors = {} }) {
 
       <div className="space-y-6">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0">
-            <div className="space-y-1.5">
-              <CardTitle>
-                {isEdit ? 'Edit Rule' : 'Create Rule'}
-              </CardTitle>
-              <CardDescription>
-                {isEdit ? 'Update rule information' : 'Add a new authorization rule'}
-              </CardDescription>
-            </div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle>
+              {isEdit ? 'Edit Rule' : 'Create Rule'}
+            </CardTitle>
             <Link href="/rule">
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="h-4 w-4" />
+              <Button variant="outline" size="sm">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
               </Button>
             </Link>
           </CardHeader>
