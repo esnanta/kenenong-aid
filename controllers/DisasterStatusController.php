@@ -5,16 +5,20 @@ namespace app\controllers;
 use Yii;
 use app\models\DisasterStatus;
 use app\models\DisasterStatusSearch;
+use yii\data\ArrayDataProvider;
+use yii\db\Exception;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * DisasterStatusController implements the CRUD actions for DisasterStatus model.
  */
 class DisasterStatusController extends BaseController
 {
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'verbs' => [
@@ -28,10 +32,12 @@ class DisasterStatusController extends BaseController
 
     /**
      * Lists all DisasterStatus models.
-     * @return mixed
+     * @return string
+     * @throws ForbiddenHttpException
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
+        $this->checkAccess('disasterStatus.index');
         $searchModel = new DisasterStatusSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -44,12 +50,16 @@ class DisasterStatusController extends BaseController
     /**
      * Displays a single DisasterStatus model.
      * @param integer $id
-     * @return mixed
+     * @return string
+     * @throws NotFoundHttpException
+     * @throws ForbiddenHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $providerDisaster = new \yii\data\ArrayDataProvider([
+        $this->checkAccess('disasterStatus.view', $model);
+
+        $providerDisaster = new ArrayDataProvider([
             'allModels' => $model->disasters,
         ]);
         return $this->render('view', [
@@ -61,10 +71,13 @@ class DisasterStatusController extends BaseController
     /**
      * Creates a new DisasterStatus model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return string|Response
+     * @throws ForbiddenHttpException
+     * @throws Exception
      */
     public function actionCreate()
     {
+        $this->checkAccess('disasterStatus.create');
         $model = new DisasterStatus();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -80,11 +93,15 @@ class DisasterStatusController extends BaseController
      * Updates an existing DisasterStatus model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
-     * @return mixed
+     * @return Response|string
+     * @throws NotFoundHttpException
+     * @throws Exception
+     * @throws ForbiddenHttpException
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('disasterStatus.update', $model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -99,12 +116,17 @@ class DisasterStatusController extends BaseController
      * Deletes an existing DisasterStatus model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
-     * @return mixed
+     * @return Response
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
+     * @throws Exception
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
+        $model = $this->findModel($id);
+        $this->checkAccess('disasterStatus.delete', $model);
 
+        $model->deleteWithRelated();
         return $this->redirect(['index']);
     }
 

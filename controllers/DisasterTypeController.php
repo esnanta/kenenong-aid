@@ -5,16 +5,19 @@ namespace app\controllers;
 use Yii;
 use app\models\DisasterType;
 use app\models\DisasterTypeSearch;
-use yii\web\Controller;
+use yii\data\ArrayDataProvider;
+use yii\db\Exception;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * DisasterTypeController implements the CRUD actions for DisasterType model.
  */
 class DisasterTypeController extends BaseController
 {
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'verbs' => [
@@ -28,10 +31,12 @@ class DisasterTypeController extends BaseController
 
     /**
      * Lists all DisasterType models.
-     * @return mixed
+     * @return string
+     * @throws ForbiddenHttpException
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
+        $this->checkAccess('disasterType.index');
         $searchModel = new DisasterTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -44,12 +49,15 @@ class DisasterTypeController extends BaseController
     /**
      * Displays a single DisasterType model.
      * @param integer $id
-     * @return mixed
+     * @return string
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $providerDisaster = new \yii\data\ArrayDataProvider([
+        $this->checkAccess('disasterType.view', $model);
+        $providerDisaster = new ArrayDataProvider([
             'allModels' => $model->disasters,
         ]);
         return $this->render('view', [
@@ -61,10 +69,13 @@ class DisasterTypeController extends BaseController
     /**
      * Creates a new DisasterType model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return string|Response
+     * @throws ForbiddenHttpException
+     * @throws Exception
      */
     public function actionCreate()
     {
+        $this->checkAccess('disasterType.create');
         $model = new DisasterType();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -80,11 +91,15 @@ class DisasterTypeController extends BaseController
      * Updates an existing DisasterType model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
-     * @return mixed
+     * @return Response|string
+     * @throws NotFoundHttpException
+     * @throws ForbiddenHttpException
+     * @throws Exception
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('disasterType.update', $model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -99,12 +114,17 @@ class DisasterTypeController extends BaseController
      * Deletes an existing DisasterType model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
-     * @return mixed
+     * @return Response
+     * @throws Exception
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
+        $model = $this->findModel($id);
+        $this->checkAccess('disasterType.delete', $model);
 
+        $model->deleteWithRelated();
         return $this->redirect(['index']);
     }
 
@@ -116,7 +136,7 @@ class DisasterTypeController extends BaseController
      * @return DisasterType the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): DisasterType
     {
         if (($model = DisasterType::findOne($id)) !== null) {
             return $model;
