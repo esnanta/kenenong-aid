@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select.tsx'
 import { Textarea } from '@/components/ui/textarea.tsx'
+import { addCsrfToData } from '@/lib/csrf' // Import addCsrfToData
 
 export default function PermissionForm({ permission, errors = {}, rules = [] }) {
   const { props } = usePage()
@@ -28,12 +29,14 @@ export default function PermissionForm({ permission, errors = {}, rules = [] }) 
   const handleSubmit = (e) => {
     e.preventDefault()
 
+    const formDataWithCsrf = addCsrfToData(formData)
+
     const url = isEdit ? `/permission/${permission.old_name}/update` : '/permission/create'
     const method = isEdit ? 'put' : 'post'
 
     router[method](
       url,
-      formData,
+      formDataWithCsrf,
       {
         onSuccess: () => {
           toast.success(isEdit ? 'Permission updated successfully' : 'Permission created successfully')

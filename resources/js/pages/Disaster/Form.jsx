@@ -4,7 +4,7 @@ import { ArrowLeft } from 'lucide-react'
 import { useForm as useHookForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import {DashboardLayout} from '@/components/layouts/DashboardLayout'
+import { DashboardLayout } from '@/components/layouts/DashboardLayout'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { addCsrfToData } from '@/lib/csrf' // Import addCsrfToData
 
 const disasterSchema = z.object({
   disaster_type_id: z.string().min(1, 'Disaster type is required'),
@@ -48,31 +49,21 @@ export default function DisasterForm({ disaster, errors: serverErrors, disasterT
   })
 
   const onSubmit = (data) => {
-    const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-    const metaParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute('content')
-
-    const csrfToken = metaToken || props.csrfToken
-    const csrfParam = metaParam || props.csrfParam
-
-    if (!csrfToken || !csrfParam) {
-      toast.error('CSRF token missing. Please refresh the page.')
-      return
-    }
-
     // Convert string values to numbers for disaster_type_id and disaster_status_id
-    const formData = {
+    const rawFormData = {
       disaster_type_id: Number.parseInt(data.disaster_type_id),
       disaster_status_id: Number.parseInt(data.disaster_status_id),
       start_date: data.start_date,
       end_date: data.end_date || null,
       description: data.description,
-      [csrfParam]: csrfToken,
     }
+
+    const formDataWithCsrf = addCsrfToData(rawFormData)
 
     const url = isEdit ? `/disasters/${disaster.id}/edit` : '/disasters/create'
     const method = isEdit ? 'put' : 'post'
 
-    router[method](url, formData, {
+    router[method](url, formDataWithCsrf, {
       preserveScroll: true,
       onSuccess: (page) => {
         const isOnDisastersList = page?.component === 'Disaster/Index'

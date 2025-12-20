@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button.tsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Label } from '@/components/ui/label.tsx'
+import { addCsrfToData } from '@/lib/csrf' // Import addCsrfToData
 
 export default function Register({ form, errors, enableEmailConfirmation }) {
   const [data, setData] = useState({
@@ -18,7 +19,9 @@ export default function Register({ form, errors, enableEmailConfirmation }) {
     e.preventDefault()
     setProcessing(true)
 
-    router.post('/register', data, {
+    const formDataWithCsrf = addCsrfToData(data)
+
+    router.post('/register', formDataWithCsrf, {
       onFinish: () => setProcessing(false),
     })
   }

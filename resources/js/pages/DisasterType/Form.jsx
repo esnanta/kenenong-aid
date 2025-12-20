@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { addCsrfToData } from '@/lib/csrf' // Import addCsrfToData
 
 const disasterTypeSchema = z.object({
   code: z.string().min(1, 'Code is required').max(50, 'Code must be at most 50 characters'),
@@ -35,26 +36,12 @@ export default function DisasterTypeForm({ type, errors: serverErrors }) {
   })
 
   const onSubmit = (data) => {
-    const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-    const metaParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute('content')
-
-    const csrfToken = metaToken || props.csrfToken
-    const csrfParam = metaParam || props.csrfParam
-
-    if (!csrfToken || !csrfParam) {
-      toast.error('CSRF token missing. Please refresh the page.')
-      return
-    }
-
-    const formData = {
-      ...data,
-      [csrfParam]: csrfToken,
-    }
+    const formDataWithCsrf = addCsrfToData(data)
 
     const url = isEdit ? `/disaster-types/${type.id}/edit` : '/disaster-types/create'
     const method = isEdit ? 'put' : 'post'
 
-    router[method](url, formData, {
+    router[method](url, formDataWithCsrf, {
       preserveScroll: true,
       onSuccess: (page) => {
         const isOnList = page?.component === 'DisasterType/Index'

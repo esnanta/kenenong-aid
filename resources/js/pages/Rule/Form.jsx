@@ -7,6 +7,14 @@ import { Button } from '@/components/ui/button.tsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Label } from '@/components/ui/label.tsx'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select.tsx'
+import { addCsrfToData } from '@/lib/csrf' // Import addCsrfToData
 
 export default function RuleForm({ rule, errors = {} }) {
   const { props } = usePage()
@@ -19,12 +27,14 @@ export default function RuleForm({ rule, errors = {} }) {
   const handleSubmit = (e) => {
     e.preventDefault()
 
+    const formDataWithCsrf = addCsrfToData(formData)
+
     const url = isEdit ? `/rule/${rule.old_name}/update` : '/rule/create'
     const method = isEdit ? 'put' : 'post'
 
     router[method](
       url,
-      formData,
+      formDataWithCsrf,
       {
         onSuccess: () => {
           toast.success(isEdit ? 'Rule updated successfully' : 'Rule created successfully')

@@ -2,7 +2,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react'
 import { ArrowLeft, Lock, Shield } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import {DashboardLayout} from '@/components/layouts/DashboardLayout.jsx'
+import { DashboardLayout } from '@/components/layouts/DashboardLayout.jsx'
 import { Badge } from '@/components/ui/badge.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select.tsx'
 import { Textarea } from '@/components/ui/textarea.tsx'
+import { addCsrfToData } from '@/lib/csrf' // Import addCsrfToData
 
 const EMPTY_ERRORS = {}
 const EMPTY_RULES = []
@@ -48,12 +49,14 @@ export default function RoleForm({ role, errors = EMPTY_ERRORS, rules = EMPTY_RU
   const handleSubmit = (e) => {
     e.preventDefault()
 
+    const formDataWithCsrf = addCsrfToData(formData)
+
     const url = isEdit ? `/role/${role.old_name}/update` : '/role/create'
     const method = isEdit ? 'put' : 'post'
 
     router[method](
       url,
-      formData,
+      formDataWithCsrf,
       {
         onSuccess: () => {
           toast.success(isEdit ? 'Role updated successfully' : 'Role created successfully')

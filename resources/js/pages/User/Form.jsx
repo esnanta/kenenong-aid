@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button.tsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Label } from '@/components/ui/label.tsx'
+import { addCsrfToData } from '@/lib/csrf' // Import addCsrfToData
 
 // Validation schema - password validation is handled in onSubmit
 const userSchema = z.object({
@@ -35,18 +36,6 @@ export default function UserForm({ user, errors: serverErrors }) {
   })
 
   const onSubmit = (data) => {
-    // Get CSRF token from meta tag or props
-    const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-    const metaParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute('content')
-
-    const csrfToken = metaToken || props.csrfToken
-    const csrfParam = metaParam || props.csrfParam
-
-    if (!csrfToken || !csrfParam) {
-      toast.error('CSRF token missing. Please refresh the page.')
-      return
-    }
-
     // Validate password for create
     if (!isEdit && !data.password) {
       toast.error('Password is required')
@@ -54,15 +43,14 @@ export default function UserForm({ user, errors: serverErrors }) {
     }
 
     // Create form data with CSRF token
-    const formData = {
-      ...data,
-      [csrfParam]: csrfToken,
-    }
+    let formData = { ...data };
 
     // Remove password if it's empty (for edit)
     if (isEdit && !data.password) {
       delete formData.password
     }
+
+    formData = addCsrfToData(formData);
 
     const url = isEdit ? `/user/${user.id}/edit` : '/user/create'
     const method = isEdit ? 'put' : 'post'

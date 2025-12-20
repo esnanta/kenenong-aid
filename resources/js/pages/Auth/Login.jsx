@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Checkbox } from '@/components/ui/checkbox.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Label } from '@/components/ui/label.tsx'
+import { addCsrfToData } from '@/lib/csrf' // Import addCsrfToData
 
 export default function Login({ form, errors }) {
   const [data, setData] = useState({
@@ -18,7 +19,9 @@ export default function Login({ form, errors }) {
     e.preventDefault()
     setProcessing(true)
 
-    router.post('/login', data, {
+    const formDataWithCsrf = addCsrfToData(data)
+
+    router.post('/login', formDataWithCsrf, {
       onFinish: () => setProcessing(false),
     })
   }
