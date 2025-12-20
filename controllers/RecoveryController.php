@@ -9,6 +9,8 @@ use Crenspire\Yii2Inertia\Inertia;
 use Yii;
 use yii\web\Response;
 use yii\web\NotFoundHttpException;
+use Da\User\Model\Token;
+use yii\base\InvalidConfigException;
 
 /**
  * RecoveryController handles password recovery functionality
@@ -19,7 +21,7 @@ class RecoveryController extends BaseRecoveryController
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         $behaviors = parent::behaviors();
 
@@ -40,9 +42,10 @@ class RecoveryController extends BaseRecoveryController
     /**
      * Displays the password recovery request page
      *
-     * @return Response|array
+     * @return Response
+     * @throws InvalidConfigException
      */
-    public function actionRequest()
+    public function actionRequest(): Response
     {
         if (!Yii::$app->user->isGuest) {
             return Inertia::location('/dashboard');
@@ -70,7 +73,7 @@ class RecoveryController extends BaseRecoveryController
             ]);
         }
 
-        // GET request - show empty recovery form
+        // GET request - show an empty recovery form
         return Inertia::render('Auth/ForgotPassword', [
             'form' => [
                 'email' => '',
@@ -84,17 +87,18 @@ class RecoveryController extends BaseRecoveryController
      *
      * @param int $id
      * @param string $code
-     * @return Response|array
+     * @return Response
      * @throws NotFoundHttpException
+     * @throws InvalidConfigException
      */
-    public function actionReset($id, $code)
+    public function actionReset($id, $code): Response
     {
         if (!Yii::$app->user->isGuest) {
             return Inertia::location('/dashboard');
         }
 
-        /** @var \Da\User\Model\Token $token */
-        $token = $this->tokenQuery->findToken($id, $code, \Da\User\Model\Token::TYPE_RECOVERY)->one();
+        /** @var Token $token */
+        $token = $this->tokenQuery->findToken($id, $code, Token::TYPE_RECOVERY)->one();
 
         if ($token === null || $token->getIsExpired() || $token->user === null) {
             Yii::$app->session->setFlash('error', 'Invalid or expired password reset link.');
@@ -129,7 +133,7 @@ class RecoveryController extends BaseRecoveryController
             ]);
         }
 
-        // GET request - show password reset form
+        // GET request - show a password reset form
         return Inertia::render('Auth/ResetPassword', [
             'form' => [
                 'password' => '',
@@ -140,4 +144,3 @@ class RecoveryController extends BaseRecoveryController
         ]);
     }
 }
-

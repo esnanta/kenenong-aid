@@ -35,7 +35,7 @@ class AccessRouteController extends BaseController
      * @return string
      * @throws ForbiddenHttpException
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $this->checkAccess('accessRoute.index');
         $searchModel = new AccessRouteSearch();
@@ -95,7 +95,7 @@ class AccessRouteController extends BaseController
 
     /**
      * Updates an existing AccessRoute model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * If the update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return Response|string
      * @throws ForbiddenHttpException
@@ -161,18 +161,7 @@ class AccessRouteController extends BaseController
     public function actionAddAccessRouteShelters(): string
     {
         $this->checkAccess('accessRoute.update');
-
-        if (Yii::$app->request->isAjax) {
-            $row = Yii::$app->request->post('AccessRouteShelters');
-            if (!empty($row)) {
-                $row = array_values($row);
-            }
-            if((Yii::$app->request->post('isNewRecord') && Yii::$app->request->post('_action') == 'load' && empty($row)) || Yii::$app->request->post('_action') == 'add')
-                $row[] = [];
-            return $this->renderAjax('_formAccessRouteShelters', ['row' => $row]);
-        } else {
-            throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-        }
+        return $this->_renderAjaxForm('AccessRouteShelters', '_formAccessRouteShelters');
     }
 
     /**
@@ -188,15 +177,26 @@ class AccessRouteController extends BaseController
     public function actionAddAccessRouteVehicles(): string
     {
         $this->checkAccess('accessRoute.update');
+        return $this->_renderAjaxForm('AccessRouteVehicles', '_formAccessRouteVehicles');
+    }
 
+    /**
+     * Renders an AJAX form for related models.
+     * @param string $postKey The key for the POST data (e.g., 'AccessRouteShelters').
+     * @param string $viewName The name of the view file to render (e.g., '_formAccessRouteShelters').
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    private function _renderAjaxForm(string $postKey, string $viewName): string
+    {
         if (Yii::$app->request->isAjax) {
-            $row = Yii::$app->request->post('AccessRouteVehicles');
+            $row = Yii::$app->request->post($postKey);
             if (!empty($row)) {
                 $row = array_values($row);
             }
             if((Yii::$app->request->post('isNewRecord') && Yii::$app->request->post('_action') == 'load' && empty($row)) || Yii::$app->request->post('_action') == 'add')
                 $row[] = [];
-            return $this->renderAjax('_formAccessRouteVehicles', ['row' => $row]);
+            return $this->renderAjax($viewName, ['row' => $row]);
         } else {
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
         }

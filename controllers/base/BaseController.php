@@ -4,6 +4,7 @@ namespace app\controllers\base;
 
 use Crenspire\Yii2Inertia\Inertia;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
@@ -27,10 +28,12 @@ class BaseController extends Controller
 
     /**
      * {@inheritdoc}
+     * @throws InvalidConfigException
+     * @throws BadRequestHttpException
      */
-    public function beforeAction($action)
+    public function beforeAction($action): bool
     {
-        // For Inertia JSON requests, ensure CSRF token is read from JSON body
+        // For Inertia JSON requests, ensure CSRF token is read from the JSON body
         $isInertiaRequest = (Yii::$app->request->isPost || Yii::$app->request->isPut || Yii::$app->request->isPatch) && 
             (Yii::$app->request->headers->get('X-Inertia') !== null || 
              Yii::$app->request->headers->get('X-Inertia-Version') !== null);
@@ -85,9 +88,11 @@ class BaseController extends Controller
     }
 
     /**
-     * Get Inertia page component name from route
+     * Get Inertia page component name from the route
+     * @param string $route
+     * @return string
      */
-    protected function getPageComponentFromRoute($route)
+    protected function getPageComponentFromRoute(string $route): string
     {
         // Map routes to Inertia page components
         $routeMap = [
@@ -140,4 +145,3 @@ class BaseController extends Controller
         return $routeMap[$route] ?? 'Home';
     }
 }
-

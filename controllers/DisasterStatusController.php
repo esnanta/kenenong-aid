@@ -7,7 +7,6 @@ use app\models\DisasterStatus;
 use app\models\DisasterStatusSearch;
 use Crenspire\Yii2Inertia\Inertia;
 use Yii;
-use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
@@ -16,7 +15,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
- * DisasterStatusController implements the CRUD actions for DisasterStatus model.
+ * DisasterStatusController implements the CRUD actions for the DisasterStatus model.
  */
 class DisasterStatusController extends BaseController
 {
@@ -56,10 +55,10 @@ class DisasterStatusController extends BaseController
         return Inertia::render('DisasterStatus/Index', [
             'statuses' => $statusesData,
             'pagination' => [
-                'total' => (int) $dataProvider->getPagination()->totalCount,
-                'per_page' => (int) $dataProvider->getPagination()->pageSize,
-                'current_page' => (int) $dataProvider->getPagination()->getPage() + 1,
-                'last_page' => (int) $dataProvider->getPagination()->getPageCount(),
+                'total' => $dataProvider->getPagination()->totalCount,
+                'per_page' => $dataProvider->getPagination()->pageSize,
+                'current_page' => $dataProvider->getPagination()->getPage() + 1,
+                'last_page' => $dataProvider->getPagination()->getPageCount(),
             ],
             'filters' => Yii::$app->request->queryParams,
             'sort' => [
@@ -91,7 +90,7 @@ class DisasterStatusController extends BaseController
      * If creation is successful, the browser will be redirected to the 'index' page.
      * @return Response
      * @throws ForbiddenHttpException
-     * @throws Exception|NotFoundHttpException
+     * @throws Exception
      */
     public function actionCreate(): Response
     {
@@ -101,7 +100,7 @@ class DisasterStatusController extends BaseController
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post(), '')) {
                 if ($model->validate() && $model->save()) {
-                    Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil disimpan.'));
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'Data saved successfully.'));
                     if (Yii::$app->request->headers->get('X-Inertia')) {
                         return Inertia::location(Url::to(['index']));
                     }
@@ -123,15 +122,14 @@ class DisasterStatusController extends BaseController
 
     /**
      * Updates an existing DisasterStatus model.
-     * If update is successful, the browser will be redirected to the 'index' page.
+     * If the update is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return Response
      * @throws NotFoundHttpException
      * @throws Exception
      * @throws ForbiddenHttpException
-     * @throws InvalidConfigException
      */
-    public function actionUpdate(int $id)
+    public function actionUpdate(int $id): Response
     {
         $model = $this->findModel($id);
         $this->checkAccess('disasterStatus.update', $model);
@@ -154,7 +152,7 @@ class DisasterStatusController extends BaseController
 
             if ($model->load($requestData, '')) {
                 if ($model->validate() && $model->save()) {
-                    Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil disimpan.'));
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'Data saved successfully.'));
                     if (Yii::$app->request->headers->get('X-Inertia')) {
                         return Inertia::location(Url::to(['index']));
                     }
@@ -194,9 +192,9 @@ class DisasterStatusController extends BaseController
         $model->deleted_by = Yii::$app->user->id;
 
         if ($model->save(false)) {
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil dihapus.'));
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Data deleted successfully.'));
         } else {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Gagal menghapus data.'));
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Failed to delete data.'));
         }
 
         if (Yii::$app->request->headers->get('X-Inertia')) {
@@ -229,9 +227,10 @@ class DisasterStatusController extends BaseController
     * @author Yohanes Candrajaya <moo.tensai@gmail.com>
     * @author Jiwantoro Ndaru <jiwanndaru@gmail.com>
     *
-    * @return mixed
+    * @return string
+    * @throws NotFoundHttpException
     */
-    public function actionAddDisaster()
+    public function actionAddDisaster(): string
     {
         if (Yii::$app->request->isAjax) {
             $row = Yii::$app->request->post('Disaster');

@@ -8,18 +8,25 @@ use Crenspire\Yii2Inertia\Inertia;
 use Da\User\Form\RegistrationForm;
 use Da\User\Form\ResendForm;
 use Yii;
+use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\web\Response;
+use Da\User\Module;
+use app\models\User;
+use Da\User\Model\Token;
 
 /**
  * RegistrationController handles user registration
  * Extends yii2-usuario RegistrationController
+ *
+ * @property Finder $finder
  */
 class RegistrationController extends BaseRegistrationController
 {
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         $behaviors = parent::behaviors();
 
@@ -40,15 +47,17 @@ class RegistrationController extends BaseRegistrationController
     /**
      * Displays the registration page using Inertia.js
      *
-     * @return Response|array
+     * @return Response
+     * @throws InvalidConfigException
+     * @throws Exception
      */
-    public function actionRegister()
+    public function actionRegister(): Response
     {
         if (!Yii::$app->user->isGuest) {
             return Inertia::location('/dashboard');
         }
 
-        /** @var \Da\User\Module $module */
+        /** @var Module $module */
         $module = $this->module;
 
         if (!$module->enableRegistration) {
@@ -62,7 +71,7 @@ class RegistrationController extends BaseRegistrationController
         $requestData = Yii::$app->request->post();
 
         if (Yii::$app->request->isPost && !empty($requestData)) {
-            // Load data without wrapper
+            // Load data without a wrapper
             if ($model->load($requestData, '')) {
                 if ($user = $model->register()) {
                     // Create profile with name if provided
@@ -96,7 +105,7 @@ class RegistrationController extends BaseRegistrationController
             ]);
         }
 
-        // GET request - show empty registration form
+        // GET request - show an empty registration form
         return Inertia::render('Auth/Register', [
             'form' => [
                 'email' => '',
@@ -116,9 +125,9 @@ class RegistrationController extends BaseRegistrationController
      * @param string $code
      * @return Response
      */
-    public function actionConfirm($id, $code)
+    public function actionConfirm($id, $code): Response
     {
-        /** @var \app\models\User $user */
+        /** @var User $user */
         $user = $this->finder->findUserById($id);
 
         if ($user === null || $user->confirmed_at !== null) {
@@ -126,8 +135,8 @@ class RegistrationController extends BaseRegistrationController
             return Inertia::location('/login');
         }
 
-        /** @var \Da\User\Model\Token $token */
-        $token = $this->finder->findTokenByParams($id, $code, \Da\User\Model\Token::TYPE_CONFIRMATION);
+        /** @var Token $token */
+        $token = $this->finder->findTokenByParams($id, $code, Token::TYPE_CONFIRMATION);
 
         if ($token === null || $token->isExpired) {
             Yii::$app->session->setFlash('error', 'Invalid or expired confirmation link.');
@@ -146,9 +155,10 @@ class RegistrationController extends BaseRegistrationController
     /**
      * Resends confirmation email
      *
-     * @return Response|array
+     * @return Response
+     * @throws InvalidConfigException
      */
-    public function actionResend()
+    public function actionResend(): Response
     {
         if (!Yii::$app->user->isGuest) {
             return Inertia::location('/dashboard');
@@ -181,4 +191,3 @@ class RegistrationController extends BaseRegistrationController
         ]);
     }
 }
-

@@ -6,15 +6,21 @@ use app\controllers\base\BaseController;
 use app\models\EntityType;
 use app\models\EntityTypeSearch;
 use Yii;
+use yii\data\ArrayDataProvider;
+use yii\db\Exception;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * EntityTypeController implements the CRUD actions for EntityType model.
  */
 class EntityTypeController extends BaseController
 {
-    public function behaviors()
+    /**
+     * @return array
+     */
+    public function behaviors(): array
     {
         return [
             'verbs' => [
@@ -28,9 +34,9 @@ class EntityTypeController extends BaseController
 
     /**
      * Lists all EntityType models.
-     * @return mixed
+     * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new EntityTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -43,16 +49,17 @@ class EntityTypeController extends BaseController
 
     /**
      * Displays a single EntityType model.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return string
+     * @throws NotFoundHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $providerMediaFiles = new \yii\data\ArrayDataProvider([
+        $providerMediaFiles = new ArrayDataProvider([
             'allModels' => $model->mediaFiles,
         ]);
-        $providerVerification = new \yii\data\ArrayDataProvider([
+        $providerVerification = new ArrayDataProvider([
             'allModels' => $model->verifications,
         ]);
         return $this->render('view', [
@@ -65,7 +72,8 @@ class EntityTypeController extends BaseController
     /**
      * Creates a new EntityType model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return Response|string
+     * @throws Exception
      */
     public function actionCreate()
     {
@@ -82,11 +90,13 @@ class EntityTypeController extends BaseController
 
     /**
      * Updates an existing EntityType model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
+     * If the update is successful, the browser will be redirected to the 'view' page.
+     * @param int $id
+     * @return Response|string
+     * @throws NotFoundHttpException
+     * @throws Exception
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
 
@@ -102,10 +112,12 @@ class EntityTypeController extends BaseController
     /**
      * Deletes an existing EntityType model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws Exception
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
         $this->findModel($id)->deleteWithRelated();
 
@@ -116,11 +128,11 @@ class EntityTypeController extends BaseController
     /**
      * Finds the EntityType model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id
      * @return EntityType the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): EntityType
     {
         if (($model = EntityType::findOne($id)) !== null) {
             return $model;
@@ -135,9 +147,10 @@ class EntityTypeController extends BaseController
     * @author Yohanes Candrajaya <moo.tensai@gmail.com>
     * @author Jiwantoro Ndaru <jiwanndaru@gmail.com>
     *
-    * @return mixed
+    * @return string
+    * @throws NotFoundHttpException
     */
-    public function actionAddMediaFiles()
+    public function actionAddMediaFiles(): string
     {
         if (Yii::$app->request->isAjax) {
             $row = Yii::$app->request->post('MediaFiles');
@@ -156,11 +169,12 @@ class EntityTypeController extends BaseController
     * Action to load a tabular form grid
     * for Verification
     * @author Yohanes Candrajaya <moo.tensai@gmail.com>
-    * @author Jiwantoro Ndaru <jiwanndaru@gmail.com>
+    * @author Jiwanndaru@gmail.com>
     *
-    * @return mixed
+    * @return string
+    * @throws NotFoundHttpException
     */
-    public function actionAddVerification()
+    public function actionAddVerification(): string
     {
         if (Yii::$app->request->isAjax) {
             $row = Yii::$app->request->post('Verification');

@@ -8,13 +8,16 @@ use app\models\ItemSearch;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
+use yii\db\Exception;
+use yii\data\ArrayDataProvider;
+use yii\web\Response;
 
 /**
- * ItemController implements the CRUD actions for Item model.
+ * ItemController implements the CRUD actions for an Item model.
  */
 class ItemController extends BaseController
 {
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'verbs' => [
@@ -28,9 +31,9 @@ class ItemController extends BaseController
 
     /**
      * Lists all Item models.
-     * @return mixed
+     * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new ItemSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -43,16 +46,17 @@ class ItemController extends BaseController
 
     /**
      * Displays a single Item model.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return string
+     * @throws NotFoundHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $providerAidDistributionDetails = new \yii\data\ArrayDataProvider([
+        $providerAidDistributionDetails = new ArrayDataProvider([
             'allModels' => $model->aidDistributionDetails,
         ]);
-        $providerAidPlanDetails = new \yii\data\ArrayDataProvider([
+        $providerAidPlanDetails = new ArrayDataProvider([
             'allModels' => $model->aidPlanDetails,
         ]);
         return $this->render('view', [
@@ -65,9 +69,10 @@ class ItemController extends BaseController
     /**
      * Creates a new Item model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return string|Response
+     * @throws Exception
      */
-    public function actionCreate()
+    public function actionCreate(): string
     {
         $model = new Item();
 
@@ -82,11 +87,13 @@ class ItemController extends BaseController
 
     /**
      * Updates an existing Item model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
+     * If the update is successful, the browser will be redirected to the 'view' page.
+     * @param int $id
+     * @return string|Response
+     * @throws NotFoundHttpException
+     * @throws Exception
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id): string
     {
         $model = $this->findModel($id);
 
@@ -102,10 +109,12 @@ class ItemController extends BaseController
     /**
      * Deletes an existing Item model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws Exception
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
         $this->findModel($id)->deleteWithRelated();
 
@@ -116,11 +125,11 @@ class ItemController extends BaseController
     /**
      * Finds the Item model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id
      * @return Item the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): Item
     {
         if (($model = Item::findOne($id)) !== null) {
             return $model;
@@ -135,21 +144,12 @@ class ItemController extends BaseController
     * @author Yohanes Candrajaya <moo.tensai@gmail.com>
     * @author Jiwantoro Ndaru <jiwanndaru@gmail.com>
     *
-    * @return mixed
+    * @return string
+    * @throws NotFoundHttpException
     */
-    public function actionAddAidDistributionDetails()
+    public function actionAddAidDistributionDetails(): string
     {
-        if (Yii::$app->request->isAjax) {
-            $row = Yii::$app->request->post('AidDistributionDetails');
-            if (!empty($row)) {
-                $row = array_values($row);
-            }
-            if((Yii::$app->request->post('isNewRecord') && Yii::$app->request->post('_action') == 'load' && empty($row)) || Yii::$app->request->post('_action') == 'add')
-                $row[] = [];
-            return $this->renderAjax('_formAidDistributionDetails', ['row' => $row]);
-        } else {
-            throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-        }
+        return $this->_loadTabularFormGrid('AidDistributionDetails', '_formAidDistributionDetails');
     }
     
     /**
@@ -158,18 +158,31 @@ class ItemController extends BaseController
     * @author Yohanes Candrajaya <moo.tensai@gmail.com>
     * @author Jiwantoro Ndaru <jiwanndaru@gmail.com>
     *
-    * @return mixed
+    * @return string
+    * @throws NotFoundHttpException
     */
-    public function actionAddAidPlanDetails()
+    public function actionAddAidPlanDetails(): string
+    {
+        return $this->_loadTabularFormGrid('AidPlanDetails', '_formAidPlanDetails');
+    }
+
+    /**
+     * Helper method to load a tabular form grid.
+     * @param string $postKey The key for the POST data.
+     * @param string $viewName The name of the view to render.
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    private function _loadTabularFormGrid(string $postKey, string $viewName): string
     {
         if (Yii::$app->request->isAjax) {
-            $row = Yii::$app->request->post('AidPlanDetails');
+            $row = Yii::$app->request->post($postKey);
             if (!empty($row)) {
                 $row = array_values($row);
             }
             if((Yii::$app->request->post('isNewRecord') && Yii::$app->request->post('_action') == 'load' && empty($row)) || Yii::$app->request->post('_action') == 'add')
                 $row[] = [];
-            return $this->renderAjax('_formAidPlanDetails', ['row' => $row]);
+            return $this->renderAjax($viewName, ['row' => $row]);
         } else {
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
         }

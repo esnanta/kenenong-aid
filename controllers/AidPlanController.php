@@ -6,15 +6,18 @@ use app\controllers\base\BaseController;
 use app\models\AidPlan;
 use app\models\AidPlanSearch;
 use Yii;
+use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
+use yii\db\Exception;
 
 /**
- * AidPlanController implements the CRUD actions for AidPlan model.
+ * AidPlanController implements the CRUD actions for the AidPlan model.
  */
 class AidPlanController extends BaseController
 {
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'verbs' => [
@@ -28,9 +31,9 @@ class AidPlanController extends BaseController
 
     /**
      * Lists all AidPlan models.
-     * @return mixed
+     * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new AidPlanSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -43,16 +46,17 @@ class AidPlanController extends BaseController
 
     /**
      * Displays a single AidPlan model.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return string
+     * @throws NotFoundHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $providerAidDistribution = new \yii\data\ArrayDataProvider([
+        $providerAidDistribution = new ArrayDataProvider([
             'allModels' => $model->aidDistributions,
         ]);
-        $providerAidPlanDetails = new \yii\data\ArrayDataProvider([
+        $providerAidPlanDetails = new ArrayDataProvider([
             'allModels' => $model->aidPlanDetails,
         ]);
         return $this->render('view', [
@@ -65,9 +69,10 @@ class AidPlanController extends BaseController
     /**
      * Creates a new AidPlan model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return string|Response
+     * @throws Exception
      */
-    public function actionCreate()
+    public function actionCreate() // Removed union type from signature
     {
         $model = new AidPlan();
 
@@ -82,11 +87,13 @@ class AidPlanController extends BaseController
 
     /**
      * Updates an existing AidPlan model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
+     * If the update is successful, the browser will be redirected to the 'view' page.
+     * @param int $id
+     * @return string|Response
+     * @throws NotFoundHttpException
+     * @throws Exception
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id) // Removed union type from signature
     {
         $model = $this->findModel($id);
 
@@ -102,10 +109,12 @@ class AidPlanController extends BaseController
     /**
      * Deletes an existing AidPlan model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws Exception
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
         $this->findModel($id)->deleteWithRelated();
 
@@ -116,11 +125,11 @@ class AidPlanController extends BaseController
     /**
      * Finds the AidPlan model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id
      * @return AidPlan the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): AidPlan
     {
         if (($model = AidPlan::findOne($id)) !== null) {
             return $model;
@@ -135,9 +144,10 @@ class AidPlanController extends BaseController
     * @author Yohanes Candrajaya <moo.tensai@gmail.com>
     * @author Jiwantoro Ndaru <jiwanndaru@gmail.com>
     *
-    * @return mixed
+    * @return string
+    * @throws NotFoundHttpException
     */
-    public function actionAddAidDistribution()
+    public function actionAddAidDistribution(): string
     {
         if (Yii::$app->request->isAjax) {
             $row = Yii::$app->request->post('AidDistribution');
@@ -158,9 +168,10 @@ class AidPlanController extends BaseController
     * @author Yohanes Candrajaya <moo.tensai@gmail.com>
     * @author Jiwantoro Ndaru <jiwanndaru@gmail.com>
     *
-    * @return mixed
+    * @return string
+    * @throws NotFoundHttpException
     */
-    public function actionAddAidPlanDetails()
+    public function actionAddAidPlanDetails(): string
     {
         if (Yii::$app->request->isAjax) {
             $row = Yii::$app->request->post('AidPlanDetails');
