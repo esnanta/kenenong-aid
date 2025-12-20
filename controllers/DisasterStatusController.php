@@ -10,6 +10,7 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -102,7 +103,7 @@ class DisasterStatusController extends BaseController
                 if ($model->validate() && $model->save()) {
                     Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil disimpan.'));
                     if (Yii::$app->request->headers->get('X-Inertia')) {
-                        return $this->actionIndex();
+                        return Inertia::location(Url::to(['index']));
                     }
                     return $this->redirect(['index']);
                 }
@@ -155,7 +156,7 @@ class DisasterStatusController extends BaseController
                 if ($model->validate() && $model->save()) {
                     Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil disimpan.'));
                     if (Yii::$app->request->headers->get('X-Inertia')) {
-                        return $this->actionIndex();
+                        return Inertia::location(Url::to(['index']));
                     }
                     return $this->redirect(['index']);
                 }
@@ -199,7 +200,7 @@ class DisasterStatusController extends BaseController
         }
 
         if (Yii::$app->request->headers->get('X-Inertia')) {
-            return $this->actionIndex();
+            return Inertia::location(Url::to(['index']));
         }
 
         return $this->redirect(['index']);
