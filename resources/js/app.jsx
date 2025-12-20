@@ -5,27 +5,18 @@ import { createRoot } from 'react-dom/client'
 import { toast, Toaster } from 'sonner'
 import ErrorBoundary from './components/ErrorBoundary'
 import { ThemeProvider } from './components/ThemeProvider'
+import Dashboard from './pages/Dashboard/Index'
+
+import Home from './pages/Home'
+import NotFound from './pages/NotFound'
 import '../css/app.css'
 
-// Get CSRF token from meta tag
-function getCsrfToken() {
-  const meta = document.querySelector('meta[name="csrf-token"]')
-  return meta ? meta.getAttribute('content') : null
-}
-
-function getCsrfParam() {
-  const meta = document.querySelector('meta[name="csrf-param"]')
-  return meta ? meta.getAttribute('content') : null
-}
-
 // Lazy load pages for code splitting
-const Home = lazy(() => import('./pages/Home'))
 const Login = lazy(() => import('./pages/Auth/Login'))
 const Register = lazy(() => import('./pages/Auth/Register'))
 const ForgotPassword = lazy(() => import('./pages/Auth/ForgotPassword'))
 const ResetPassword = lazy(() => import('./pages/Auth/ResetPassword'))
 const Resend = lazy(() => import('./pages/Auth/Resend'))
-const Dashboard = lazy(() => import('./pages/Dashboard/Index'))
 const Profile = lazy(() => import('./pages/Dashboard/Profile'))
 const Settings = lazy(() => import('./pages/Dashboard/Settings'))
 const Billing = lazy(() => import('./pages/Dashboard/Billing'))
@@ -41,7 +32,6 @@ const DisasterStatusView = lazy(() => import('./pages/DisasterStatus/View'))
 const DisasterTypeIndex = lazy(() => import('./pages/DisasterType/Index'))
 const DisasterTypeForm = lazy(() => import('./pages/DisasterType/Form'))
 const DisasterTypeView = lazy(() => import('./pages/DisasterType/View'))
-const NotFound = lazy(() => import('./pages/NotFound'))
 // RBAC pages
 const RoleIndex = lazy(() => import('./pages/Role/Index'))
 const RoleForm = lazy(() => import('./pages/Role/Form'))
@@ -52,6 +42,17 @@ const PermissionView = lazy(() => import('./pages/Permission/View'))
 const RuleIndex = lazy(() => import('./pages/Rule/Index'))
 const RuleForm = lazy(() => import('./pages/Rule/Form'))
 const RuleView = lazy(() => import('./pages/Rule/View'))
+
+// Get CSRF token from meta tag
+function getCsrfToken() {
+  const meta = document.querySelector('meta[name="csrf-token"]')
+  return meta ? meta.getAttribute('content') : null
+}
+
+function getCsrfParam() {
+  const meta = document.querySelector('meta[name="csrf-param"]')
+  return meta ? meta.getAttribute('content') : null
+}
 
 // CSRF Header setup
 const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
@@ -231,5 +232,12 @@ createInertiaApp({
         </ThemeProvider>
       </ErrorBoundary>,
     )
+
+    // FIX: Remove the PHP loader once React is ready
+    const loader = document.getElementById('app-loader')
+    if (loader) {
+      loader.style.opacity = '0'
+      setTimeout(() => loader.remove(), 300)
+    }
   },
 })
