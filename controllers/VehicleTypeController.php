@@ -6,15 +6,21 @@ use app\controllers\base\BaseController;
 use app\models\VehicleType;
 use app\models\VehicleTypeSearch;
 use Yii;
+use yii\data\ArrayDataProvider;
+use yii\db\Exception;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
- * VehicleTypeController implements the CRUD actions for VehicleType model.
+ * VehicleTypeController implements the CRUD actions for the VehicleType model.
  */
 class VehicleTypeController extends BaseController
 {
-    public function behaviors()
+    /**
+     * @return array
+     */
+    public function behaviors(): array
     {
         return [
             'verbs' => [
@@ -28,9 +34,9 @@ class VehicleTypeController extends BaseController
 
     /**
      * Lists all VehicleType models.
-     * @return mixed
+     * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new VehicleTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -43,13 +49,14 @@ class VehicleTypeController extends BaseController
 
     /**
      * Displays a single VehicleType model.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return string
+     * @throws NotFoundHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $providerAccessRouteVehicles = new \yii\data\ArrayDataProvider([
+        $providerAccessRouteVehicles = new ArrayDataProvider([
             'allModels' => $model->accessRouteVehicles,
         ]);
         return $this->render('view', [
@@ -61,7 +68,8 @@ class VehicleTypeController extends BaseController
     /**
      * Creates a new VehicleType model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return string|Response
+     * @throws Exception
      */
     public function actionCreate()
     {
@@ -78,11 +86,13 @@ class VehicleTypeController extends BaseController
 
     /**
      * Updates an existing VehicleType model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
+     * If the update is successful, the browser will be redirected to the 'view' page.
+     * @param int $id
+     * @return string|Response
+     * @throws NotFoundHttpException
+     * @throws Exception
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
 
@@ -98,10 +108,12 @@ class VehicleTypeController extends BaseController
     /**
      * Deletes an existing VehicleType model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws Exception
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
         $this->findModel($id)->deleteWithRelated();
 
@@ -112,11 +124,11 @@ class VehicleTypeController extends BaseController
     /**
      * Finds the VehicleType model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id
      * @return VehicleType the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): VehicleType
     {
         if (($model = VehicleType::findOne($id)) !== null) {
             return $model;
@@ -131,9 +143,10 @@ class VehicleTypeController extends BaseController
     * @author Yohanes Candrajaya <moo.tensai@gmail.com>
     * @author Jiwantoro Ndaru <jiwanndaru@gmail.com>
     *
-    * @return mixed
+    * @return string
+    * @throws NotFoundHttpException
     */
-    public function actionAddAccessRouteVehicles()
+    public function actionAddAccessRouteVehicles(): string
     {
         if (Yii::$app->request->isAjax) {
             $row = Yii::$app->request->post('AccessRouteVehicles');

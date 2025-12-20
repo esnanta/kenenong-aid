@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\controllers\base\BaseController;
+use app\models\AuthItem;
 use Crenspire\Yii2Inertia\Inertia;
 use Da\User\Helper\AuthHelper;
 use Da\User\Model\Role;
@@ -10,21 +11,21 @@ use Da\User\Search\RoleSearch;
 use Da\User\Service\AuthItemEditionService;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\base\Module;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
-use yii\web\Response; // Added this import
-
+use yii\web\Response;
 class RoleController extends BaseController
 {
     protected AuthHelper $authHelper; // Added type declaration
 
     /**
      * @param string $id
-     * @param \yii\base\Module $module
+     * @param Module $module
      * @param array $config
      * @throws InvalidConfigException
      */
-    public function __construct($id, $module, $config = [])
+    public function __construct($id, Module $module, $config = [])
     {
         // Get AuthHelper instance
         $this->authHelper = Yii::createObject(AuthHelper::class);
@@ -80,10 +81,10 @@ class RoleController extends BaseController
      * Retrieves an AuthItem (Role) by its name.
      *
      * @param string $name The name of the role.
-     * @return \Da\User\Model\AuthItem
+     * @return Role
      * @throws NotFoundHttpException if the role is not found.
      */
-    protected function getItem(string $name): \Da\User\Model\AuthItem
+    protected function getItem(string $name): Role
     {
         $authItem = $this->authHelper->getRole($name);
         if ($authItem !== null) {
@@ -142,6 +143,7 @@ class RoleController extends BaseController
 
         // Get assigned items (child roles and permissions)
         $assignedItems = [];
+        /** @var AuthItem $child */
         foreach ($authItem->children as $child) {
             $assignedItems[] = [
                 'name' => $child->name,
@@ -205,7 +207,7 @@ class RoleController extends BaseController
             ]);
         }
 
-        // GET request - show empty form
+        // GET request - show an empty form
         return Inertia::render('Role/Form', [
             'role' => [
                 'name' => '',
@@ -273,7 +275,7 @@ class RoleController extends BaseController
             $assignedChildren[] = $child->name;
         }
 
-        // GET request - show form with current data
+        // GET request - show a form with current data
         return Inertia::render('Role/Form', [
             'role' => [
                 'name' => $model->name,
@@ -320,7 +322,7 @@ class RoleController extends BaseController
         $authManager = Yii::$app->authManager;
 
         foreach ($items as $name => $label) {
-            // Get the actual item object from auth manager
+            // Get the actual item object from the auth manager
             $item = $authManager->getPermission($name) ?? $authManager->getRole($name);
 
             if ($item !== null) {
@@ -337,7 +339,7 @@ class RoleController extends BaseController
     }
 
     /**
-     * Get list of available rules.
+     * Get a list of available rules.
      *
      * @return array
      */

@@ -8,13 +8,18 @@ use app\models\VerificationVoteSearch;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
+use yii\db\Exception;
+use yii\web\Response;
 
 /**
  * VerificationVoteController implements the CRUD actions for VerificationVote model.
  */
 class VerificationVoteController extends BaseController
 {
-    public function behaviors()
+    /**
+     * @return array
+     */
+    public function behaviors(): array
     {
         return [
             'verbs' => [
@@ -28,9 +33,9 @@ class VerificationVoteController extends BaseController
 
     /**
      * Lists all VerificationVote models.
-     * @return mixed
+     * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $searchModel = new VerificationVoteSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -43,12 +48,12 @@ class VerificationVoteController extends BaseController
 
     /**
      * Displays a single VerificationVote model.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return string
+     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
-        $model = $this->findModel($id);
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
@@ -57,7 +62,8 @@ class VerificationVoteController extends BaseController
     /**
      * Creates a new VerificationVote model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return Response|string
+     * @throws Exception
      */
     public function actionCreate()
     {
@@ -74,11 +80,13 @@ class VerificationVoteController extends BaseController
 
     /**
      * Updates an existing VerificationVote model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
+     * If the update is successful, the browser will be redirected to the 'view' page.
+     * @param int $id
+     * @return Response|string
+     * @throws NotFoundHttpException if the model cannot be found
+     * @throws Exception
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
 
@@ -94,10 +102,12 @@ class VerificationVoteController extends BaseController
     /**
      * Deletes an existing VerificationVote model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException if the model cannot be found
+     * @throws Exception
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
         $this->findModel($id)->deleteWithRelated();
 
@@ -108,11 +118,11 @@ class VerificationVoteController extends BaseController
     /**
      * Finds the VerificationVote model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id
      * @return VerificationVote the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): VerificationVote
     {
         if (($model = VerificationVote::findOne($id)) !== null) {
             return $model;

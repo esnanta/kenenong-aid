@@ -14,6 +14,7 @@ use yii\web\Response;
 use Da\User\Module;
 use app\models\User;
 use Da\User\Model\Token;
+use Da\User\Query\Finder;
 
 /**
  * RegistrationController handles user registration
