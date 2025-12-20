@@ -2,12 +2,12 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
 use app\models\ItemCategory;
 use app\models\ItemCategorySearch;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
+use Yii;
 use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
 
 /**
  * ItemCategoryController implements the CRUD actions for ItemCategory model.

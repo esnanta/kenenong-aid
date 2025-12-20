@@ -2,18 +2,16 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
+use Crenspire\Yii2Inertia\Inertia;
 use Da\User\Model\Rule;
 use Da\User\Search\RuleSearch;
 use Da\User\Service\AuthRuleEditionService;
-use Da\User\Validator\AjaxRequestModelValidator;
-use Da\User\Filter\AccessRuleFilter;
 use Da\User\Traits\AuthManagerAwareTrait;
 use Da\User\Traits\ContainerAwareTrait;
-use Crenspire\Yii2Inertia\Inertia;
+use Yii;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
-use app\controllers\BaseController;
 
 class RuleController extends BaseController
 {

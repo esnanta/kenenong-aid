@@ -2,12 +2,12 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
 use app\models\AidPlanDetails;
 use app\models\AidPlanDetailSearch;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
+use Yii;
 use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
 
 /**
  * AidPlanDetailController implements the CRUD actions for AidPlanDetails model.

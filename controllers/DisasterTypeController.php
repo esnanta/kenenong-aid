@@ -2,15 +2,15 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
 use app\models\DisasterType;
 use app\models\DisasterTypeSearch;
 use Crenspire\Yii2Inertia\Inertia;
-use yii\data\ArrayDataProvider;
+use Yii;
 use yii\db\Exception;
+use yii\filters\VerbFilter;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**

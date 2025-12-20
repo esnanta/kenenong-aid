@@ -2,14 +2,14 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
 use app\models\Disaster;
+use Crenspire\Yii2Inertia\Inertia;
+use Yii;
 use yii\db\Exception;
+use yii\filters\VerbFilter;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
-use Crenspire\Yii2Inertia\Inertia;
 use yii\web\Response;
 
 /**

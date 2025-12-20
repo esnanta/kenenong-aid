@@ -2,12 +2,12 @@
 
 namespace app\controllers;
 
+use app\controllers\base\BaseController;
+use app\models\User;
+use Crenspire\Yii2Inertia\Inertia;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
-use Crenspire\Yii2Inertia\Inertia;
-use app\controllers\BaseController;
-use app\models\User;
 
 class UserController extends BaseController
 {

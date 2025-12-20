@@ -2,17 +2,16 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
 use app\models\DisasterStatus;
 use app\models\DisasterStatusSearch;
 use Crenspire\Yii2Inertia\Inertia;
+use Yii;
 use yii\base\InvalidConfigException;
-use yii\data\ArrayDataProvider;
 use yii\db\Exception;
-use yii\web\Controller;
+use yii\filters\VerbFilter;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\Response;
 
 /**

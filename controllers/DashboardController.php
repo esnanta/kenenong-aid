@@ -2,10 +2,10 @@
 
 namespace app\controllers;
 
+use app\controllers\base\BaseController;
+use Crenspire\Yii2Inertia\Inertia;
 use Yii;
 use yii\filters\AccessControl;
-use Crenspire\Yii2Inertia\Inertia;
-use app\controllers\BaseController;
 
 class DashboardController extends BaseController
 {

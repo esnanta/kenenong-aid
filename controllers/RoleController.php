@@ -2,12 +2,13 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
+use Crenspire\Yii2Inertia\Inertia;
+use Da\User\Helper\AuthHelper;
 use Da\User\Model\Role;
 use Da\User\Search\RoleSearch;
-use Da\User\Helper\AuthHelper;
 use Da\User\Service\AuthItemEditionService;
-use Crenspire\Yii2Inertia\Inertia;
+use Yii;
 use yii\web\NotFoundHttpException;
 
 class RoleController extends BaseController

@@ -1,11 +1,11 @@
 <?php
 
-namespace app\controllers;
+namespace app\controllers\base;
 
-use Yii;
-use yii\web\Controller;
-use yii\web\BadRequestHttpException;
 use Crenspire\Yii2Inertia\Inertia;
+use Yii;
+use yii\web\BadRequestHttpException;
+use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 
 /**

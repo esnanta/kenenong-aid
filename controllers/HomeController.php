@@ -2,10 +2,10 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
 use Crenspire\Yii2Inertia\Inertia;
+use Yii;
 use yii\web\NotFoundHttpException;
-use app\controllers\BaseController;
 
 class HomeController extends BaseController
 {
