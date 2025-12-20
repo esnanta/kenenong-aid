@@ -77,7 +77,7 @@ class DisasterStatusController extends BaseController
 
     /**
      * Creates a new DisasterStatus model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * If creation is successful, the browser will be redirected to the 'index' page.
      * @return Response
      * @throws ForbiddenHttpException
      * @throws Exception|NotFoundHttpException
@@ -87,23 +87,32 @@ class DisasterStatusController extends BaseController
         $this->checkAccess('disasterStatus.create');
         $model = new DisasterStatus();
 
-        if ($model->load(Yii::$app->request->post(), '') && $model->save()) {
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil disimpan.'));
-            if (Yii::$app->request->headers->get('X-Inertia')) {
-                return $this->actionView($model->id);
+        if (Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post(), '')) {
+                if ($model->validate() && $model->save()) {
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil disimpan.'));
+                    if (Yii::$app->request->headers->get('X-Inertia')) {
+                        return $this->actionIndex();
+                    }
+                    return $this->redirect(['index']);
+                }
             }
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+
             return Inertia::render('DisasterStatus/Form', [
-                'status' => $model,
-                'errors' => $model->getErrors(),
+                'status' => null,
+                'errors' => $model->errors,
             ]);
         }
+
+        return Inertia::render('DisasterStatus/Form', [
+            'status' => null,
+            'errors' => [],
+        ]);
     }
 
     /**
      * Updates an existing DisasterStatus model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * If update is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return Response
      * @throws NotFoundHttpException
@@ -116,20 +125,42 @@ class DisasterStatusController extends BaseController
         $model = $this->findModel($id);
         $this->checkAccess('disasterStatus.update', $model);
 
-        $requestData = Yii::$app->request->isPut ? Yii::$app->request->getBodyParams() : Yii::$app->request->post();
+        $isPost = Yii::$app->request->isPost;
+        $isPut = Yii::$app->request->isPut;
 
-        if ($model->load($requestData, '') && $model->save()) {
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil disimpan.'));
-            if (Yii::$app->request->headers->get('X-Inertia')) {
-                return $this->actionView($model->id);
+        if ($isPost || $isPut) {
+            if ($isPut) {
+                $requestData = Yii::$app->request->bodyParams;
+                if (empty($requestData) && Yii::$app->request->contentType === 'application/json') {
+                    $rawBody = Yii::$app->request->rawBody;
+                    if (!empty($rawBody)) {
+                        $requestData = json_decode($rawBody, true) ?: [];
+                    }
+                }
+            } else {
+                $requestData = Yii::$app->request->post();
             }
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+
+            if ($model->load($requestData, '')) {
+                if ($model->validate() && $model->save()) {
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil disimpan.'));
+                    if (Yii::$app->request->headers->get('X-Inertia')) {
+                        return $this->actionIndex();
+                    }
+                    return $this->redirect(['index']);
+                }
+            }
+
             return Inertia::render('DisasterStatus/Form', [
                 'status' => $model,
-                'errors' => $model->getErrors(),
+                'errors' => $model->errors,
             ]);
         }
+
+        return Inertia::render('DisasterStatus/Form', [
+            'status' => $model,
+            'errors' => [],
+        ]);
     }
 
     /**
@@ -146,7 +177,12 @@ class DisasterStatusController extends BaseController
         $model = $this->findModel($id);
         $this->checkAccess('disasterStatus.delete', $model);
 
-        if ($model->deleteWithRelated()) {
+        // Soft delete manually
+        $model->is_deleted = 1;
+        $model->deleted_at = date('Y-m-d H:i:s');
+        $model->deleted_by = Yii::$app->user->id;
+
+        if ($model->save(false)) {
             Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil dihapus.'));
         } else {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Gagal menghapus data.'));

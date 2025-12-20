@@ -35,18 +35,79 @@ export default function DisasterTypeForm({ type, errors: serverErrors }) {
   })
 
   const onSubmit = (data) => {
+    const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+    const metaParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute('content')
+
+    const csrfToken = metaToken || props.csrfToken
+    const csrfParam = metaParam || props.csrfParam
+
+    if (!csrfToken || !csrfParam) {
+      toast.error('CSRF token missing. Please refresh the page.')
+      return
+    }
+
+    const formData = {
+      ...data,
+      [csrfParam]: csrfToken,
+    }
+
     const url = isEdit ? `/disaster-types/${type.id}/edit` : '/disaster-types/create'
     const method = isEdit ? 'put' : 'post'
 
-    router[method](url, data, {
+    router[method](url, formData, {
       preserveScroll: true,
-      onSuccess: () => {
-        toast.success(isEdit ? 'Disaster type updated successfully' : 'Disaster type created successfully')
+      onSuccess: (page) => {
+        const isOnList = page?.component === 'DisasterType/Index'
+
+        if (isOnList) {
+          toast.success(isEdit ? 'Disaster type updated successfully' : 'Disaster type created successfully')
+        }
+      },
+      onError: (errors) => {
+        console.error('Form submission error:', errors)
+        if (errors && typeof errors === 'object') {
+          Object.values(errors).forEach((error) => {
+            if (Array.isArray(error)) {
+              error.forEach(err => toast.error(err))
+            }
+            else if (typeof error === 'string') {
+              toast.error(error)
+            }
+          })
+        }
       },
     })
   }
 
-  const allErrors = { ...errors, ...serverErrors, ...props.errors }
+  // Merge all error sources
+  const allErrors = {}
+
+  const pageErrors = props?.errors || {}
+
+  if (errors) {
+    Object.keys(errors).forEach((key) => {
+      const errorValue = errors[key]
+      if (errorValue?.message) {
+        allErrors[key] = errorValue.message
+      }
+    })
+  }
+
+  if (serverErrors) {
+    Object.keys(serverErrors).forEach((key) => {
+      const errorValue = serverErrors[key]
+      allErrors[key] = Array.isArray(errorValue) ? errorValue[0] : errorValue
+    })
+  }
+
+  if (pageErrors) {
+    Object.keys(pageErrors).forEach((key) => {
+      const errorValue = pageErrors[key]
+      if (!allErrors[key]) {
+        allErrors[key] = Array.isArray(errorValue) ? errorValue[0] : errorValue
+      }
+    })
+  }
 
   return (
     <>
@@ -75,7 +136,7 @@ export default function DisasterTypeForm({ type, errors: serverErrors }) {
                     />
                     {allErrors.code && (
                       <p className="text-sm text-destructive">
-                        {typeof allErrors.code === 'string' ? allErrors.code : allErrors.code.message}
+                        {allErrors.code}
                       </p>
                     )}
                   </div>
@@ -89,7 +150,7 @@ export default function DisasterTypeForm({ type, errors: serverErrors }) {
                     />
                     {allErrors.title && (
                       <p className="text-sm text-destructive">
-                        {typeof allErrors.title === 'string' ? allErrors.title : allErrors.title.message}
+                        {allErrors.title}
                       </p>
                     )}
                   </div>
@@ -105,7 +166,7 @@ export default function DisasterTypeForm({ type, errors: serverErrors }) {
                   />
                   {allErrors.description && (
                     <p className="text-sm text-destructive">
-                      {typeof allErrors.description === 'string' ? allErrors.description : allErrors.description.message}
+                      {allErrors.description}
                     </p>
                   )}
                 </div>
