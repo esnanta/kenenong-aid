@@ -103,6 +103,14 @@ class BaseController extends Controller
             'users/create' => 'Users/Form',
             'users/<id:\d+>' => 'Users/View',
             'users/<id:\d+>/edit' => 'Users/Form',
+            'disaster-statuses' => 'DisasterStatus/Index',
+            'disaster-statuses/create' => 'DisasterStatus/Form',
+            'disaster-statuses/<id:\d+>/edit' => 'DisasterStatus/Form',
+            'disaster-statuses/<id:\d+>' => 'DisasterStatus/View',
+            'disaster-types' => 'DisasterType/Index',
+            'disaster-types/create' => 'DisasterType/Form',
+            'disaster-types/<id:\d+>/edit' => 'DisasterType/Form',
+            'disaster-types/<id:\d+>' => 'DisasterType/View',
             '' => 'Home',
             'home/index' => 'Home',
         ];
@@ -113,6 +121,20 @@ class BaseController extends Controller
         }
         if (preg_match('/^users\/(\d+)\/edit$/', $route, $matches)) {
             return 'Users/Form';
+        }
+        
+        if (preg_match('/^disaster-statuses\/(\d+)$/', $route, $matches)) {
+            return 'DisasterStatus/View';
+        }
+        if (preg_match('/^disaster-statuses\/(\d+)\/edit$/', $route, $matches)) {
+            return 'DisasterStatus/Form';
+        }
+
+        if (preg_match('/^disaster-types\/(\d+)$/', $route, $matches)) {
+            return 'DisasterType/View';
+        }
+        if (preg_match('/^disaster-types\/(\d+)\/edit$/', $route, $matches)) {
+            return 'DisasterType/Form';
         }
         
         return $routeMap[$route] ?? 'Home';

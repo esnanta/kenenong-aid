@@ -61,6 +61,24 @@ VALUES ('accessRoute.index', 2, 'Index Access Route', UNIX_TIMESTAMP(), UNIX_TIM
 
 /* PERMISSION: DISASTER (MASTER DETAIL) */
 INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('disasterType.index', 2, 'Index Type Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('disasterType.create', 2, 'Create Type Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('disasterType.update', 2, 'Update Type Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('disasterType.view', 2, 'View Type Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('disasterType.delete', 2, 'Delete Type Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('disasterType.report', 2, 'Report Type Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('disasterStatus.index', 2, 'Index Status Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('disasterStatus.create', 2, 'Create Status Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('disasterStatus.update', 2, 'Update Status Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('disasterStatus.view', 2, 'View Status Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('disasterStatus.delete', 2, 'Delete Status Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('disasterStatus.report', 2, 'Report Status Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+INSERT INTO t_auth_item
     (name, type, description, created_at, updated_at)
 VALUES ('disaster.index', 2, 'Index Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
        ('disaster.create', 2, 'Create Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
@@ -81,6 +99,24 @@ VALUES ('master.index', 'accessRoute.index'),
        ('master.report', 'accessRoute.report');
 
 /* MASTER → DISASTER */
+INSERT INTO t_auth_item_child
+(parent, child)
+VALUES ('master.index', 'disasterType.index'),
+       ('master.create', 'disasterType.create'),
+       ('master.update', 'disasterType.update'),
+       ('master.view', 'disasterType.view'),
+       ('master.delete', 'disasterType.delete'),
+       ('master.report', 'disasterType.report');
+
+INSERT INTO t_auth_item_child
+(parent, child)
+VALUES ('master.index', 'disasterStatus.index'),
+       ('master.create', 'disasterStatus.create'),
+       ('master.update', 'disasterStatus.update'),
+       ('master.view', 'disasterStatus.view'),
+       ('master.delete', 'disasterStatus.delete'),
+       ('master.report', 'disasterStatus.report');
+
 INSERT INTO t_auth_item_child
     (parent, child)
 VALUES ('master.index', 'disaster.index'),

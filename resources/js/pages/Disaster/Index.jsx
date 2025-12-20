@@ -73,7 +73,6 @@ export default function DisasterIndex({ disasters, pagination, filters, sort, di
   const [deleteId, setDeleteId] = useState(null)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [columnVisibility, setColumnVisibility] = useState({
-    id: true,
     type: true,
     status: true,
     startDate: true,
@@ -222,12 +221,6 @@ export default function DisasterIndex({ disasters, pagination, filters, sort, di
                     <DropdownMenuContent align="end" className="w-48">
                       <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuCheckboxItem
-                        checked={columnVisibility.id}
-                        onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, id: checked })}
-                      >
-                        ID
-                      </DropdownMenuCheckboxItem>
                       <DropdownMenuCheckboxItem
                         checked={columnVisibility.type}
                         onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, type: checked })}
@@ -380,9 +373,6 @@ export default function DisasterIndex({ disasters, pagination, filters, sort, di
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      {columnVisibility.id && (
-                        <SortableHeader column="id" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} onSort={handleSort}>ID</SortableHeader>
-                      )}
                       {columnVisibility.type && (
                         <SortableHeader column="disaster_type" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} onSort={handleSort}>Type</SortableHeader>
                       )}
@@ -408,9 +398,6 @@ export default function DisasterIndex({ disasters, pagination, filters, sort, di
                       ? (
                           disasters.map(disaster => (
                             <TableRow key={disaster.id}>
-                              {columnVisibility.id && (
-                                <TableCell className="font-medium">{disaster.id}</TableCell>
-                              )}
                               {columnVisibility.type && (
                                 <TableCell>
                                   <Badge variant="outline" className={getTypeBadgeColor(disaster.disaster_type_id)}>

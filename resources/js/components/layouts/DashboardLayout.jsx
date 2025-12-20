@@ -70,7 +70,9 @@ export default function DashboardLayout({ children, user }) {
     url.startsWith('/users')
     || url.startsWith('/roles')
     || url.startsWith('/rules')
-    || url.startsWith('/permissions'),
+    || url.startsWith('/permissions')
+    || url.startsWith('/disaster-statuses')
+    || url.startsWith('/disaster-types'),
   )
 
   // Handle logout - use form submission to ensure full page reload
@@ -160,6 +162,28 @@ export default function DashboardLayout({ children, user }) {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <SidebarMenuSub>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={url === '/disaster-statuses' || url.startsWith('/disaster-statuses/')}
+                          >
+                            <Link href="/disaster-statuses">
+                              <Shield />
+                              <span>Disaster Statuses</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={url === '/disaster-types' || url.startsWith('/disaster-types/')}
+                          >
+                            <Link href="/disaster-types">
+                              <AlertTriangle />
+                              <span>Disaster Types</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
                             asChild

@@ -83,10 +83,6 @@ export default function DisasterView({ disaster }) {
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">ID</label>
-                  <p className="text-sm font-medium">{disaster.id}</p>
-                </div>
-                <div>
                   <label className="text-sm font-medium text-muted-foreground">Disaster Type</label>
                   <div className="mt-1">
                     <Badge variant="outline" className={getTypeBadgeColor(disaster.disaster_type_id)}>

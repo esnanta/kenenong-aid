@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use app\models\DisasterType;
 use app\models\DisasterTypeSearch;
+use Crenspire\Yii2Inertia\Inertia;
 use yii\data\ArrayDataProvider;
 use yii\db\Exception;
 use yii\web\ForbiddenHttpException;
@@ -31,45 +32,52 @@ class DisasterTypeController extends BaseController
 
     /**
      * Lists all DisasterType models.
-     * @return string
+     * @return \yii\web\Response
      * @throws ForbiddenHttpException
      */
-    public function actionIndex(): string
+    public function actionIndex(): \yii\web\Response
     {
         $this->checkAccess('disasterType.index');
         $searchModel = new DisasterTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+        return Inertia::render('DisasterType/Index', [
+            'types' => $dataProvider->getModels(),
+            'pagination' => [
+                'total' => (int) $dataProvider->getPagination()->totalCount,
+                'per_page' => (int) $dataProvider->getPagination()->pageSize,
+                'current_page' => (int) $dataProvider->getPagination()->getPage() + 1,
+                'last_page' => (int) $dataProvider->getPagination()->getPageCount(),
+            ],
+            'filters' => Yii::$app->request->queryParams,
+            'sort' => [
+                'sort_by' => Yii::$app->request->get('sort_by', 'id'),
+                'sort_order' => Yii::$app->request->get('sort_order', 'asc'),
+            ],
         ]);
     }
 
     /**
      * Displays a single DisasterType model.
      * @param integer $id
-     * @return string
+     * @return \yii\web\Response
      * @throws ForbiddenHttpException
      * @throws NotFoundHttpException
      */
-    public function actionView(int $id): string
+    public function actionView(int $id): \yii\web\Response
     {
         $model = $this->findModel($id);
         $this->checkAccess('disasterType.view', $model);
-        $providerDisaster = new ArrayDataProvider([
-            'allModels' => $model->disasters,
-        ]);
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-            'providerDisaster' => $providerDisaster,
+        
+        return Inertia::render('DisasterType/View', [
+            'type' => $model,
         ]);
     }
 
     /**
      * Creates a new DisasterType model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|Response
+     * @return \yii\web\Response
      * @throws ForbiddenHttpException
      * @throws Exception
      */
@@ -78,11 +86,12 @@ class DisasterTypeController extends BaseController
         $this->checkAccess('disasterType.create');
         $model = new DisasterType();
 
-        if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
+        if ($model->load(Yii::$app->request->post(), '') && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('create', [
-                'model' => $model,
+            return Inertia::render('DisasterType/Form', [
+                'type' => $model,
+                'errors' => $model->getErrors(),
             ]);
         }
     }
@@ -91,7 +100,7 @@ class DisasterTypeController extends BaseController
      * Updates an existing DisasterType model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
-     * @return Response|string
+     * @return \yii\web\Response
      * @throws NotFoundHttpException
      * @throws ForbiddenHttpException
      * @throws Exception
@@ -101,11 +110,12 @@ class DisasterTypeController extends BaseController
         $model = $this->findModel($id);
         $this->checkAccess('disasterType.update', $model);
 
-        if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
+        if ($model->load(Yii::$app->request->post(), '') && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('update', [
-                'model' => $model,
+            return Inertia::render('DisasterType/Form', [
+                'type' => $model,
+                'errors' => $model->getErrors(),
             ]);
         }
     }

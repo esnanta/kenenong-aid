@@ -140,6 +140,20 @@ $config = [
                 'disasters/<id:\d+>/edit' => 'disaster/update',
                 'disasters/<id:\d+>/delete' => 'disaster/delete',
 
+                // Disaster Status routes
+                'disaster-statuses' => 'disaster-status/index',
+                'disaster-statuses/create' => 'disaster-status/create',
+                'disaster-statuses/<id:\d+>/edit' => 'disaster-status/update',
+                'disaster-statuses/<id:\d+>/delete' => 'disaster-status/delete',
+                'disaster-statuses/<id:\d+>' => 'disaster-status/view',
+
+                // Disaster Type routes
+                'disaster-types' => 'disaster-type/index',
+                'disaster-types/create' => 'disaster-type/create',
+                'disaster-types/<id:\d+>/edit' => 'disaster-type/update',
+                'disaster-types/<id:\d+>/delete' => 'disaster-type/delete',
+                'disaster-types/<id:\d+>' => 'disaster-type/view',
+
                 // Generic routes (fallback)
                 '<controller:\w+>/<id:\d+>' => '<controller>/view',
                 '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',

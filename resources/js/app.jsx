@@ -36,6 +36,12 @@ const UserView = lazy(() => import('./pages/User/View'))
 const DisasterIndex = lazy(() => import('./pages/Disaster/Index'))
 const DisasterForm = lazy(() => import('./pages/Disaster/Form'))
 const DisasterView = lazy(() => import('./pages/Disaster/View'))
+const DisasterStatusIndex = lazy(() => import('./pages/DisasterStatus/Index'))
+const DisasterStatusForm = lazy(() => import('./pages/DisasterStatus/Form'))
+const DisasterStatusView = lazy(() => import('./pages/DisasterStatus/View'))
+const DisasterTypeIndex = lazy(() => import('./pages/DisasterType/Index'))
+const DisasterTypeForm = lazy(() => import('./pages/DisasterType/Form'))
+const DisasterTypeView = lazy(() => import('./pages/DisasterType/View'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 // RBAC pages
 const RoleIndex = lazy(() => import('./pages/Role/Index'))
@@ -82,6 +88,12 @@ createInertiaApp({
       'Disaster/Index': DisasterIndex,
       'Disaster/Form': DisasterForm,
       'Disaster/View': DisasterView,
+      'DisasterStatus/Index': DisasterStatusIndex,
+      'DisasterStatus/Form': DisasterStatusForm,
+      'DisasterStatus/View': DisasterStatusView,
+      'DisasterType/Index': DisasterTypeIndex,
+      'DisasterType/Form': DisasterTypeForm,
+      'DisasterType/View': DisasterTypeView,
       'NotFound': NotFound,
     }
     return pages[name] || NotFound
