@@ -6,6 +6,7 @@ use Yii;
 use app\models\DisasterStatus;
 use app\models\DisasterStatusSearch;
 use Crenspire\Yii2Inertia\Inertia;
+use yii\base\InvalidConfigException;
 use yii\data\ArrayDataProvider;
 use yii\db\Exception;
 use yii\web\Controller;
@@ -109,13 +110,16 @@ class DisasterStatusController extends BaseController
      * @throws NotFoundHttpException
      * @throws Exception
      * @throws ForbiddenHttpException
+     * @throws InvalidConfigException
      */
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
         $this->checkAccess('disasterStatus.update', $model);
 
-        if ($model->load(Yii::$app->request->post(), '') && $model->save()) {
+        $requestData = Yii::$app->request->isPut ? Yii::$app->request->getBodyParams() : Yii::$app->request->post();
+
+        if ($model->load($requestData, '') && $model->save()) {
             Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil disimpan.'));
             if (Yii::$app->request->headers->get('X-Inertia')) {
                 return $this->actionView($model->id);

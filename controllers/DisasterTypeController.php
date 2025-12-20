@@ -114,7 +114,9 @@ class DisasterTypeController extends BaseController
         $model = $this->findModel($id);
         $this->checkAccess('disasterType.update', $model);
 
-        if ($model->load(Yii::$app->request->post(), '') && $model->save()) {
+        $requestData = Yii::$app->request->isPut ? Yii::$app->request->getBodyParams() : Yii::$app->request->post();
+
+        if ($model->load($requestData, '') && $model->save()) {
             Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil disimpan.'));
             if (Yii::$app->request->headers->get('X-Inertia')) {
                 return $this->actionView($model->id);
