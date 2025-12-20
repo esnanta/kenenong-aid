@@ -87,6 +87,10 @@ class DisasterTypeController extends BaseController
         $model = new DisasterType();
 
         if ($model->load(Yii::$app->request->post(), '') && $model->save()) {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil disimpan.'));
+            if (Yii::$app->request->headers->get('X-Inertia')) {
+                return $this->actionView($model->id);
+            }
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return Inertia::render('DisasterType/Form', [
@@ -111,6 +115,10 @@ class DisasterTypeController extends BaseController
         $this->checkAccess('disasterType.update', $model);
 
         if ($model->load(Yii::$app->request->post(), '') && $model->save()) {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil disimpan.'));
+            if (Yii::$app->request->headers->get('X-Inertia')) {
+                return $this->actionView($model->id);
+            }
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return Inertia::render('DisasterType/Form', [
@@ -134,7 +142,16 @@ class DisasterTypeController extends BaseController
         $model = $this->findModel($id);
         $this->checkAccess('disasterType.delete', $model);
 
-        $model->deleteWithRelated();
+        if ($model->deleteWithRelated()) {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil dihapus.'));
+        } else {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Gagal menghapus data.'));
+        }
+
+        if (Yii::$app->request->headers->get('X-Inertia')) {
+            return $this->actionIndex();
+        }
+
         return $this->redirect(['index']);
     }
 

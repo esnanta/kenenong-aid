@@ -80,14 +80,18 @@ class DisasterStatusController extends BaseController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return Response
      * @throws ForbiddenHttpException
-     * @throws Exception
+     * @throws Exception|NotFoundHttpException
      */
-    public function actionCreate()
+    public function actionCreate(): Response
     {
         $this->checkAccess('disasterStatus.create');
         $model = new DisasterStatus();
 
         if ($model->load(Yii::$app->request->post(), '') && $model->save()) {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil disimpan.'));
+            if (Yii::$app->request->headers->get('X-Inertia')) {
+                return $this->actionView($model->id);
+            }
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return Inertia::render('DisasterStatus/Form', [
@@ -112,6 +116,10 @@ class DisasterStatusController extends BaseController
         $this->checkAccess('disasterStatus.update', $model);
 
         if ($model->load(Yii::$app->request->post(), '') && $model->save()) {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil disimpan.'));
+            if (Yii::$app->request->headers->get('X-Inertia')) {
+                return $this->actionView($model->id);
+            }
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return Inertia::render('DisasterStatus/Form', [
@@ -135,7 +143,16 @@ class DisasterStatusController extends BaseController
         $model = $this->findModel($id);
         $this->checkAccess('disasterStatus.delete', $model);
 
-        $model->deleteWithRelated();
+        if ($model->deleteWithRelated()) {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Data berhasil dihapus.'));
+        } else {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Gagal menghapus data.'));
+        }
+
+        if (Yii::$app->request->headers->get('X-Inertia')) {
+            return $this->actionIndex();
+        }
+
         return $this->redirect(['index']);
     }
 
