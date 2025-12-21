@@ -9,6 +9,7 @@ use Yii;
 use yii\data\ArrayDataProvider;
 use yii\db\Exception;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -35,9 +36,11 @@ class EntityTypeController extends BaseController
     /**
      * Lists all EntityType models.
      * @return string
+     * @throws ForbiddenHttpException
      */
     public function actionIndex(): string
     {
+        $this->checkAccess('entityType.index');
         $searchModel = new EntityTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -52,10 +55,13 @@ class EntityTypeController extends BaseController
      * @param int $id
      * @return string
      * @throws NotFoundHttpException
+     * @throws ForbiddenHttpException
      */
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
+        $this->checkAccess('entityType.view', $model);
+
         $providerMediaFiles = new ArrayDataProvider([
             'allModels' => $model->mediaFiles,
         ]);
@@ -74,9 +80,11 @@ class EntityTypeController extends BaseController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return Response|string
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionCreate()
     {
+        $this->checkAccess('entityType.create');
         $model = new EntityType();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -95,10 +103,12 @@ class EntityTypeController extends BaseController
      * @return Response|string
      * @throws NotFoundHttpException
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('entityType.update', $model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -116,10 +126,13 @@ class EntityTypeController extends BaseController
      * @return Response
      * @throws NotFoundHttpException
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
+        $model = $this->findModel($id);
+        $this->checkAccess('entityType.delete', $model);
+        $model->deleteWithRelated();
 
         return $this->redirect(['index']);
     }

@@ -7,6 +7,7 @@ use app\models\AidDistributionDetails;
 use app\models\AidDistributionDetailsSearch;
 use Yii;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\db\Exception;
@@ -34,9 +35,11 @@ class AidDistributionDetailsController extends BaseController
     /**
      * Lists all AidDistributionDetails models.
      * @return string
+     * @throws ForbiddenHttpException
      */
     public function actionIndex(): string
     {
+        $this->checkAccess('aidDistribution.index');
         $searchModel = new AidDistributionDetailsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -51,11 +54,15 @@ class AidDistributionDetailsController extends BaseController
      * @param int $id
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws ForbiddenHttpException
      */
     public function actionView(int $id): string
     {
+        $model = $this->findModel($id);
+        $this->checkAccess('aidDistribution.view',$model);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
         ]);
     }
 
@@ -64,9 +71,11 @@ class AidDistributionDetailsController extends BaseController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return Response|string
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionCreate()
     {
+        $this->checkAccess('aidDistribution.create');
         $model = new AidDistributionDetails();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -85,10 +94,12 @@ class AidDistributionDetailsController extends BaseController
      * @return Response|string
      * @throws NotFoundHttpException if the model cannot be found
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('aidDistribution.update',$model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -109,8 +120,9 @@ class AidDistributionDetailsController extends BaseController
      */
     public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
-
+        $model = $this->findModel($id);
+        $this->checkAccess('aidDistribution.delete', $model);
+        $model->deleteWithRelated();
         return $this->redirect(['index']);
     }
 

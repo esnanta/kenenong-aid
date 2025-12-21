@@ -7,6 +7,7 @@ use app\models\MediaFile;
 use app\models\MediaFileSearch;
 use Yii;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use Throwable;
@@ -36,9 +37,11 @@ class MediaFileController extends BaseController
     /**
      * Lists all MediaFile models.
      * @return string
+     * @throws ForbiddenHttpException
      */
     public function actionIndex(): string
     {
+        $this->checkAccess('mediaFile.index');
         $searchModel = new MediaFileSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -53,10 +56,13 @@ class MediaFileController extends BaseController
      * @param int $id
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws ForbiddenHttpException
      */
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
+        $this->checkAccess('mediaFile.view', $model);
+
         return $this->render('view', [
             'model' => $model,
         ]);
@@ -67,9 +73,11 @@ class MediaFileController extends BaseController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return Response|string
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionCreate()
     {
+        $this->checkAccess('mediaFile.create');
         $model = new MediaFile();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -88,10 +96,12 @@ class MediaFileController extends BaseController
      * @return Response|string
      * @throws NotFoundHttpException if the model cannot be found
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('mediaFile.update', $model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -113,7 +123,9 @@ class MediaFileController extends BaseController
      */
     public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
+        $model = $this->findModel($id);
+        $this->checkAccess('mediaFile.delete', $model);
+        $model->deleteWithRelated();
 
         return $this->redirect(['index']);
     }

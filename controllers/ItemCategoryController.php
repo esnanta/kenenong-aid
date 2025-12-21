@@ -8,6 +8,7 @@ use app\models\ItemCategorySearch;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\db\Exception;
@@ -35,9 +36,11 @@ class ItemCategoryController extends BaseController
     /**
      * Lists all ItemCategory models.
      * @return string
+     * @throws ForbiddenHttpException
      */
     public function actionIndex(): string
     {
+        $this->checkAccess('itemCategory.index');
         $searchModel = new ItemCategorySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -52,10 +55,13 @@ class ItemCategoryController extends BaseController
      * @param int $id
      * @return string
      * @throws NotFoundHttpException
+     * @throws ForbiddenHttpException
      */
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
+        $this->checkAccess('itemCategory.view', $model);
+
         $providerItem = new ArrayDataProvider([
             'allModels' => $model->items,
         ]);
@@ -70,9 +76,11 @@ class ItemCategoryController extends BaseController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return Response|string
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionCreate()
     {
+        $this->checkAccess('itemCategory.create');
         $model = new ItemCategory();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -91,10 +99,12 @@ class ItemCategoryController extends BaseController
      * @return Response|string
      * @throws NotFoundHttpException
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('itemCategory.update',$model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -112,10 +122,13 @@ class ItemCategoryController extends BaseController
      * @return Response
      * @throws NotFoundHttpException
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
+        $model = $this->findModel($id);
+        $this->checkAccess('itemCategory.delete', $model);
+        $model->deleteWithRelated();
 
         return $this->redirect(['index']);
     }

@@ -7,6 +7,7 @@ use app\models\VerificationVote;
 use app\models\VerificationVoteSearch;
 use Yii;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\db\Exception;
 use yii\web\Response;
@@ -34,9 +35,11 @@ class VerificationVoteController extends BaseController
     /**
      * Lists all VerificationVote models.
      * @return string
+     * @throws ForbiddenHttpException
      */
     public function actionIndex(): string
     {
+        $this->checkAccess('verificationVote.index');
         $searchModel = new VerificationVoteSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -51,11 +54,15 @@ class VerificationVoteController extends BaseController
      * @param int $id
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws ForbiddenHttpException
      */
     public function actionView(int $id): string
     {
+        $model = $this->findModel($id);
+        $this->checkAccess('verificationVote.view', $model);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
         ]);
     }
 
@@ -64,9 +71,11 @@ class VerificationVoteController extends BaseController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return Response|string
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionCreate()
     {
+        $this->checkAccess('verificationVote.create');
         $model = new VerificationVote();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -85,10 +94,12 @@ class VerificationVoteController extends BaseController
      * @return Response|string
      * @throws NotFoundHttpException if the model cannot be found
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('verificationVote.update',$model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -106,10 +117,13 @@ class VerificationVoteController extends BaseController
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
+        $model = $this->findModel($id);
+        $this->checkAccess('verificationVote.delete', $model);
+        $model->deleteWithRelated();
 
         return $this->redirect(['index']);
     }

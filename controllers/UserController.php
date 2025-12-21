@@ -10,6 +10,7 @@ use Yii;
 use yii\base\Model;
 use yii\db\Exception;
 use yii\filters\AccessControl;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -37,9 +38,12 @@ class UserController extends BaseController
      * Lists all users.
      *
      * @return Response
+     * @throws ForbiddenHttpException
      */
     public function actionIndex(): Response
     {
+        $this->checkAccess('user.index');
+
         $request = Yii::$app->request;
         $search = $request->get('search', '');
         $page = (int)$request->get('page', 1);
@@ -137,10 +141,12 @@ class UserController extends BaseController
      * @param int $id
      * @return Response
      * @throws NotFoundHttpException if the user cannot be found
+     * @throws ForbiddenHttpException
      */
     public function actionView(int $id): Response
     {
         $user = $this->findModel($id);
+        $this->checkAccess('user.view', $user);
 
         return Inertia::render('User/View', [
             'user' => [
@@ -158,10 +164,12 @@ class UserController extends BaseController
      * Creates a new user.
      *
      * @return Response
-     * @throws Exception
+     * @throws Exception|ForbiddenHttpException
      */
     public function actionCreate(): Response
     {
+        $this->checkAccess('user.create');
+
         $model = new User();
         $model->scenario = 'create';
 
@@ -221,11 +229,13 @@ class UserController extends BaseController
      * @param int $id
      * @return Response
      * @throws NotFoundHttpException if the user cannot be found
-     * @throws Exception
+     * @throws Exception|ForbiddenHttpException
      */
     public function actionUpdate(int $id): Response
     {
         $model = $this->findModel($id);
+        $this->checkAccess('user.update', $model);
+
         $profile = $model->profile;
 
         // Handle both POST and PUT requests
@@ -327,11 +337,13 @@ class UserController extends BaseController
      * @return Response
      * @throws NotFoundHttpException if the user cannot be found
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        
+        $this->checkAccess('user.delete', $model);
+
         // Prevent deleting yourself
         if ($model->id === Yii::$app->user->id) {
             Yii::$app->session->setFlash('error', 'You cannot delete your own account.');

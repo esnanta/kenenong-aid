@@ -9,6 +9,7 @@ use Yii;
 use yii\data\ArrayDataProvider;
 use yii\db\Exception;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -35,9 +36,11 @@ class ShelterController extends BaseController
     /**
      * Lists all Shelter models.
      * @return string
+     * @throws ForbiddenHttpException
      */
     public function actionIndex(): string
     {
+        $this->checkAccess('shelter.index');
         $searchModel = new ShelterSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -52,10 +55,13 @@ class ShelterController extends BaseController
      * @param int $id
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws ForbiddenHttpException
      */
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
+        $this->checkAccess('shelter.view', $model);
+
         $providerAccessRouteShelters = new ArrayDataProvider([
             'allModels' => $model->accessRouteShelters,
         ]);
@@ -78,9 +84,11 @@ class ShelterController extends BaseController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return Response|string
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionCreate()
     {
+        $this->checkAccess('shelter');
         $model = new Shelter();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -99,10 +107,12 @@ class ShelterController extends BaseController
      * @return Response|string
      * @throws NotFoundHttpException if the model cannot be found
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('shelter.update', $model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -120,10 +130,13 @@ class ShelterController extends BaseController
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
+        $model = $this->findModel($id);
+        $this->checkAccess('shelter.delete', $model);
+        $model->deleteWithRelated();
 
         return $this->redirect(['index']);
     }

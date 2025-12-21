@@ -9,6 +9,7 @@ use Exception;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -35,9 +36,11 @@ class VerificationController extends BaseController
     /**
      * Lists all Verification models.
      * @return string
+     * @throws ForbiddenHttpException
      */
     public function actionIndex(): string
     {
+        $this->checkAccess('verification.index');
         $searchModel = new VerificationSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -52,10 +55,13 @@ class VerificationController extends BaseController
      * @param int $id
      * @return string
      * @throws NotFoundHttpException
+     * @throws ForbiddenHttpException
      */
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
+        $this->checkAccess('verification.view', $model);
+
         $providerVerificationVote = new ArrayDataProvider([
             'allModels' => $model->verificationVotes,
         ]);
@@ -73,6 +79,7 @@ class VerificationController extends BaseController
      */
     public function actionCreate()
     {
+        $this->checkAccess('verification.create');
         $model = new Verification();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -95,6 +102,7 @@ class VerificationController extends BaseController
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('verification.update', $model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -115,7 +123,9 @@ class VerificationController extends BaseController
      */
     public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
+        $model = $this->findModel($id);
+        $this->checkAccess('verification.delete', $model);
+        $model->deleteWithRelated();
 
         return $this->redirect(['index']);
     }

@@ -9,6 +9,7 @@ use Yii;
 use yii\data\ArrayDataProvider;
 use yii\db\Exception;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -35,9 +36,11 @@ class VerificationActionController extends BaseController
     /**
      * Lists all VerificationAction models.
      * @return string
+     * @throws ForbiddenHttpException
      */
     public function actionIndex(): string
     {
+        $this->checkAccess('verificationAction.index');
         $searchModel = new VerificationActionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -52,10 +55,13 @@ class VerificationActionController extends BaseController
      * @param int $id
      * @return string
      * @throws NotFoundHttpException
+     * @throws ForbiddenHttpException
      */
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
+        $this->checkAccess('verificationAction.view',$model);
+        
         $providerVerificationVote = new ArrayDataProvider([
             'allModels' => $model->verificationVotes,
         ]);
@@ -70,9 +76,11 @@ class VerificationActionController extends BaseController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return Response|string
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionCreate()
     {
+        $this->checkAccess('verificationAction.create');
         $model = new VerificationAction();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -91,11 +99,13 @@ class VerificationActionController extends BaseController
      * @return Response|string
      * @throws NotFoundHttpException
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
-
+        $this->checkAccess('verificationAction.update',$model);
+        
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
@@ -112,10 +122,13 @@ class VerificationActionController extends BaseController
      * @return Response
      * @throws NotFoundHttpException
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
+        $model = $this->findModel($id);
+        $this->checkAccess('verificationAction.delete', $model);
+        $model->deleteWithRelated();
 
         return $this->redirect(['index']);
     }

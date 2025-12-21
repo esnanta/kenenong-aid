@@ -7,6 +7,7 @@ use app\models\Profile;
 use app\models\ProfileSearch;
 use Yii;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\db\Exception;
@@ -34,9 +35,11 @@ class ProfileController extends BaseController
     /**
      * Lists all Profile models.
      * @return string
+     * @throws ForbiddenHttpException
      */
     public function actionIndex(): string
     {
+        $this->checkAccess('profile.index');
         $searchModel = new ProfileSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -51,10 +54,13 @@ class ProfileController extends BaseController
      * @param int $id
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws ForbiddenHttpException
      */
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
+        $this->checkAccess('profile.view',$model);
+
         return $this->render('view', [
             'model' => $model,
         ]);
@@ -68,6 +74,7 @@ class ProfileController extends BaseController
      */
     public function actionCreate()
     {
+        $this->checkAccess('profile.create');
         $model = new Profile();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -86,10 +93,12 @@ class ProfileController extends BaseController
      * @return Response|string
      * @throws NotFoundHttpException if the model cannot be found
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('profile.update',$model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->user_id]);
@@ -107,10 +116,13 @@ class ProfileController extends BaseController
      * @return Response
      * @throws NotFoundHttpException if the model cannot be found
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
+        $model = $this->findModel($id);
+        $this->checkAccess('profile.delete', $model);
+        $model->deleteWithRelated();
 
         return $this->redirect(['index']);
     }

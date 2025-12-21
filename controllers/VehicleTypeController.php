@@ -9,6 +9,7 @@ use Yii;
 use yii\data\ArrayDataProvider;
 use yii\db\Exception;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -35,9 +36,11 @@ class VehicleTypeController extends BaseController
     /**
      * Lists all VehicleType models.
      * @return string
+     * @throws ForbiddenHttpException
      */
     public function actionIndex(): string
     {
+        $this->checkAccess('vehicleType.index');
         $searchModel = new VehicleTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -52,10 +55,13 @@ class VehicleTypeController extends BaseController
      * @param int $id
      * @return string
      * @throws NotFoundHttpException
+     * @throws ForbiddenHttpException
      */
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
+        $this->checkAccess('vehicleType.view', $model);
+
         $providerAccessRouteVehicles = new ArrayDataProvider([
             'allModels' => $model->accessRouteVehicles,
         ]);
@@ -70,9 +76,11 @@ class VehicleTypeController extends BaseController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|Response
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionCreate()
     {
+        $this->checkAccess('vehicleType.index');
         $model = new VehicleType();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -91,10 +99,12 @@ class VehicleTypeController extends BaseController
      * @return string|Response
      * @throws NotFoundHttpException
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('vehicleType.update', $model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -112,10 +122,13 @@ class VehicleTypeController extends BaseController
      * @return Response
      * @throws NotFoundHttpException
      * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
+        $model = $this->findModel($id);
+        $this->checkAccess('vehicleType.delete', $model);
+        $model->deleteWithRelated();
 
         return $this->redirect(['index']);
     }

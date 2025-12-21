@@ -115,6 +115,135 @@ VALUES ('disaster.index', 2, 'Index Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(
        ('disaster.report', 2, 'Report Disaster', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
 
 
+INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('aidPlan.index', 2, 'Index Aid Plan', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('aidPlan.create', 2, 'Create Aid Plan', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('aidPlan.update', 2, 'Update Aid Plan', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('aidPlan.view', 2, 'View Aid Plan', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('aidPlan.delete', 2, 'Delete Aid Plan', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('aidPlan.report', 2, 'Report Aid Plan', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+
+INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('aidDistribution.index', 2, 'Index Aid Distribution', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('aidDistribution.create', 2, 'Create Aid Distribution', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('aidDistribution.update', 2, 'Update Aid Distribution', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('aidDistribution.view', 2, 'View Aid Distribution', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('aidDistribution.delete', 2, 'Delete Aid Distribution', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('aidDistribution.report', 2, 'Report Aid Distribution', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('entityType.index', 2, 'Index Entity Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('entityType.create', 2, 'Create Entity Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('entityType.update', 2, 'Update Entity Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('entityType.view', 2, 'View Entity Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('entityType.delete', 2, 'Delete Entity Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('entityType.report', 2, 'Report Entity Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+
+INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('itemCategory.index', 2, 'Index Item Category', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('itemCategory.create', 2, 'Create Item Category', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('itemCategory.update', 2, 'Update Item Category', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('itemCategory.view', 2, 'View Item Category', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('itemCategory.delete', 2, 'Delete Item Category', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('itemCategory.report', 2, 'Report Item Category', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('item.index', 2, 'Index Item', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('item.create', 2, 'Create Item', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('item.update', 2, 'Update Item', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('item.view', 2, 'View Item', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('item.delete', 2, 'Delete Item', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('item.report', 2, 'Report Item', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('mediaFile.index', 2, 'Index Media File', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('mediaFile.create', 2, 'Create Media File', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('mediaFile.update', 2, 'Update Media File', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('mediaFile.view', 2, 'View Media File', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('mediaFile.delete', 2, 'Delete Media File', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('mediaFile.report', 2, 'Report Media File', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('profile.index', 2, 'Index Profile', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('profile.create', 2, 'Create Profile', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('profile.update', 2, 'Update Profile', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('profile.view', 2, 'View Profile', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('profile.delete', 2, 'Delete Profile', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('profile.report', 2, 'Report Profile', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+
+INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('shelter.index', 2, 'Index Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('shelter.create', 2, 'Create Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('shelter.update', 2, 'Update Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('shelter.view', 2, 'View Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('shelter.delete', 2, 'Delete Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('shelter.report', 2, 'Report Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('unit.index', 2, 'Index Unit', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('unit.create', 2, 'Create Unit', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('unit.update', 2, 'Update Unit', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('unit.view', 2, 'View Unit', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('unit.delete', 2, 'Delete Unit', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('unit.report', 2, 'Report Unit', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('vehicleType.index', 2, 'Index Vehicle Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('vehicleType.create', 2, 'Create Vehicle Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('vehicleType.update', 2, 'Update Vehicle Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('vehicleType.view', 2, 'View Vehicle Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('vehicleType.delete', 2, 'Delete Vehicle Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('vehicleType.report', 2, 'Report Vehicle Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+
+INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('verificationAction.index', 2, 'Index Verification Action', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verificationAction.create', 2, 'Create Verification Action', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verificationAction.update', 2, 'Update Verification Action', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verificationAction.view', 2, 'View Verification Action', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verificationAction.delete', 2, 'Delete Verification Action', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verificationAction.report', 2, 'Report Verification Action', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('verification.index', 2, 'Index Verification', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verification.create', 2, 'Create Verification', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verification.update', 2, 'Update Verification', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verification.view', 2, 'View Verification', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verification.delete', 2, 'Delete Verification', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verification.report', 2, 'Report Verification', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('verificationVote.index', 2, 'Index Verification Vote', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verificationVote.create', 2, 'Create Verification Vote', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verificationVote.update', 2, 'Update Verification Vote', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verificationVote.view', 2, 'View Verification Vote', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verificationVote.delete', 2, 'Delete Verification Vote', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verificationVote.report', 2, 'Report Verification Vote', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+INSERT INTO t_auth_item
+(name, type, description, created_at, updated_at)
+VALUES ('user.index', 2, 'Index User', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('user.create', 2, 'Create User', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('user.update', 2, 'Update User', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('user.view', 2, 'View User', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('user.delete', 2, 'Delete User', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('user.report', 2, 'Report User', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
 
 
 /* MASTER → DETAIL */
@@ -156,6 +285,81 @@ VALUES ('master.index', 'disaster.index'),
        ('master.delete', 'disaster.delete'),
        ('master.report', 'disaster.report');
 
+INSERT INTO t_auth_item_child
+(parent, child)
+VALUES ('master.index', 'verificationAction.index'),
+       ('master.create', 'verificationAction.create'),
+       ('master.update', 'verificationAction.update'),
+       ('master.view', 'verificationAction.view'),
+       ('master.delete', 'verificationAction.delete'),
+       ('master.report', 'verificationAction.report');
+
+INSERT INTO t_auth_item_child
+(parent, child)
+VALUES ('master.index', 'vehicleType.index'),
+       ('master.create', 'vehicleType.create'),
+       ('master.update', 'vehicleType.update'),
+       ('master.view', 'vehicleType.view'),
+       ('master.delete', 'vehicleType.delete'),
+       ('master.report', 'vehicleType.report');
+
+INSERT INTO t_auth_item_child
+(parent, child)
+VALUES ('master.index', 'unit.index'),
+       ('master.create', 'unit.create'),
+       ('master.update', 'unit.update'),
+       ('master.view', 'unit.view'),
+       ('master.delete', 'unit.delete'),
+       ('master.report', 'unit.report');
+
+
+INSERT INTO t_auth_item_child
+(parent, child)
+VALUES ('master.index', 'shelter.index'),
+       ('master.create', 'shelter.create'),
+       ('master.update', 'shelter.update'),
+       ('master.view', 'shelter.view'),
+       ('master.delete', 'shelter.delete'),
+       ('master.report', 'shelter.report');
+
+INSERT INTO t_auth_item_child
+(parent, child)
+VALUES ('master.index', 'profile.index'),
+       ('master.create', 'profile.create'),
+       ('master.update', 'profile.update'),
+       ('master.view', 'profile.view'),
+       ('master.delete', 'profile.delete'),
+       ('master.report', 'profile.report');
+
+
+
+INSERT INTO t_auth_item_child
+(parent, child)
+VALUES ('master.index', 'item.index'),
+       ('master.create', 'item.create'),
+       ('master.update', 'item.update'),
+       ('master.view', 'item.view'),
+       ('master.delete', 'item.delete'),
+       ('master.report', 'item.report');
+
+INSERT INTO t_auth_item_child
+(parent, child)
+VALUES ('master.index', 'itemCategory.index'),
+       ('master.create', 'itemCategory.create'),
+       ('master.update', 'itemCategory.update'),
+       ('master.view', 'itemCategory.view'),
+       ('master.delete', 'itemCategory.delete'),
+       ('master.report', 'itemCategory.report');
+
+INSERT INTO t_auth_item_child
+(parent, child)
+VALUES ('master.index', 'entityType.index'),
+       ('master.create', 'entityType.create'),
+       ('master.update', 'entityType.update'),
+       ('master.view', 'entityType.view'),
+       ('master.delete', 'entityType.delete'),
+       ('master.report', 'entityType.report');
+
 /* TRANSACTION → DETAIL */
 /* TRANSACTION → ACCESS ROUTE SHELTER*/
 INSERT INTO t_auth_item_child
@@ -185,6 +389,52 @@ VALUES ('transaction.index', 'accessRouteVehicle.index'),
        ('transaction.delete', 'accessRouteVehicle.delete'),
        ('transaction.report', 'accessRouteVehicle.report');
 
+INSERT INTO t_auth_item_child
+(parent, child)
+VALUES ('transaction.index', 'verificationVote.index'),
+       ('transaction.create', 'verificationVote.create'),
+       ('transaction.update', 'verificationVote.update'),
+       ('transaction.view', 'verificationVote.view'),
+       ('transaction.delete', 'verificationVote.delete'),
+       ('transaction.report', 'verificationVote.report');
+
+INSERT INTO t_auth_item_child
+(parent, child)
+VALUES ('transaction.index', 'verification.index'),
+       ('transaction.create', 'verification.create'),
+       ('transaction.update', 'verification.update'),
+       ('transaction.view', 'verification.view'),
+       ('transaction.delete', 'verification.delete'),
+       ('transaction.report', 'verification.report');
+
+INSERT INTO t_auth_item_child
+(parent, child)
+VALUES ('transaction.index', 'mediaFile.index'),
+       ('transaction.create', 'mediaFile.create'),
+       ('transaction.update', 'mediaFile.update'),
+       ('transaction.view', 'mediaFile.view'),
+       ('transaction.delete', 'mediaFile.delete'),
+       ('transaction.report', 'mediaFile.report');
+
+
+INSERT INTO t_auth_item_child
+(parent, child)
+VALUES ('transaction.index', 'aidPlan.index'),
+       ('transaction.create', 'aidPlan.create'),
+       ('transaction.update', 'aidPlan.update'),
+       ('transaction.view', 'aidPlan.view'),
+       ('transaction.delete', 'aidPlan.delete'),
+       ('transaction.report', 'aidPlan.report');
+
+
+INSERT INTO t_auth_item_child
+(parent, child)
+VALUES ('transaction.index', 'aidDistribution.index'),
+       ('transaction.create', 'aidDistribution.create'),
+       ('transaction.update', 'aidDistribution.update'),
+       ('transaction.view', 'aidDistribution.view'),
+       ('transaction.delete', 'aidDistribution.delete'),
+       ('transaction.report', 'aidDistribution.report');
 
 
 /* ASSIGN MASTER & TRANSACTION KE ROLE */
@@ -202,7 +452,13 @@ VALUES ('admin', 'master.index'),
        ('admin', 'transaction.update'),
        ('admin', 'transaction.view'),
        ('admin', 'transaction.delete'),
-       ('admin', 'transaction.report');
+       ('admin', 'transaction.report'),
+       ('admin', 'user.index'),
+       ('admin', 'user.create'),
+       ('admin', 'user.update'),
+       ('admin', 'user.view'),
+       ('admin', 'user.delete'),
+       ('admin', 'user.report');
 
 /* REGULAR → TRANSACTION */
 INSERT INTO t_auth_item_child
