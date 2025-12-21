@@ -3,7 +3,9 @@
 namespace app\models;
 
 use Yii;
-use Da\User\Model\AuthItem as BaseAuthItem;
+use yii\base\InvalidConfigException;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "t_auth_item".
@@ -23,12 +25,12 @@ use Da\User\Model\AuthItem as BaseAuthItem;
  * @property AuthItem[] $parents
  * @property AuthRule $ruleName
  */
-class AuthItem extends BaseAuthItem
+class AuthItem extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 't_auth_item';
     }
@@ -36,7 +38,7 @@ class AuthItem extends BaseAuthItem
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['description', 'rule_name', 'data', 'created_at', 'updated_at'], 'default', 'value' => null],
@@ -52,7 +54,7 @@ class AuthItem extends BaseAuthItem
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'name' => Yii::t('app', 'Name'),
@@ -66,51 +68,53 @@ class AuthItem extends BaseAuthItem
     }
 
     /**
-     * Gets query for [[AuthAssignments]].
+     * Gets a query for [[AuthAssignments]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getAuthAssignments()
+    public function getAuthAssignments(): ActiveQuery
     {
         return $this->hasMany(AuthAssignment::class, ['item_name' => 'name']);
     }
 
     /**
-     * Gets query for [[AuthItemChildren]].
+     * Gets a query for [[AuthItemChildren]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getAuthItemChildren()
+    public function getAuthItemChildren(): ActiveQuery
     {
         return $this->hasMany(AuthItemChild::class, ['parent' => 'name']);
     }
 
     /**
-     * Gets query for [[AuthItemChildren0]].
+     * Gets a query for [[AuthItemChildren0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getAuthItemChildren0()
+    public function getAuthItemChildren0(): ActiveQuery
     {
         return $this->hasMany(AuthItemChild::class, ['child' => 'name']);
     }
 
     /**
-     * Gets query for [[Children]].
+     * Gets a query for [[Children]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
+     * @throws InvalidConfigException
      */
-    public function getChildren()
+    public function getChildren(): ActiveQuery
     {
         return $this->hasMany(AuthItem::class, ['name' => 'child'])->viaTable('t_auth_item_child', ['parent' => 'name']);
     }
 
     /**
-     * Gets query for [[Parents]].
+     * Gets a query for [[Parents]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
+     * @throws InvalidConfigException
      */
-    public function getParents()
+    public function getParents(): ActiveQuery
     {
         return $this->hasMany(AuthItem::class, ['name' => 'parent'])->viaTable('t_auth_item_child', ['child' => 'name']);
     }
@@ -118,9 +122,9 @@ class AuthItem extends BaseAuthItem
     /**
      * Gets query for [[RuleName]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getRuleName()
+    public function getRuleName(): ActiveQuery
     {
         return $this->hasOne(AuthRule::class, ['name' => 'rule_name']);
     }
