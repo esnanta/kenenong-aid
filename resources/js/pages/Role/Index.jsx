@@ -1,5 +1,5 @@
 import { Head, Link, router, usePage } from '@inertiajs/react'
-import { Edit, Eye, Plus, Shield, Trash2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, ChevronUp, Columns2, Edit, Eye, Filter, Plus, Search, Shield, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import {DashboardLayout} from '@/components/layouts/DashboardLayout.jsx'
@@ -17,6 +17,16 @@ import { Badge } from '@/components/ui/badge.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
 import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu.tsx'
+import { Input } from '@/components/ui/input.tsx'
+import { Label } from '@/components/ui/label.tsx'
+import {
   Table,
   TableBody,
   TableCell,
@@ -25,12 +35,70 @@ import {
   TableRow,
 } from '@/components/ui/table.tsx'
 
-export default function RoleIndex({ roles, pagination: _pagination }) {
+export default function RoleIndex({ roles, pagination, filters, sort }) {
   const { props } = usePage()
+  const [search, setSearch] = useState(filters?.search || '')
   const [deleteName, setDeleteName] = useState(null)
+  const [showFilters, setShowFilters] = useState(false)
+  const [columnVisibility, setColumnVisibility] = useState({
+    name: true,
+    description: true,
+    ruleName: true,
+    createdAt: true,
+    updatedAt: true,
+    actions: true,
+  })
+
+  const currentSortBy = sort?.sort_by || 'created_at'
+  const currentSortOrder = sort?.sort_order || 'desc'
+
+  const handleSort = (column) => {
+    const newSortOrder = currentSortBy === column && currentSortOrder === 'asc' ? 'desc' : 'asc'
+    router.get('/role', {
+      ...filters,
+      search,
+      sort_by: column,
+      sort_order: newSortOrder,
+      page: 1,
+    }, { preserveState: true })
+  }
+
+  const handleFilter = () => {
+    router.get('/role', {
+      search,
+      sort_by: currentSortBy,
+      sort_order: currentSortOrder,
+      page: 1,
+    }, { preserveState: true })
+  }
+
+  const handleClearFilters = () => {
+    setSearch('')
+    router.get('/role', {
+      sort_by: currentSortBy,
+      sort_order: currentSortOrder,
+      page: 1,
+    }, { preserveState: true })
+  }
 
   const handleDelete = (name) => {
-    router.post(`/role/${name}/delete`, {}, {
+    // Get CSRF token from meta tag or props
+    const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+    const metaParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute('content')
+
+    const csrfToken = metaToken || props.csrfToken
+    const csrfParam = metaParam || props.csrfParam
+
+    if (!csrfToken || !csrfParam) {
+      toast.error('CSRF token missing. Please refresh the page.')
+      return
+    }
+
+    const formData = {
+      [csrfParam]: csrfToken,
+    }
+
+    router.post(`/role/${name}/delete`, formData, {
       onSuccess: () => {
         setDeleteName(null)
         toast.success('Role deleted successfully')
@@ -38,6 +106,16 @@ export default function RoleIndex({ roles, pagination: _pagination }) {
       onError: () => {
         toast.error('Failed to delete role')
       },
+    })
+  }
+
+  const formatDate = (dateString) => {
+    if (!dateString)
+      return 'N/A'
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
     })
   }
 
@@ -53,120 +131,338 @@ export default function RoleIndex({ roles, pagination: _pagination }) {
     })
   }
 
+  const SortableHeader = ({ column, children }) => {
+    const isSorted = currentSortBy === column
+    const sortIcon = isSorted
+      ? (currentSortOrder === 'asc' ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />)
+      : <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
+
+    return (
+      <TableHead className="cursor-pointer hover:bg-muted/50" onClick={() => handleSort(column)}>
+        <div className="flex items-center">
+          {children}
+          {sortIcon}
+        </div>
+      </TableHead>
+    )
+  }
+
+  const hasActiveFilters = search
+
   return (
-    <DashboardLayout user={props.auth?.user}>
-      <Head title="Role Management" />
-
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Roles</CardTitle>
-                <CardDescription>
-                  A list of all roles in the system
-                </CardDescription>
+    <>
+      <Head title="Roles | Yii2 - Modern Starter Kit" />
+      <DashboardLayout user={props.user}>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Roles List</CardTitle>
+                  <CardDescription>
+                    A list of all roles in the system
+                  </CardDescription>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowFilters(!showFilters)}
+                  >
+                    <Filter className="mr-2 h-4 w-4" />
+                    Filters
+                    {showFilters ? <ChevronUp className="ml-2 h-4 w-4" /> : <ChevronDown className="ml-2 h-4 w-4" />}
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Columns2 className="mr-2 h-4 w-4" />
+                        Columns
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuCheckboxItem
+                        checked={columnVisibility.name}
+                        onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, name: checked })}
+                      >
+                        Name
+                      </DropdownMenuCheckboxItem>
+                      <DropdownMenuCheckboxItem
+                        checked={columnVisibility.description}
+                        onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, description: checked })}
+                      >
+                        Description
+                      </DropdownMenuCheckboxItem>
+                      <DropdownMenuCheckboxItem
+                        checked={columnVisibility.ruleName}
+                        onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, ruleName: checked })}
+                      >
+                        Rule Name
+                      </DropdownMenuCheckboxItem>
+                      <DropdownMenuCheckboxItem
+                        checked={columnVisibility.createdAt}
+                        onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, createdAt: checked })}
+                      >
+                        Created At
+                      </DropdownMenuCheckboxItem>
+                      <DropdownMenuCheckboxItem
+                        checked={columnVisibility.updatedAt}
+                        onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, updatedAt: checked })}
+                      >
+                        Updated At
+                      </DropdownMenuCheckboxItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <Link href="/role/create">
+                    <Button size="sm">
+                      <Plus className="mr-2 h-4 w-4" />
+                      Create Role
+                    </Button>
+                  </Link>
+                </div>
               </div>
-              <Link href="/role/create">
-                <Button size="sm">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Role
-                </Button>
-              </Link>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Rule</TableHead>
-                  <TableHead>Created At</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {roles && roles.length > 0
-                  ? (
-                      roles.map(role => (
-                        <TableRow key={role.name}>
-                          <TableCell className="font-medium">
-                            <div className="flex items-center gap-2">
-                              <Shield className="h-4 w-4 text-blue-500" />
-                              {role.name}
-                            </div>
-                          </TableCell>
-                          <TableCell>{role.description || '-'}</TableCell>
-                          <TableCell>
-                            {role.rule_name
-                              ? (
-                                  <Badge variant="outline">{role.rule_name}</Badge>
-                                )
-                              : (
-                                  '-'
-                                )}
-                          </TableCell>
-                          <TableCell className="text-muted-foreground">
-                            {formatDateTime(role.created_at)}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <Link href={`/role/${role.name}`}>
-                                <Button size="sm" variant="ghost">
-                                  <Eye className="h-4 w-4" />
-                                </Button>
-                              </Link>
-                              <Link href={`/role/${role.name}/update`}>
-                                <Button size="sm" variant="ghost">
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                              </Link>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => setDeleteName(role.name)}
-                              >
-                                <Trash2 className="h-4 w-4 text-destructive" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )
-                  : (
-                      <TableRow>
-                        <TableCell colSpan={5} className="text-center text-muted-foreground">
-                          No roles found
-                        </TableCell>
-                      </TableRow>
+            </CardHeader>
+            <CardContent>
+              {/* Advanced Filters - Collapsible */}
+              {showFilters && (
+                <div className="space-y-4 mb-6 p-4 border rounded-lg bg-muted/50">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Filter className="h-4 w-4" />
+                      <h3 className="font-semibold">Filters</h3>
+                    </div>
+                    {hasActiveFilters && (
+                      <Button variant="ghost" size="sm" onClick={handleClearFilters}>
+                        <X className="mr-2 h-4 w-4" />
+                        Clear All
+                      </Button>
                     )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </div>
+                  </div>
 
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteName} onOpenChange={() => setDeleteName(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Role</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete the role "
-              {deleteName}
-              "? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => handleDelete(deleteName)}>
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </DashboardLayout>
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    {/* Search */}
+                    <div className="space-y-2">
+                      <Label htmlFor="search">Search</Label>
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="search"
+                          type="search"
+                          placeholder="Name or description..."
+                          value={search}
+                          onChange={e => setSearch(e.target.value)}
+                          className="pl-9"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault()
+                              handleFilter()
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <Button onClick={handleFilter}>
+                      <Filter className="mr-2 h-4 w-4" />
+                      Apply Filters
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Table */}
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      {columnVisibility.name && (
+                        <SortableHeader column="name">Name</SortableHeader>
+                      )}
+                      {columnVisibility.description && (
+                        <SortableHeader column="description">Description</SortableHeader>
+                      )}
+                      {columnVisibility.ruleName && (
+                        <SortableHeader column="rule_name">Rule</SortableHeader>
+                      )}
+                      {columnVisibility.createdAt && (
+                        <SortableHeader column="created_at">Created At</SortableHeader>
+                      )}
+                      {columnVisibility.updatedAt && (
+                        <SortableHeader column="updated_at">Updated At</SortableHeader>
+                      )}
+                      {columnVisibility.actions && (
+                        <TableHead className="text-right">Actions</TableHead>
+                      )}
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {roles && roles.length > 0
+                      ? (
+                          roles.map(role => (
+                            <TableRow key={role.name}>
+                              {columnVisibility.name && (
+                                <TableCell className="font-medium">
+                                  <div className="flex items-center gap-2">
+                                    <Shield className="h-4 w-4 text-blue-500" />
+                                    {role.name}
+                                  </div>
+                                </TableCell>
+                              )}
+                              {columnVisibility.description && (
+                                <TableCell>{role.description || '-'}</TableCell>
+                              )}
+                              {columnVisibility.ruleName && (
+                                <TableCell>
+                                  {role.rule_name
+                                    ? (
+                                        <Badge variant="outline">{role.rule_name}</Badge>
+                                      )
+                                    : (
+                                        '-'
+                                      )}
+                                </TableCell>
+                              )}
+                              {columnVisibility.createdAt && (
+                                <TableCell>
+                                  <div className="flex flex-col">
+                                    <span>{formatDate(role.created_at)}</span>
+                                    <span className="text-xs text-muted-foreground">
+                                      {formatDateTime(role.created_at).split(',')[1]?.trim()}
+                                    </span>
+                                  </div>
+                                </TableCell>
+                              )}
+                              {columnVisibility.updatedAt && (
+                                <TableCell>
+                                  <div className="flex flex-col">
+                                    <span>{formatDate(role.updated_at)}</span>
+                                    <span className="text-xs text-muted-foreground">
+                                      {formatDateTime(role.updated_at).split(',')[1]?.trim()}
+                                    </span>
+                                  </div>
+                                </TableCell>
+                              )}
+                              {columnVisibility.actions && (
+                                <TableCell className="text-right">
+                                  <div className="flex items-center justify-end gap-2">
+                                    <Link href={`/role/${role.name}`}>
+                                      <Button size="sm" variant="ghost" title="View">
+                                        <Eye className="h-4 w-4" />
+                                      </Button>
+                                    </Link>
+                                    <Link href={`/role/${role.name}/update`}>
+                                      <Button size="sm" variant="ghost" title="Edit">
+                                        <Edit className="h-4 w-4" />
+                                      </Button>
+                                    </Link>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => setDeleteName(role.name)}
+                                      title="Delete"
+                                    >
+                                      <Trash2 className="h-4 w-4 text-destructive" />
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              )}
+                            </TableRow>
+                          ))
+                        )
+                      : (
+                          <TableRow>
+                            <TableCell colSpan={Object.values(columnVisibility).filter(Boolean).length} className="text-center text-muted-foreground py-8">
+                              No roles found
+                            </TableCell>
+                          </TableRow>
+                        )}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Pagination */}
+              {pagination && pagination.last_page > 1 && (
+                <div className="flex items-center justify-between mt-4">
+                  <div className="text-sm text-muted-foreground">
+                    Showing
+                    {' '}
+                    {((pagination.current_page - 1) * pagination.per_page) + 1}
+                    {' '}
+                    to
+                    {' '}
+                    {Math.min(pagination.current_page * pagination.per_page, pagination.total)}
+                    {' '}
+                    of
+                    {' '}
+                    {pagination.total}
+                    {' '}
+                    roles
+                  </div>
+                  <div className="flex gap-2">
+                    {pagination.current_page > 1 && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => router.get('/role', {
+                          ...filters,
+                          search,
+                          sort_by: currentSortBy,
+                          sort_order: currentSortOrder,
+                          page: pagination.current_page - 1,
+                        }, { preserveState: true })}
+                      >
+                        Previous
+                      </Button>
+                    )}
+                    {pagination.current_page < pagination.last_page && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => router.get('/role', {
+                          ...filters,
+                          search,
+                          sort_by: currentSortBy,
+                          sort_order: currentSortOrder,
+                          page: pagination.current_page + 1,
+                        }, { preserveState: true })}
+                      >
+                        Next
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={!!deleteName} onOpenChange={() => setDeleteName(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Role</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete the role "
+                {deleteName}
+                "? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => handleDelete(deleteName)}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </DashboardLayout>
+    </>
   )
 }
-
