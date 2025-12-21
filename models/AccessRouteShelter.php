@@ -3,7 +3,7 @@
 namespace app\models;
 
 use Yii;
-use \app\models\base\AccessRouteShelter as BaseAccessRouteShelters;
+use app\models\base\AccessRouteShelter as BaseAccessRouteShelters;
 
 /**
  * This is the model class for table "t_access_route_shelters".
@@ -13,7 +13,7 @@ class AccessRouteShelter extends BaseAccessRouteShelters
     /**
      * @inheritdoc
      */
-    public function rules()
+    public function rules(): array
     {
         return array_replace_recursive(parent::rules(),
 	    [
@@ -29,7 +29,7 @@ class AccessRouteShelter extends BaseAccessRouteShelters
     /**
      * @inheritdoc
      */
-    public function attributeHints()
+    public function attributeHints(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -39,5 +39,14 @@ class AccessRouteShelter extends BaseAccessRouteShelters
             'verlock' => Yii::t('app', 'Verlock'),
             'uuid' => Yii::t('app', 'Uuid'),
         ];
+    }
+
+    /**
+     * @inheritdoc
+     * @return AccessRouteSheltersQuery the active query used by this AR class.
+     */
+    public static function find(): AccessRouteSheltersQuery
+    {
+        return new AccessRouteSheltersQuery(get_called_class());
     }
 }

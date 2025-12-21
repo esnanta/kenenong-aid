@@ -72,7 +72,7 @@ class AidPlanController extends BaseController
      * @return string|Response
      * @throws Exception
      */
-    public function actionCreate() // Removed union type from signature
+    public function actionCreate(): string|Response
     {
         $model = new AidPlan();
 
@@ -93,7 +93,7 @@ class AidPlanController extends BaseController
      * @throws NotFoundHttpException
      * @throws Exception
      */
-    public function actionUpdate(int $id) // Removed union type from signature
+    public function actionUpdate(int $id): string|Response
     {
         $model = $this->findModel($id);
 

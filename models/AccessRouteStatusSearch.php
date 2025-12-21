@@ -2,10 +2,8 @@
 
 namespace app\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\AccessRouteStatus;
 
 /**
  * app\models\AccessRouteStatusSearch represents the model behind the search form about `app\models\AccessRouteStatus`.
@@ -15,7 +13,7 @@ use app\models\AccessRouteStatus;
     /**
      * @inheritdoc
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['id', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
@@ -26,7 +24,7 @@ use app\models\AccessRouteStatus;
     /**
      * @inheritdoc
      */
-    public function scenarios()
+    public function scenarios(): array
     {
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
@@ -39,7 +37,7 @@ use app\models\AccessRouteStatus;
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search(array $params): ActiveDataProvider
     {
         $query = AccessRouteStatus::find();
 

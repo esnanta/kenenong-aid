@@ -2,12 +2,14 @@
 
 namespace app\models;
 
+use yii\db\ActiveQuery;
+
 /**
  * This is the ActiveQuery class for [[AccessRoute]].
  *
  * @see AccessRoute
  */
-class AccessRouteQuery extends \yii\db\ActiveQuery
+class AccessRouteQuery extends ActiveQuery
 {
     /*public function active()
     {
@@ -17,19 +19,21 @@ class AccessRouteQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return AccessRoute[]|array
+     * @return AccessRoute[]
      */
-    public function all($db = null)
+    public function all($db = null): array
     {
         return parent::all($db);
     }
 
     /**
      * @inheritdoc
-     * @return AccessRoute|array|null
+     * @return AccessRoute|null
      */
     public function one($db = null)
     {
-        return parent::one($db);
+        /** @var AccessRoute|null $result */
+        $result = parent::one($db);
+        return $result;
     }
 }
