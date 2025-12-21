@@ -60,11 +60,45 @@ function SortableHeader({ column, children, currentSortBy, currentSortOrder, han
   )
 }
 
+/**
+ * @typedef {object} UserFilter
+ * @property {string} [search]
+ * @property {string} [email_verified]
+ * @property {string} [date_from]
+ * @property {string} [date_to]
+ */
+
+/**
+ * @typedef {object} UserSort
+ * @property {string} [sort_by]
+ * @property {string} [sort_order]
+ */
+
+/**
+ * @typedef {object} User
+ * @property {number} id
+ * @property {string} name
+ * @property {string} email
+ * @property {string|null} email_verified_at
+ * @property {string} created_at
+ */
+
+/**
+ * @param {object} props
+ * @param {Array<User>} props.users
+ * @param {object} props.pagination
+ * @param {UserFilter} props.filters
+ * @param {UserSort} props.sort
+ */
 export default function UserIndex({ users, pagination, filters, sort }) {
   const { props } = usePage()
+  /** @type {string} */
   const [search, setSearch] = useState(filters?.search || '')
+  /** @type {string} */
   const [emailVerified, setEmailVerified] = useState(filters?.email_verified || '')
+  /** @type {string} */
   const [dateFrom, setDateFrom] = useState(filters?.date_from || '')
+  /** @type {string} */
   const [dateTo, setDateTo] = useState(filters?.date_to || '')
   const [deleteId, setDeleteId] = useState(null)
   const [showFilters, setShowFilters] = useState(false)
