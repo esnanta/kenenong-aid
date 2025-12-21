@@ -161,8 +161,6 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
     name: true,
     description: true,
     ruleName: true,
-    createdAt: true,
-    updatedAt: true,
     actions: true,
   })
 
@@ -337,12 +335,6 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
                       )}
                       {columnVisibility.ruleName && (
                         <SortableHeader column="rule_name" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} handleSort={handleSort}>Rule</SortableHeader>
-                      )}
-                      {columnVisibility.createdAt && (
-                        <SortableHeader column="created_at" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} handleSort={handleSort}>Created At</SortableHeader>
-                      )}
-                      {columnVisibility.updatedAt && (
-                        <SortableHeader column="updated_at" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} handleSort={handleSort}>Updated At</SortableHeader>
                       )}
                       {columnVisibility.actions && (
                         <TableHead className="text-right">Actions</TableHead>

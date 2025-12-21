@@ -112,8 +112,6 @@ class RoleController extends BaseController
                 'name' => $role['name'],
                 'description' => $role['description'],
                 'rule_name' => $role['rule_name'],
-                'created_at' => isset($role['created_at']) ? date('Y-m-d H:i:s', $role['created_at']) : null,
-                'updated_at' => isset($role['updated_at']) ? date('Y-m-d H:i:s', $role['updated_at']) : null,
             ];
         }
 
@@ -162,8 +160,6 @@ class RoleController extends BaseController
                 'name' => $model->name,
                 'description' => $model->description,
                 'rule_name' => $model->ruleName,
-                'created_at' => $authItem->createdAt ? date('Y-m-d H:i:s', $authItem->createdAt) : null,
-                'updated_at' => $authItem->updatedAt ? date('Y-m-d H:i:s', $authItem->updatedAt) : null,
                 'children' => $assignedItems,
             ],
         ]);
