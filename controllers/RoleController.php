@@ -125,6 +125,11 @@ class RoleController extends BaseController
                 'total' => $dataProvider->totalCount,
                 'last_page' => $dataProvider->pagination ? $dataProvider->pagination->getPageCount() : 1,
             ],
+            'filters' => Yii::$app->request->get(),
+            'sort' => [
+                'sort_by' => Yii::$app->request->get('sort_by'),
+                'sort_order' => Yii::$app->request->get('sort_order'),
+            ],
         ]);
     }
 
