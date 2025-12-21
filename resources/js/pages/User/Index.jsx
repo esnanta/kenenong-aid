@@ -62,25 +62,25 @@ function SortableHeader({ column, children, currentSortBy, currentSortOrder, han
 
 /**
  * @typedef {object} UserFilter
- * @property {string} [search]
- * @property {string} [email_verified]
- * @property {string} [date_from]
- * @property {string} [date_to]
+ * @property {string} [search] - Search query for users.
+ * @property {string} [email_verified] - Filter by email verification status.
+ * @property {string} [date_from] - Filter users created from this date.
+ * @property {string} [date_to] - Filter users created up to this date.
  */
 
 /**
  * @typedef {object} UserSort
- * @property {string} [sort_by]
- * @property {string} [sort_order]
+ * @property {string} [sort_by] - Column to sort by.
+ * @property {string} [sort_order] - Sort order (asc or desc).
  */
 
 /**
  * @typedef {object} User
- * @property {number} id
- * @property {string} name
- * @property {string} email
- * @property {string|null} email_verified_at
- * @property {string} created_at
+ * @property {number} id - The user's ID.
+ * @property {string} name - The user's name.
+ * @property {string} email - The user's email address.
+ * @property {string|null} email_verified_at - Timestamp when the email was verified, or null if not verified.
+ * @property {string} created_at - Timestamp when the user was created.
  */
 
 /**
@@ -277,7 +277,7 @@ export default function UserIndex({ users, pagination, filters, sort }) {
                 <div className="space-y-4 mb-6 p-4 border rounded-lg bg-muted/50">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Filter className="h-4 w-4" />
+                      <Search className="h-4 w-4" />
                       <h3 className="font-semibold">Filters</h3>
                     </div>
                     {hasActiveFilters && (
@@ -456,11 +456,15 @@ export default function UserIndex({ users, pagination, filters, sort }) {
                           ))
                         )
                       : (
-                          <TableRow>
-                            <TableCell colSpan={Object.values(columnVisibility).filter(Boolean).length} className="text-center text-muted-foreground py-8">
-                              No users found
-                            </TableCell>
-                          </TableRow>
+                          [ // Wrap in an array
+                            <TableRow key="no-users-found">
+                              {' '}
+                              {/* Add a unique key */}
+                              <TableCell colSpan={Object.values(columnVisibility).filter(Boolean).length} className="text-center text-muted-foreground py-8">
+                                No users found
+                              </TableCell>
+                            </TableRow>,
+                          ]
                         )}
                   </TableBody>
                 </Table>
