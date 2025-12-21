@@ -2,7 +2,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react'
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, ChevronUp, Columns2, Edit, Eye, Filter, Plus, Search, Shield, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import {DashboardLayout} from '@/components/layouts/DashboardLayout.jsx'
+import { DashboardLayout } from '@/components/layouts/DashboardLayout.jsx'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,6 +35,123 @@ import {
   TableRow,
 } from '@/components/ui/table.tsx'
 
+function SortableHeader({ column, children, currentSortBy, currentSortOrder, handleSort }) {
+  const isSorted = currentSortBy === column
+  const sortIcon = isSorted
+    ? (currentSortOrder === 'asc' ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />)
+    : <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
+
+  return (
+    <TableHead className="cursor-pointer hover:bg-muted/50" onClick={() => handleSort(column)}>
+      <div className="flex items-center">
+        {children}
+        {sortIcon}
+      </div>
+    </TableHead>
+  )
+}
+
+function ColumnVisibilityDropdown({ columnVisibility, setColumnVisibility }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm">
+          <Columns2 className="mr-2 h-4 w-4" />
+          Columns
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuCheckboxItem
+          checked={columnVisibility.name}
+          onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, name: checked })}
+        >
+          Name
+        </DropdownMenuCheckboxItem>
+        <DropdownMenuCheckboxItem
+          checked={columnVisibility.description}
+          onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, description: checked })}
+        >
+          Description
+        </DropdownMenuCheckboxItem>
+        <DropdownMenuCheckboxItem
+          checked={columnVisibility.ruleName}
+          onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, ruleName: checked })}
+        >
+          Rule Name
+        </DropdownMenuCheckboxItem>
+        <DropdownMenuCheckboxItem
+          checked={columnVisibility.createdAt}
+          onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, createdAt: checked })}
+        >
+          Created At
+        </DropdownMenuCheckboxItem>
+        <DropdownMenuCheckboxItem
+          checked={columnVisibility.updatedAt}
+          onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, updatedAt: checked })}
+        >
+          Updated At
+        </DropdownMenuCheckboxItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
+/**
+ * @typedef {object} Role
+ * @property {string} name - The name of the role.
+ * @property {string} [description] - The description of the role.
+ * @property {string} [rule_name] - The rule name associated with the role.
+ * @property {string} created_at - The creation timestamp of the role.
+ * @property {string} updated_at - The last update timestamp of the role.
+ */
+
+/**
+ * @typedef {object} Pagination
+ * @property {number} current_page - The current page number.
+ * @property {number} per_page - The number of items per page.
+ * @property {number} total - The total number of items.
+ * @property {number} last_page - The last page number.
+ */
+
+/**
+ * @typedef {object} Filters
+ * @property {string} [search] - The search string for filtering roles.
+ */
+
+/**
+ * @typedef {object} Sort
+ * @property {string} [sort_by] - The column to sort by.
+ * @property {string} [sort_order] - The sort order (asc or desc).
+ */
+
+/**
+ * Helper function to get CSRF token and parameter.
+ * @param {object} props - The props object from usePage().
+ * @returns {{csrfToken: string, csrfParam: string} | null} - An object containing csrfToken and csrfParam, or null if not found.
+ */
+function getCsrfTokenAndParam(props) {
+  const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+  const metaParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute('content')
+
+  const csrfToken = metaToken || props.csrfToken
+  const csrfParam = metaParam || props.csrfParam
+
+  if (!csrfToken || !csrfParam) {
+    toast.error('CSRF token missing. Please refresh the page.')
+    return null
+  }
+  return { csrfToken, csrfParam }
+}
+
+/**
+ * @param {object} props
+ * @param {Role[]} props.roles
+ * @param {Pagination} props.pagination
+ * @param {Filters} props.filters
+ * @param {Sort} props.sort
+ */
 export default function RoleIndex({ roles, pagination, filters, sort }) {
   const { props } = usePage()
   const [search, setSearch] = useState(filters?.search || '')
@@ -56,7 +173,7 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
     const newSortOrder = currentSortBy === column && currentSortOrder === 'asc' ? 'desc' : 'asc'
     router.get('/role', {
       ...filters,
-      search,
+      search: String(search),
       sort_by: column,
       sort_order: newSortOrder,
       page: 1,
@@ -65,7 +182,7 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
 
   const handleFilter = () => {
     router.get('/role', {
-      search,
+      search: String(search),
       sort_by: currentSortBy,
       sort_order: currentSortOrder,
       page: 1,
@@ -82,20 +199,12 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
   }
 
   const handleDelete = (name) => {
-    // Get CSRF token from meta tag or props
-    const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-    const metaParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute('content')
-
-    const csrfToken = metaToken || props.csrfToken
-    const csrfParam = metaParam || props.csrfParam
-
-    if (!csrfToken || !csrfParam) {
-      toast.error('CSRF token missing. Please refresh the page.')
+    const csrf = getCsrfTokenAndParam(props)
+    if (!csrf)
       return
-    }
 
     const formData = {
-      [csrfParam]: csrfToken,
+      [csrf.csrfParam]: csrf.csrfToken,
     }
 
     router.post(`/role/${name}/delete`, formData, {
@@ -131,24 +240,6 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
     })
   }
 
-  const SortableHeader = ({ column, children }) => {
-    const isSorted = currentSortBy === column
-    const sortIcon = isSorted
-      ? (currentSortOrder === 'asc' ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />)
-      : <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
-
-    return (
-      <TableHead className="cursor-pointer hover:bg-muted/50" onClick={() => handleSort(column)}>
-        <div className="flex items-center">
-          {children}
-          {sortIcon}
-        </div>
-      </TableHead>
-    )
-  }
-
-  const hasActiveFilters = search
-
   return (
     <>
       <Head title="Roles | Yii2 - Modern Starter Kit" />
@@ -173,48 +264,7 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
                     Filters
                     {showFilters ? <ChevronUp className="ml-2 h-4 w-4" /> : <ChevronDown className="ml-2 h-4 w-4" />}
                   </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        <Columns2 className="mr-2 h-4 w-4" />
-                        Columns
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
-                      <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuCheckboxItem
-                        checked={columnVisibility.name}
-                        onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, name: checked })}
-                      >
-                        Name
-                      </DropdownMenuCheckboxItem>
-                      <DropdownMenuCheckboxItem
-                        checked={columnVisibility.description}
-                        onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, description: checked })}
-                      >
-                        Description
-                      </DropdownMenuCheckboxItem>
-                      <DropdownMenuCheckboxItem
-                        checked={columnVisibility.ruleName}
-                        onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, ruleName: checked })}
-                      >
-                        Rule Name
-                      </DropdownMenuCheckboxItem>
-                      <DropdownMenuCheckboxItem
-                        checked={columnVisibility.createdAt}
-                        onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, createdAt: checked })}
-                      >
-                        Created At
-                      </DropdownMenuCheckboxItem>
-                      <DropdownMenuCheckboxItem
-                        checked={columnVisibility.updatedAt}
-                        onCheckedChange={checked => setColumnVisibility({ ...columnVisibility, updatedAt: checked })}
-                      >
-                        Updated At
-                      </DropdownMenuCheckboxItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <ColumnVisibilityDropdown columnVisibility={columnVisibility} setColumnVisibility={setColumnVisibility} />
                   <Link href="/role/create">
                     <Button size="sm">
                       <Plus className="mr-2 h-4 w-4" />
@@ -233,7 +283,7 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
                       <Filter className="h-4 w-4" />
                       <h3 className="font-semibold">Filters</h3>
                     </div>
-                    {hasActiveFilters && (
+                    {search && (
                       <Button variant="ghost" size="sm" onClick={handleClearFilters}>
                         <X className="mr-2 h-4 w-4" />
                         Clear All
@@ -251,7 +301,7 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
                           id="search"
                           type="search"
                           placeholder="Name or description..."
-                          value={search}
+                          value={String(search)}
                           onChange={e => setSearch(e.target.value)}
                           className="pl-9"
                           onKeyDown={(e) => {
@@ -280,19 +330,19 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
                   <TableHeader>
                     <TableRow>
                       {columnVisibility.name && (
-                        <SortableHeader column="name">Name</SortableHeader>
+                        <SortableHeader column="name" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} handleSort={handleSort}>Name</SortableHeader>
                       )}
                       {columnVisibility.description && (
-                        <SortableHeader column="description">Description</SortableHeader>
+                        <SortableHeader column="description" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} handleSort={handleSort}>Description</SortableHeader>
                       )}
                       {columnVisibility.ruleName && (
-                        <SortableHeader column="rule_name">Rule</SortableHeader>
+                        <SortableHeader column="rule_name" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} handleSort={handleSort}>Rule</SortableHeader>
                       )}
                       {columnVisibility.createdAt && (
-                        <SortableHeader column="created_at">Created At</SortableHeader>
+                        <SortableHeader column="created_at" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} handleSort={handleSort}>Created At</SortableHeader>
                       )}
                       {columnVisibility.updatedAt && (
-                        <SortableHeader column="updated_at">Updated At</SortableHeader>
+                        <SortableHeader column="updated_at" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} handleSort={handleSort}>Updated At</SortableHeader>
                       )}
                       {columnVisibility.actions && (
                         <TableHead className="text-right">Actions</TableHead>
@@ -409,7 +459,7 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
                         size="sm"
                         onClick={() => router.get('/role', {
                           ...filters,
-                          search,
+                          search: String(search),
                           sort_by: currentSortBy,
                           sort_order: currentSortOrder,
                           page: pagination.current_page - 1,
@@ -424,7 +474,7 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
                         size="sm"
                         onClick={() => router.get('/role', {
                           ...filters,
-                          search,
+                          search: String(search),
                           sort_by: currentSortBy,
                           sort_order: currentSortOrder,
                           page: pagination.current_page + 1,
@@ -445,12 +495,12 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Delete Role</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to delete the role "
-                {deleteName}
-                "? This action cannot be undone.
-              </AlertDialogDescription>
             </AlertDialogHeader>
+            <AlertDialogDescription>
+              Are you sure you want to delete the role "
+              {String(deleteName)}
+              "? This action cannot be undone.
+            </AlertDialogDescription>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
