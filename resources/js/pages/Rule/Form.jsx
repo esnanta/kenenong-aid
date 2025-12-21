@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import {DashboardLayout} from '@/components/layouts/DashboardLayout.jsx'
 import { Button } from '@/components/ui/button.tsx'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx' // Added CardDescription
 import { Input } from '@/components/ui/input.tsx'
 import { Label } from '@/components/ui/label.tsx'
 import {
@@ -103,8 +103,7 @@ export default function RuleForm({ rule, errors = {} }) {
                   <p className="text-sm text-destructive">{errors.className[0]}</p>
                 )}
                 <p className="text-sm text-muted-foreground">
-                  Full namespaced class name that implements yii\rbac\Rule
-                </p>
+                  Full namespaced class name that implements yii\rbac\Rule</p>
               </div>
 
               <div className="flex gap-2 pt-4">

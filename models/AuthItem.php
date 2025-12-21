@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use Da\User\Model\AuthItem as BaseAuthItem;
 
 /**
  * This is the model class for table "t_auth_item".
@@ -22,10 +23,8 @@ use Yii;
  * @property AuthItem[] $parents
  * @property AuthRule $ruleName
  */
-class AuthItem extends \yii\db\ActiveRecord
+class AuthItem extends BaseAuthItem
 {
-
-
     /**
      * {@inheritdoc}
      */
@@ -125,5 +124,4 @@ class AuthItem extends \yii\db\ActiveRecord
     {
         return $this->hasOne(AuthRule::class, ['name' => 'rule_name']);
     }
-
 }

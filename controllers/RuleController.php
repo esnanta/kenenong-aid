@@ -4,8 +4,8 @@ namespace app\controllers;
 
 use app\controllers\base\BaseController;
 use Crenspire\Yii2Inertia\Inertia;
-use Da\User\Model\Rule;
-use Da\User\Search\RuleSearch;
+use Da\User\Model\Rule; // Use Da\User's Rule model
+use Da\User\Search\RuleSearch; // Use Da\User's RuleSearch model
 use Da\User\Service\AuthRuleEditionService;
 use Da\User\Traits\AuthManagerAwareTrait;
 use Da\User\Traits\ContainerAwareTrait;
