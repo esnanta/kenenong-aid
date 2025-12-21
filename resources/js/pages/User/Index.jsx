@@ -2,7 +2,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react'
 import { ArrowDown, ArrowUp, ArrowUpDown, CheckCircle2, ChevronDown, ChevronUp, Columns2, Edit, Eye, Filter, Plus, Search, Trash2, X, XCircle } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import {DashboardLayout} from '@/components/layouts/DashboardLayout.jsx'
+import { DashboardLayout } from '@/components/layouts/DashboardLayout.jsx'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,6 +41,24 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table.tsx'
+import { getCsrfParam, getCsrfToken } from '@/lib/csrf.js'
+
+// SortableHeader component moved outside UserIndex
+function SortableHeader({ column, children, currentSortBy, currentSortOrder, handleSort }) {
+  const isSorted = currentSortBy === column
+  const sortIcon = isSorted
+    ? (currentSortOrder === 'asc' ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />)
+    : <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
+
+  return (
+    <TableHead className="cursor-pointer hover:bg-muted/50" onClick={() => handleSort(column)}>
+      <div className="flex items-center">
+        {children}
+        {sortIcon}
+      </div>
+    </TableHead>
+  )
+}
 
 export default function UserIndex({ users, pagination, filters, sort }) {
   const { props } = usePage()
@@ -101,12 +119,8 @@ export default function UserIndex({ users, pagination, filters, sort }) {
   }
 
   const handleDelete = (id) => {
-    // Get CSRF token from meta tag or props
-    const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-    const metaParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute('content')
-
-    const csrfToken = metaToken || props.csrfToken
-    const csrfParam = metaParam || props.csrfParam
+    const csrfToken = getCsrfToken()
+    const csrfParam = getCsrfParam()
 
     if (!csrfToken || !csrfParam) {
       toast.error('CSRF token missing. Please refresh the page.')
@@ -144,22 +158,6 @@ export default function UserIndex({ users, pagination, filters, sort }) {
       hour: '2-digit',
       minute: '2-digit',
     })
-  }
-
-  const SortableHeader = ({ column, children }) => {
-    const isSorted = currentSortBy === column
-    const sortIcon = isSorted
-      ? (currentSortOrder === 'asc' ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />)
-      : <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
-
-    return (
-      <TableHead className="cursor-pointer hover:bg-muted/50" onClick={() => handleSort(column)}>
-        <div className="flex items-center">
-          {children}
-          {sortIcon}
-        </div>
-      </TableHead>
-    )
   }
 
   const hasActiveFilters = search || emailVerified || dateFrom || dateTo
@@ -332,19 +330,19 @@ export default function UserIndex({ users, pagination, filters, sort }) {
                   <TableHeader>
                     <TableRow>
                       {columnVisibility.id && (
-                        <SortableHeader column="id">ID</SortableHeader>
+                        <SortableHeader column="id" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} handleSort={handleSort}>ID</SortableHeader>
                       )}
                       {columnVisibility.name && (
-                        <SortableHeader column="name">Name</SortableHeader>
+                        <SortableHeader column="name" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} handleSort={handleSort}>Name</SortableHeader>
                       )}
                       {columnVisibility.email && (
-                        <SortableHeader column="email">Email</SortableHeader>
+                        <SortableHeader column="email" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} handleSort={handleSort}>Email</SortableHeader>
                       )}
                       {columnVisibility.emailVerified && (
-                        <SortableHeader column="email_verified_at">Email Verified</SortableHeader>
+                        <SortableHeader column="email_verified_at" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} handleSort={handleSort}>Email Verified</SortableHeader>
                       )}
                       {columnVisibility.createdAt && (
-                        <SortableHeader column="created_at">Created At</SortableHeader>
+                        <SortableHeader column="created_at" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} handleSort={handleSort}>Created At</SortableHeader>
                       )}
                       {columnVisibility.actions && (
                         <TableHead className="text-right">Actions</TableHead>
