@@ -24,7 +24,7 @@
     "yiisoft/yii2-bootstrap5": "~2.0.2",
     "yiisoft/yii2-symfonymailer": "~2.0.3",
     "crenspire/yii2-inertia": "^1.0",
-
+    "yidas/yii2-bower-asset": "~2.0.5",
     "mootensai/yii2-enhanced-gii": "dev-master",
     "ext-json": "*",
     "2amigos/yii2-usuario": "^1.6"
@@ -40,9 +40,13 @@
     "codeception/module-filesystem": "^3.0 || ^2.0 || ^1.1",
     "codeception/verify": "^3.0 || ^2.2"
   },
+  "replace": {
+    "2amigos/yii2-selectize-widget": "*"
+  },
   "config": {
     "allow-plugins": {
-      "yiisoft/yii2-composer": true
+      "yiisoft/yii2-composer": true,
+      "kylekatarnls/update-helper": true
     },
     "process-timeout": 1800,
     "fxp-asset": {
@@ -67,6 +71,10 @@
           "yii": "0755"
         }
       ]
+    },
+    "asset-installer-paths": {
+      "npm-asset-library": "vendor/npm-asset",
+      "bower-asset-library": "vendor/bower-asset"
     },
     "yii\\composer\\Installer::postInstall": {
       "generateCookieValidationKey": [
