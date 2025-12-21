@@ -117,7 +117,7 @@ class AidPlan extends \yii\db\ActiveRecord
      */
     public function getAidDistributions()
     {
-        return $this->hasMany(\app\models\AidDistribution::className(), ['aid_plan_id' => 'id']);
+        return $this->hasMany(\app\models\AidDistribution::class, ['aid_plan_id' => 'id']);
     }
         
     /**
@@ -125,7 +125,7 @@ class AidPlan extends \yii\db\ActiveRecord
      */
     public function getShelter()
     {
-        return $this->hasOne(\app\models\Shelter::className(), ['id' => 'shelter_id']);
+        return $this->hasOne(\app\models\Shelter::class, ['id' => 'shelter_id']);
     }
         
     /**
@@ -133,7 +133,7 @@ class AidPlan extends \yii\db\ActiveRecord
      */
     public function getAidPlanDetails()
     {
-        return $this->hasMany(\app\models\AidPlanDetails::className(), ['aid_plan_id' => 'id']);
+        return $this->hasMany(\app\models\AidPlanDetails::class, ['aid_plan_id' => 'id']);
     }
     
     /**
@@ -144,18 +144,18 @@ class AidPlan extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -190,6 +190,6 @@ class AidPlan extends \yii\db\ActiveRecord
     public static function find()
     {
         $query = new \app\models\AidPlanQuery(get_called_class());
-        return $query->where(['t_aid_plan.deleted_by' => 0]);
+        return $query->where(['t_aid_plan.is_deleted' => 0]);
     }
 }

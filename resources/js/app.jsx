@@ -4,9 +4,44 @@ import { lazy, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import { toast, Toaster } from 'sonner'
 import ErrorBoundary from './components/ErrorBoundary'
-import { LoadingIndicator } from './components/LoadingIndicator'
 import { ThemeProvider } from './components/ThemeProvider'
+import Dashboard from './pages/Dashboard/Index'
+
+import Home from './pages/Home'
+import NotFound from './pages/NotFound'
 import '../css/app.css'
+
+// Lazy load pages for code splitting
+const Login = lazy(() => import('./pages/Auth/Login'))
+const Register = lazy(() => import('./pages/Auth/Register'))
+const ForgotPassword = lazy(() => import('./pages/Auth/ForgotPassword'))
+const ResetPassword = lazy(() => import('./pages/Auth/ResetPassword'))
+const Resend = lazy(() => import('./pages/Auth/Resend'))
+const Profile = lazy(() => import('./pages/Dashboard/Profile'))
+const Settings = lazy(() => import('./pages/Dashboard/Settings'))
+const Billing = lazy(() => import('./pages/Dashboard/Billing'))
+const UserIndex = lazy(() => import('./pages/User/Index'))
+const UserForm = lazy(() => import('./pages/User/Form'))
+const UserView = lazy(() => import('./pages/User/View'))
+const DisasterIndex = lazy(() => import('./pages/Disaster/Index'))
+const DisasterForm = lazy(() => import('./pages/Disaster/Form'))
+const DisasterView = lazy(() => import('./pages/Disaster/View'))
+const DisasterStatusIndex = lazy(() => import('./pages/DisasterStatus/Index'))
+const DisasterStatusForm = lazy(() => import('./pages/DisasterStatus/Form'))
+const DisasterStatusView = lazy(() => import('./pages/DisasterStatus/View'))
+const DisasterTypeIndex = lazy(() => import('./pages/DisasterType/Index'))
+const DisasterTypeForm = lazy(() => import('./pages/DisasterType/Form'))
+const DisasterTypeView = lazy(() => import('./pages/DisasterType/View'))
+// RBAC pages
+const RoleIndex = lazy(() => import('./pages/Role/Index'))
+const RoleForm = lazy(() => import('./pages/Role/Form'))
+const RoleView = lazy(() => import('./pages/Role/View'))
+const PermissionIndex = lazy(() => import('./pages/Permission/Index'))
+const PermissionForm = lazy(() => import('./pages/Permission/Form'))
+const PermissionView = lazy(() => import('./pages/Permission/View'))
+const RuleIndex = lazy(() => import('./pages/Rule/Index'))
+const RuleForm = lazy(() => import('./pages/Rule/Form'))
+const RuleView = lazy(() => import('./pages/Rule/View'))
 
 // Get CSRF token from meta tag
 function getCsrfToken() {
@@ -19,42 +54,19 @@ function getCsrfParam() {
   return meta ? meta.getAttribute('content') : null
 }
 
-// Lazy load pages for code splitting
-const Home = lazy(() => import('./pages/Home'))
-const Login = lazy(() => import('./pages/Auth/Login'))
-const Register = lazy(() => import('./pages/Auth/Register'))
-const ForgotPassword = lazy(() => import('./pages/Auth/ForgotPassword'))
-const ResetPassword = lazy(() => import('./pages/Auth/ResetPassword'))
-const Resend = lazy(() => import('./pages/Auth/Resend'))
-const Dashboard = lazy(() => import('./pages/Dashboard/Index'))
-const Profile = lazy(() => import('./pages/Dashboard/Profile'))
-const Settings = lazy(() => import('./pages/Dashboard/Settings'))
-const Billing = lazy(() => import('./pages/Dashboard/Billing'))
-const UserIndex = lazy(() => import('./pages/User/Index'))
-const UserForm = lazy(() => import('./pages/User/Form'))
-const UserView = lazy(() => import('./pages/User/View'))
-const DisasterIndex = lazy(() => import('./pages/Disaster/Index'))
-const DisasterForm = lazy(() => import('./pages/Disaster/Form'))
-const DisasterView = lazy(() => import('./pages/Disaster/View'))
-const NotFound = lazy(() => import('./pages/NotFound'))
-// RBAC pages
-const RoleIndex = lazy(() => import('./pages/Role/Index'))
-const RoleForm = lazy(() => import('./pages/Role/Form'))
-const RoleView = lazy(() => import('./pages/Role/View'))
-const PermissionIndex = lazy(() => import('./pages/Permission/Index'))
-const PermissionForm = lazy(() => import('./pages/Permission/Form'))
-const PermissionView = lazy(() => import('./pages/Permission/View'))
-const RuleIndex = lazy(() => import('./pages/Rule/Index'))
-const RuleForm = lazy(() => import('./pages/Rule/Form'))
-const RuleView = lazy(() => import('./pages/Rule/View'))
-
-// Ambil token dari head meta atau dari global props yang dibagikan oleh InertiaBootstrap
+// CSRF Header setup
 const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
 if (token) {
   axios.defaults.headers.common['X-CSRF-Token'] = token
 }
 
 createInertiaApp({
+  progress: {
+    delay: 250,
+    color: '#29d',
+    includeCSS: true,
+    showSpinner: true,
+  },
   resolve: (name) => {
     const pages = {
       'Home': Home,
@@ -82,6 +94,12 @@ createInertiaApp({
       'Disaster/Index': DisasterIndex,
       'Disaster/Form': DisasterForm,
       'Disaster/View': DisasterView,
+      'DisasterStatus/Index': DisasterStatusIndex,
+      'DisasterStatus/Form': DisasterStatusForm,
+      'DisasterStatus/View': DisasterStatusView,
+      'DisasterType/Index': DisasterTypeIndex,
+      'DisasterType/Form': DisasterTypeForm,
+      'DisasterType/View': DisasterTypeView,
       'NotFound': NotFound,
     }
     return pages[name] || NotFound
@@ -207,7 +225,6 @@ createInertiaApp({
     root.render(
       <ErrorBoundary>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <LoadingIndicator />
           <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
             <App {...props} />
           </Suspense>
@@ -215,5 +232,12 @@ createInertiaApp({
         </ThemeProvider>
       </ErrorBoundary>,
     )
+
+    // FIX: Remove the PHP loader once React is ready
+    const loader = document.getElementById('app-loader')
+    if (loader) {
+      loader.style.opacity = '0'
+      setTimeout(() => loader.remove(), 300)
+    }
   },
 })

@@ -2,10 +2,11 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
 use Crenspire\Yii2Inertia\Inertia;
+use Yii;
 use yii\web\NotFoundHttpException;
-use app\controllers\BaseController;
+use yii\web\Response;
 
 class HomeController extends BaseController
 {
@@ -13,7 +14,7 @@ class HomeController extends BaseController
      * Custom error action that renders React 404 page
      * This handles all 4xx and 5xx errors and renders them via Inertia
      */
-    public function actionError()
+    public function actionError(): Response
     {
         // Disable layout to ensure we only render Inertia content
         $this->layout = false;
@@ -84,7 +85,7 @@ class HomeController extends BaseController
         ]);
     }
 
-    public function actionIndex()
+    public function actionIndex(): Response
     {
         $user = null;
         if (!Yii::$app->user->isGuest) {

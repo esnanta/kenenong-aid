@@ -2,23 +2,30 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
 use app\models\AccessRouteStatus;
 use app\models\AccessRouteStatusSearch;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
+use Yii;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
+use yii\data\ArrayDataProvider;
+use yii\db\Exception;
 
 /**
  * AccessRouteStatusController implements the CRUD actions for AccessRouteStatus model.
  */
-class AccessRouteStatusController extends Controller
+class AccessRouteStatusController extends BaseController
 {
-    public function behaviors()
+    /**
+     * @return array
+     */
+    public function behaviors(): array
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                 ],
@@ -28,10 +35,12 @@ class AccessRouteStatusController extends Controller
 
     /**
      * Lists all AccessRouteStatus models.
-     * @return mixed
+     * @return string
+     * @throws ForbiddenHttpException
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
+        $this->checkAccess('accessRouteStatus.index');
         $searchModel = new AccessRouteStatusSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -43,13 +52,17 @@ class AccessRouteStatusController extends Controller
 
     /**
      * Displays a single AccessRouteStatus model.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return string
+     * @throws NotFoundHttpException
+     * @throws ForbiddenHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $providerAccessRoute = new \yii\data\ArrayDataProvider([
+        $this->checkAccess('accessRouteStatus.view', $model);
+
+        $providerAccessRoute = new ArrayDataProvider([
             'allModels' => $model->accessRoutes,
         ]);
         return $this->render('view', [
@@ -61,10 +74,13 @@ class AccessRouteStatusController extends Controller
     /**
      * Creates a new AccessRouteStatus model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return string|Response
+     * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionCreate()
     {
+        $this->checkAccess('accessRouteStatus.create');
         $model = new AccessRouteStatus();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -78,13 +94,17 @@ class AccessRouteStatusController extends Controller
 
     /**
      * Updates an existing AccessRouteStatus model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
+     * If the update is successful, the browser will be redirected to the 'view' page.
+     * @param int $id
+     * @return string|Response
+     * @throws NotFoundHttpException
+     * @throws Exception
+     * @throws ForbiddenHttpException
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('accessRouteStatus.update',$model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -98,13 +118,17 @@ class AccessRouteStatusController extends Controller
     /**
      * Deletes an existing AccessRouteStatus model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws Exception
+     * @throws ForbiddenHttpException
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
-
+        $model = $this->findModel($id);
+        $this->checkAccess('accessRouteStatus.delete', $model);
+        $model->deleteWithRelated();
         return $this->redirect(['index']);
     }
 
@@ -112,11 +136,11 @@ class AccessRouteStatusController extends Controller
     /**
      * Finds the AccessRouteStatus model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id
      * @return AccessRouteStatus the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): AccessRouteStatus
     {
         if (($model = AccessRouteStatus::findOne($id)) !== null) {
             return $model;
@@ -124,16 +148,17 @@ class AccessRouteStatusController extends Controller
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
         }
     }
-    
+
     /**
     * Action to load a tabular form grid
     * for AccessRoute
     * @author Yohanes Candrajaya <moo.tensai@gmail.com>
     * @author Jiwantoro Ndaru <jiwanndaru@gmail.com>
     *
-    * @return mixed
+    * @return string
+    * @throws NotFoundHttpException
     */
-    public function actionAddAccessRoute()
+    public function actionAddAccessRoute(): string
     {
         if (Yii::$app->request->isAjax) {
             $row = Yii::$app->request->post('AccessRoute');

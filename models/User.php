@@ -10,6 +10,8 @@ use Da\User\Model\User as BaseUser;
  */
 class User extends BaseUser
 {
+    const STATUS_TRASHED = 1; // Example status for soft delete
+
     /**
      * {@inheritdoc}
      */
@@ -50,4 +52,15 @@ class User extends BaseUser
         return $this->hasOne(Profile::class, ['user_id' => 'id']);
     }
 
+    /**
+     * Performs a soft delete on the user.
+     * Sets the user's status to 'trashed'.
+     * @return bool whether the user was successfully trashed
+     * @throws \yii\db\Exception
+     */
+    public function trash(): bool
+    {
+        $this->flags = self::STATUS_TRASHED; // Assuming 'flags' can be used for status
+        return $this->save(false, ['flags']); // Save only the 'flags' attribute
+    }
 }

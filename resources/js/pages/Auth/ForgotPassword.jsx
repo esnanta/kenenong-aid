@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button.tsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Label } from '@/components/ui/label.tsx'
+import { addCsrfToData } from '@/lib/csrf' // Import addCsrfToData
 
 export default function ForgotPassword({ form, errors }) {
   const [data, setData] = useState({
@@ -15,7 +16,9 @@ export default function ForgotPassword({ form, errors }) {
     e.preventDefault()
     setProcessing(true)
 
-    router.post('/forgot-password', data, {
+    const formDataWithCsrf = addCsrfToData(data)
+
+    router.post('/forgot-password', formDataWithCsrf, {
       onFinish: () => setProcessing(false),
     })
   }

@@ -2,23 +2,23 @@
 
 namespace app\controllers;
 
-use Yii;
-use app\models\AccessRouteVehicles;
+use app\controllers\base\BaseController;
+use app\models\AccessRouteVehicle;
 use app\models\AccessRouteVehiclesSearch;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
+use Yii;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
+use yii\db\Exception;
 
-/**
- * AccessRouteVehiclesController implements the CRUD actions for AccessRouteVehicles model.
- */
-class AccessRouteVehiclesController extends Controller
+class AccessRouteVehicleController extends BaseController
 {
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                 ],
@@ -28,10 +28,13 @@ class AccessRouteVehiclesController extends Controller
 
     /**
      * Lists all AccessRouteVehicles models.
-     * @return mixed
+     * @return string
+     * @throws ForbiddenHttpException
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
+        $this->checkAccess('accessRouteVehicle.index');
+
         $searchModel = new AccessRouteVehiclesSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -43,25 +46,31 @@ class AccessRouteVehiclesController extends Controller
 
     /**
      * Displays a single AccessRouteVehicles model.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return string
+     * @throws NotFoundHttpException if the model cannot be found
+     * @throws ForbiddenHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         $model = $this->findModel($id);
+        $this->checkAccess('accessRouteVehicle.view',$model);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
         ]);
     }
 
     /**
      * Creates a new AccessRouteVehicles model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return Response|string
+     * @throws Exception
      */
     public function actionCreate()
     {
-        $model = new AccessRouteVehicles();
+        $this->checkAccess('accessRouteVehicle.create');
+        $model = new AccessRouteVehicle();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -74,13 +83,17 @@ class AccessRouteVehiclesController extends Controller
 
     /**
      * Updates an existing AccessRouteVehicles model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
+     * If the update is successful, the browser will be redirected to the 'view' page.
+     * @param int $id
+     * @return Response|string
+     * @throws NotFoundHttpException if the model cannot be found
+     * @throws Exception
+     * @throws ForbiddenHttpException
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('accessRouteVehicle.update',$model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -94,13 +107,17 @@ class AccessRouteVehiclesController extends Controller
     /**
      * Deletes an existing AccessRouteVehicles model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException if the model cannot be found
+     * @throws Exception
+     * @throws ForbiddenHttpException
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
-
+        $model = $this->findModel($id);
+        $this->checkAccess('accessRouteVehicle.delete', $model);
+        $model->deleteWithRelated();
         return $this->redirect(['index']);
     }
 
@@ -108,13 +125,13 @@ class AccessRouteVehiclesController extends Controller
     /**
      * Finds the AccessRouteVehicles model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return AccessRouteVehicles the loaded model
+     * @param int $id
+     * @return AccessRouteVehicle the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): AccessRouteVehicle
     {
-        if (($model = AccessRouteVehicles::findOne($id)) !== null) {
+        if (($model = AccessRouteVehicle::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));

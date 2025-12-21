@@ -20,7 +20,7 @@ use mootensai\behaviors\UUIDBehavior;
  *
  * @property \app\models\Item $item
  * @property \app\models\AidDistribution $aidDistribution
- * @property \app\models\Units $unit
+ * @property \app\models\Unit $unit
  */
 class AidDistributionDetails extends \yii\db\ActiveRecord
 {
@@ -107,7 +107,7 @@ class AidDistributionDetails extends \yii\db\ActiveRecord
      */
     public function getItem()
     {
-        return $this->hasOne(\app\models\Item::className(), ['id' => 'item_id']);
+        return $this->hasOne(\app\models\Item::class, ['id' => 'item_id']);
     }
         
     /**
@@ -115,7 +115,7 @@ class AidDistributionDetails extends \yii\db\ActiveRecord
      */
     public function getAidDistribution()
     {
-        return $this->hasOne(\app\models\AidDistribution::className(), ['id' => 'aid_distribution_id']);
+        return $this->hasOne(\app\models\AidDistribution::class, ['id' => 'aid_distribution_id']);
     }
         
     /**
@@ -123,7 +123,7 @@ class AidDistributionDetails extends \yii\db\ActiveRecord
      */
     public function getUnit()
     {
-        return $this->hasOne(\app\models\Units::className(), ['id' => 'unit_id']);
+        return $this->hasOne(\app\models\Unit::class, ['id' => 'unit_id']);
     }
     
     /**
@@ -134,18 +134,18 @@ class AidDistributionDetails extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -180,6 +180,6 @@ class AidDistributionDetails extends \yii\db\ActiveRecord
     public static function find()
     {
         $query = new \app\models\AidDistributionDetailsQuery(get_called_class());
-        return $query->where(['t_aid_distribution_details.deleted_by' => 0]);
+        return $query->where(['t_aid_distribution_details.is_deleted' => 0]);
     }
 }

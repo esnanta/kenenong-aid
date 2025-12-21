@@ -7,6 +7,7 @@ use Crenspire\Yii2Inertia\Inertia;
 use Da\User\Form\LoginForm;
 use Yii;
 use yii\web\Response;
+use yii\base\InvalidConfigException;
 
 /**
  * SecurityController handles login and logout functionality
@@ -17,11 +18,11 @@ class SecurityController extends BaseSecurityController
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         $behaviors = parent::behaviors();
 
-        // Allow guest access to login action
+        // Allow guest access to log in action
         if (isset($behaviors['access'])) {
             $behaviors['access']['rules'] = [
                 [
@@ -43,9 +44,10 @@ class SecurityController extends BaseSecurityController
     /**
      * Displays the login page using Inertia.js
      *
-     * @return Response|array
+     * @return Response
+     * @throws InvalidConfigException
      */
-    public function actionLogin()
+    public function actionLogin(): Response
     {
         if (!Yii::$app->user->isGuest) {
             return Inertia::location('/dashboard');
@@ -57,7 +59,7 @@ class SecurityController extends BaseSecurityController
         $requestData = Yii::$app->request->post();
 
         if (Yii::$app->request->isPost && !empty($requestData)) {
-            // Load data without wrapper
+            // Load data without a wrapper
             if ($model->load($requestData, '')) {
                 if ($model->login()) {
                     // Successful login - redirect to dashboard
@@ -75,7 +77,7 @@ class SecurityController extends BaseSecurityController
             ]);
         }
 
-        // GET request - show empty login form
+        // GET request - show an empty login form
         return Inertia::render('Auth/Login', [
             'form' => [
                 'login' => '',
@@ -90,7 +92,7 @@ class SecurityController extends BaseSecurityController
      *
      * @return Response
      */
-    public function actionLogout()
+    public function actionLogout(): Response
     {
         if (!Yii::$app->user->isGuest) {
             Yii::$app->user->logout();
@@ -99,4 +101,3 @@ class SecurityController extends BaseSecurityController
         return Inertia::location('/login');
     }
 }
-

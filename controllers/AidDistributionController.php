@@ -2,23 +2,27 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
 use app\models\AidDistribution;
 use app\models\AidDistributionSearch;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
+use Yii;
+use yii\data\ArrayDataProvider;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
+use yii\db\Exception;
 
 /**
  * AidDistributionController implements the CRUD actions for AidDistribution model.
  */
-class AidDistributionController extends Controller
+class AidDistributionController extends BaseController
 {
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                 ],
@@ -28,10 +32,12 @@ class AidDistributionController extends Controller
 
     /**
      * Lists all AidDistribution models.
-     * @return mixed
+     * @return string
+     * @throws ForbiddenHttpException
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
+        $this->checkAccess('aidDistribution.index');
         $searchModel = new AidDistributionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -43,13 +49,17 @@ class AidDistributionController extends Controller
 
     /**
      * Displays a single AidDistribution model.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return string
+     * @throws NotFoundHttpException if the model cannot be found
+     * @throws ForbiddenHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $providerAidDistributionDetails = new \yii\data\ArrayDataProvider([
+        $this->checkAccess('aidDistribution.view',$model);
+
+        $providerAidDistributionDetails = new ArrayDataProvider([
             'allModels' => $model->aidDistributionDetails,
         ]);
         return $this->render('view', [
@@ -61,10 +71,13 @@ class AidDistributionController extends Controller
     /**
      * Creates a new AidDistribution model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return Response|string
+     * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionCreate()
     {
+        $this->checkAccess('aidDistribution.create');
         $model = new AidDistribution();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -78,13 +91,17 @@ class AidDistributionController extends Controller
 
     /**
      * Updates an existing AidDistribution model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
+     * If the update is successful, the browser will be redirected to the 'view' page.
+     * @param int $id
+     * @return Response|string
+     * @throws NotFoundHttpException if the model cannot be found
+     * @throws Exception
+     * @throws ForbiddenHttpException
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('aidDistribution.update',$model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -98,13 +115,17 @@ class AidDistributionController extends Controller
     /**
      * Deletes an existing AidDistribution model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException if the model cannot be found
+     * @throws Exception
+     * @throws ForbiddenHttpException
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
-
+        $model = $this->findModel($id);
+        $this->checkAccess('aidDistribution.delete', $model);
+        $model->deleteWithRelated();
         return $this->redirect(['index']);
     }
 
@@ -112,11 +133,11 @@ class AidDistributionController extends Controller
     /**
      * Finds the AidDistribution model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id
      * @return AidDistribution the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): AidDistribution
     {
         if (($model = AidDistribution::findOne($id)) !== null) {
             return $model;
@@ -131,9 +152,10 @@ class AidDistributionController extends Controller
     * @author Yohanes Candrajaya <moo.tensai@gmail.com>
     * @author Jiwantoro Ndaru <jiwanndaru@gmail.com>
     *
-    * @return mixed
+    * @return string
+    * @throws NotFoundHttpException
     */
-    public function actionAddAidDistributionDetails()
+    public function actionAddAidDistributionDetails(): string
     {
         if (Yii::$app->request->isAjax) {
             $row = Yii::$app->request->post('AidDistributionDetails');

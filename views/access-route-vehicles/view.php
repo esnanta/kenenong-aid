@@ -5,7 +5,7 @@ use yii\widgets\DetailView;
 use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\AccessRouteVehicles */
+/* @var $model app\models\AccessRouteVehicle */
 
 $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Access Route Vehicles'), 'url' => ['index']];

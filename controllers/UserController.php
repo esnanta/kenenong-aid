@@ -2,19 +2,24 @@
 
 namespace app\controllers;
 
-use Yii;
-use yii\filters\AccessControl;
-use yii\web\NotFoundHttpException;
-use Crenspire\Yii2Inertia\Inertia;
-use app\controllers\BaseController;
+use app\controllers\base\BaseController;
+use app\models\Profile;
 use app\models\User;
+use Crenspire\Yii2Inertia\Inertia;
+use Yii;
+use yii\base\Model;
+use yii\db\Exception;
+use yii\filters\AccessControl;
+use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 class UserController extends BaseController
 {
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'access' => [
@@ -32,10 +37,13 @@ class UserController extends BaseController
     /**
      * Lists all users.
      *
-     * @return \yii\web\Response
+     * @return Response
+     * @throws ForbiddenHttpException
      */
-    public function actionIndex()
+    public function actionIndex(): Response
     {
+        $this->checkAccess('user.index');
+
         $request = Yii::$app->request;
         $search = $request->get('search', '');
         $page = (int)$request->get('page', 1);
@@ -48,7 +56,7 @@ class UserController extends BaseController
 
         $query = User::find();
 
-        // Join with profile table for name search
+        // Join with the profile table for name search
         $query->joinWith(['profile']);
 
         // Apply search filter
@@ -78,7 +86,7 @@ class UserController extends BaseController
             $query->andWhere(['<=', 'created_at', $dateTo . ' 23:59:59']);
         }
 
-        // Get total count before pagination
+        // Get a total count before pagination
         $total = $query->count();
 
         // Apply sorting
@@ -131,12 +139,14 @@ class UserController extends BaseController
      * Displays a single user.
      *
      * @param int $id
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException if the user cannot be found
+     * @throws ForbiddenHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): Response
     {
         $user = $this->findModel($id);
+        $this->checkAccess('user.view', $user);
 
         return Inertia::render('User/View', [
             'user' => [
@@ -153,10 +163,13 @@ class UserController extends BaseController
     /**
      * Creates a new user.
      *
-     * @return string|\yii\web\Response
+     * @return Response
+     * @throws Exception|ForbiddenHttpException
      */
-    public function actionCreate()
+    public function actionCreate(): Response
     {
+        $this->checkAccess('user.create');
+
         $model = new User();
         $model->scenario = 'create';
 
@@ -169,9 +182,9 @@ class UserController extends BaseController
                 $model->email = $requestData['email'] ?? '';
 
                 if ($model->validate() && $model->save()) {
-                    // Create profile record with the name
+                    // Create a profile record with the name
                     if (!empty($requestData['name'])) {
-                        $profile = new \app\models\Profile();
+                        $profile = new Profile();
                         $profile->user_id = $model->id;
                         $profile->name = $requestData['name'];
                         $profile->save();
@@ -186,8 +199,8 @@ class UserController extends BaseController
                 }
             }
             
-            // If we get here, validation failed - return form with errors
-            // Return 200 status but include errors in props (similar to Login form)
+            // If we get here, validation failed - return a form with errors
+            // Return 200 status but include errors in props (similar to a Login form)
             // Inertia will handle this and show errors inline
             return Inertia::render('Users/Form', [
                 'user' => [
@@ -199,7 +212,7 @@ class UserController extends BaseController
             ]);
         }
 
-        // GET request - show empty form
+        // GET request - show an empty form
         return Inertia::render('User/Form', [
             'user' => [
                 'name' => '',
@@ -214,12 +227,15 @@ class UserController extends BaseController
      * Updates an existing user.
      *
      * @param int $id
-     * @return string|\yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException if the user cannot be found
+     * @throws Exception|ForbiddenHttpException
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id): Response
     {
         $model = $this->findModel($id);
+        $this->checkAccess('user.update', $model);
+
         $profile = $model->profile;
 
         // Handle both POST and PUT requests
@@ -244,16 +260,16 @@ class UserController extends BaseController
             
             // Load the data
             $userLoaded = $model->load($requestData, '');
-            $profileLoaded = $profile ? $profile->load($requestData, '') : false;
+            $profileLoaded = $profile && $profile->load($requestData, '');
 
             if ($userLoaded || $profileLoaded) {
-                // If password is empty, don't validate or save it
+                // If the password is empty, don't validate or save it
                 if (empty($requestData['password'])) {
                     // Only validate and save name (in profile) and email (in user)
-                    // Reset scenario to default before validating specific attributes
-                    $model->scenario = \yii\base\Model::SCENARIO_DEFAULT;
+                    // Reset a scenario to default before validating specific attributes
+                    $model->scenario = Model::SCENARIO_DEFAULT;
                     $userValid = $model->validate(['email']);
-                    $profileValid = $profile ? $profile->validate(['name']) : true;
+                    $profileValid = !$profile || $profile->validate(['name']);
 
                     if ($userValid && $profileValid) {
                         $model->save(false, ['email']);
@@ -270,9 +286,9 @@ class UserController extends BaseController
                 } else {
                     // Password is provided, validate everything
                     // Use default scenario - password validation rule applies to all scenarios
-                    $model->scenario = \yii\base\Model::SCENARIO_DEFAULT;
+                    $model->scenario = Model::SCENARIO_DEFAULT;
                     $userValid = $model->validate();
-                    $profileValid = $profile ? $profile->validate(['name']) : true;
+                    $profileValid = !$profile || $profile->validate(['name']);
 
                     if ($userValid && $profileValid && $model->save()) {
                         if ($profile) {
@@ -288,8 +304,8 @@ class UserController extends BaseController
                 }
             }
             
-            // If we get here, validation failed - return form with errors
-            // Return 200 status but include errors in props (similar to Login form)
+            // If we get here, validation failed - return a form with errors
+            // Return 200 status but include errors in props (similar to a Login form)
             // Inertia will handle this and show errors inline
             return Inertia::render('User/Form', [
                 'user' => [
@@ -302,7 +318,7 @@ class UserController extends BaseController
             ]);
         }
 
-        // GET request - show form with current data
+        // GET request - show a form with current data
         return Inertia::render('User/Form', [
             'user' => [
                 'id' => $model->id,
@@ -318,20 +334,23 @@ class UserController extends BaseController
      * Deletes an existing user (soft delete).
      *
      * @param int $id
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException if the user cannot be found
+     * @throws Exception
+     * @throws ForbiddenHttpException
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        
+        $this->checkAccess('user.delete', $model);
+
         // Prevent deleting yourself
         if ($model->id === Yii::$app->user->id) {
             Yii::$app->session->setFlash('error', 'You cannot delete your own account.');
             return $this->redirect(['index']);
         }
 
-        // Soft delete
+        // Softly delete
         $model->trash();
 
         return Inertia::location('/users');
@@ -345,7 +364,7 @@ class UserController extends BaseController
      * @return User the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): User
     {
         if (($model = User::findOne($id)) !== null) {
             return $model;

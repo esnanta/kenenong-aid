@@ -3,23 +3,23 @@
 namespace app\models;
 
 use Yii;
-use \app\models\base\AccessRouteShelters as BaseAccessRouteShelters;
+use app\models\base\AccessRouteShelter as BaseAccessRouteShelters;
 
 /**
  * This is the model class for table "t_access_route_shelters".
  */
-class AccessRouteShelters extends BaseAccessRouteShelters
+class AccessRouteShelter extends BaseAccessRouteShelters
 {
     /**
      * @inheritdoc
      */
-    public function rules()
+    public function rules(): array
     {
         return array_replace_recursive(parent::rules(),
 	    [
             [['access_route_id', 'shelter_id', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
             [['created_at', 'updated_at', 'deleted_at'], 'safe'],
-            [['is_deleted'], 'string', 'max' => 1],
+            [['is_deleted'], 'integer'],
             [['uuid'], 'string', 'max' => 36],
             [['verlock'], 'default', 'value' => '0'],
             [['verlock'], 'mootensai\components\OptimisticLockValidator']
@@ -29,7 +29,7 @@ class AccessRouteShelters extends BaseAccessRouteShelters
     /**
      * @inheritdoc
      */
-    public function attributeHints()
+    public function attributeHints(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -39,5 +39,14 @@ class AccessRouteShelters extends BaseAccessRouteShelters
             'verlock' => Yii::t('app', 'Verlock'),
             'uuid' => Yii::t('app', 'Uuid'),
         ];
+    }
+
+    /**
+     * @inheritdoc
+     * @return AccessRouteSheltersQuery the active query used by this AR class.
+     */
+    public static function find(): AccessRouteSheltersQuery
+    {
+        return new AccessRouteSheltersQuery(get_called_class());
     }
 }

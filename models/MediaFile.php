@@ -23,7 +23,7 @@ class MediaFile extends BaseMediaFile
             [['notes'], 'string', 'max' => 255],
             [['file_type'], 'string', 'max' => 50],
             [['mime_type'], 'string', 'max' => 100],
-            [['is_deleted'], 'string', 'max' => 1],
+            [['is_deleted'], 'integer'],
             [['uuid'], 'string', 'max' => 36],
             [['verlock'], 'default', 'value' => '0'],
             [['verlock'], 'mootensai\components\OptimisticLockValidator']

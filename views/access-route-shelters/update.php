@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\AccessRouteShelters */
+/* @var $model app\models\AccessRouteShelter */
 
 $this->title = Yii::t('app', 'Update {modelClass}: ', [
     'modelClass' => 'Access Route Shelters',

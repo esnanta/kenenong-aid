@@ -8,25 +8,25 @@ use yii\behaviors\BlameableBehavior;
 use mootensai\behaviors\UUIDBehavior;
 
 /**
- * This is the base model class for table "t_access_route_shelters".
+ * This is the base model class for table "t_access_route_vehicles".
  *
  * @property integer $id
  * @property integer $access_route_id
- * @property integer $shelter_id
+ * @property integer $vehicle_type_id
  * @property string $created_at
  * @property string $updated_at
  * @property integer $created_by
  * @property integer $updated_by
  * @property integer $is_deleted
  * @property string $deleted_at
- * @property integer $deleted_by
+ * @property string $deleted_by
  * @property integer $verlock
  * @property string $uuid
  *
  * @property \app\models\AccessRoute $accessRoute
- * @property \app\models\Shelter $shelter
+ * @property \app\models\VehicleType $vehicleType
  */
-class AccessRouteShelters extends \yii\db\ActiveRecord
+class AccessRouteVehicle extends \yii\db\ActiveRecord
 {
     use \mootensai\relation\RelationTrait;
 
@@ -53,7 +53,7 @@ class AccessRouteShelters extends \yii\db\ActiveRecord
     {
         return [
             'accessRoute',
-            'shelter'
+            'vehicleType'
         ];
     }
 
@@ -63,9 +63,10 @@ class AccessRouteShelters extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['access_route_id', 'shelter_id', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
+            [['access_route_id', 'vehicle_type_id', 'created_by', 'updated_by', 'verlock'], 'integer'],
             [['created_at', 'updated_at', 'deleted_at'], 'safe'],
-            [['is_deleted'], 'string', 'max' => 1],
+            [['is_deleted'], 'integer'],
+            [['deleted_by'], 'string', 'max' => 255],
             [['uuid'], 'string', 'max' => 36],
             [['verlock'], 'default', 'value' => '0'],
             [['verlock'], 'mootensai\components\OptimisticLockValidator']
@@ -77,7 +78,7 @@ class AccessRouteShelters extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 't_access_route_shelters';
+        return 't_access_route_vehicle';
     }
 
     /**
@@ -99,7 +100,7 @@ class AccessRouteShelters extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'access_route_id' => Yii::t('app', 'Access Route ID'),
-            'shelter_id' => Yii::t('app', 'Shelter ID'),
+            'vehicle_type_id' => Yii::t('app', 'Vehicle Type ID'),
             'is_deleted' => Yii::t('app', 'Is Deleted'),
             'verlock' => Yii::t('app', 'Verlock'),
             'uuid' => Yii::t('app', 'Uuid'),
@@ -111,15 +112,15 @@ class AccessRouteShelters extends \yii\db\ActiveRecord
      */
     public function getAccessRoute()
     {
-        return $this->hasOne(\app\models\AccessRoute::className(), ['id' => 'access_route_id']);
+        return $this->hasOne(\app\models\AccessRoute::class, ['id' => 'access_route_id']);
     }
         
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getShelter()
+    public function getVehicleType()
     {
-        return $this->hasOne(\app\models\Shelter::className(), ['id' => 'shelter_id']);
+        return $this->hasOne(\app\models\VehicleType::class, ['id' => 'vehicle_type_id']);
     }
     
     /**
@@ -130,18 +131,18 @@ class AccessRouteShelters extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -171,11 +172,11 @@ class AccessRouteShelters extends \yii\db\ActiveRecord
 
     /**
      * @inheritdoc
-     * @return \app\models\AccessRouteSheltersQuery the active query used by this AR class.
+     * @return \app\models\AccessRouteVehiclesQuery the active query used by this AR class.
      */
     public static function find()
     {
-        $query = new \app\models\AccessRouteSheltersQuery(get_called_class());
-        return $query->where(['t_access_route_shelters.deleted_by' => 0]);
+        $query = new \app\models\AccessRouteVehiclesQuery(get_called_class());
+        return $query->where(['t_access_route_vehicles.is_deleted' => 0]);
     }
 }

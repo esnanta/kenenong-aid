@@ -2,23 +2,30 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
 use app\models\Shelter;
 use app\models\ShelterSearch;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
+use Yii;
+use yii\data\ArrayDataProvider;
+use yii\db\Exception;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
- * ShelterController implements the CRUD actions for Shelter model.
+ * ShelterController implements the CRUD actions for a Shelter model.
  */
-class ShelterController extends Controller
+class ShelterController extends BaseController
 {
-    public function behaviors()
+    /**
+     * @return array
+     */
+    public function behaviors(): array
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                 ],
@@ -28,10 +35,12 @@ class ShelterController extends Controller
 
     /**
      * Lists all Shelter models.
-     * @return mixed
+     * @return string
+     * @throws ForbiddenHttpException
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
+        $this->checkAccess('shelter.index');
         $searchModel = new ShelterSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -43,19 +52,23 @@ class ShelterController extends Controller
 
     /**
      * Displays a single Shelter model.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return string
+     * @throws NotFoundHttpException if the model cannot be found
+     * @throws ForbiddenHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $providerAccessRouteShelters = new \yii\data\ArrayDataProvider([
+        $this->checkAccess('shelter.view', $model);
+
+        $providerAccessRouteShelters = new ArrayDataProvider([
             'allModels' => $model->accessRouteShelters,
         ]);
-        $providerAidDistribution = new \yii\data\ArrayDataProvider([
+        $providerAidDistribution = new ArrayDataProvider([
             'allModels' => $model->aidDistributions,
         ]);
-        $providerAidPlan = new \yii\data\ArrayDataProvider([
+        $providerAidPlan = new ArrayDataProvider([
             'allModels' => $model->aidPlans,
         ]);
         return $this->render('view', [
@@ -69,10 +82,13 @@ class ShelterController extends Controller
     /**
      * Creates a new Shelter model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return Response|string
+     * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionCreate()
     {
+        $this->checkAccess('shelter');
         $model = new Shelter();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -86,13 +102,17 @@ class ShelterController extends Controller
 
     /**
      * Updates an existing Shelter model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
+     * If the update is successful, the browser will be redirected to the 'view' page.
+     * @param int $id
+     * @return Response|string
+     * @throws NotFoundHttpException if the model cannot be found
+     * @throws Exception
+     * @throws ForbiddenHttpException
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('shelter.update', $model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -106,12 +126,17 @@ class ShelterController extends Controller
     /**
      * Deletes an existing Shelter model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException if the model cannot be found
+     * @throws Exception
+     * @throws ForbiddenHttpException
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
+        $model = $this->findModel($id);
+        $this->checkAccess('shelter.delete', $model);
+        $model->deleteWithRelated();
 
         return $this->redirect(['index']);
     }
@@ -120,11 +145,11 @@ class ShelterController extends Controller
     /**
      * Finds the Shelter model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id
      * @return Shelter the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): Shelter
     {
         if (($model = Shelter::findOne($id)) !== null) {
             return $model;
@@ -139,9 +164,10 @@ class ShelterController extends Controller
     * @author Yohanes Candrajaya <moo.tensai@gmail.com>
     * @author Jiwantoro Ndaru <jiwanndaru@gmail.com>
     *
-    * @return mixed
+    * @return string
+    * @throws NotFoundHttpException
     */
-    public function actionAddAccessRouteShelters()
+    public function actionAddAccessRouteShelters(): string
     {
         if (Yii::$app->request->isAjax) {
             $row = Yii::$app->request->post('AccessRouteShelters');
@@ -162,9 +188,10 @@ class ShelterController extends Controller
     * @author Yohanes Candrajaya <moo.tensai@gmail.com>
     * @author Jiwantoro Ndaru <jiwanndaru@gmail.com>
     *
-    * @return mixed
+    * @return string
+    * @throws NotFoundHttpException
     */
-    public function actionAddAidDistribution()
+    public function actionAddAidDistribution(): string
     {
         if (Yii::$app->request->isAjax) {
             $row = Yii::$app->request->post('AidDistribution');
@@ -185,9 +212,10 @@ class ShelterController extends Controller
     * @author Yohanes Candrajaya <moo.tensai@gmail.com>
     * @author Jiwantoro Ndaru <jiwanndaru@gmail.com>
     *
-    * @return mixed
+    * @return string
+    * @throws NotFoundHttpException
     */
-    public function actionAddAidPlan()
+    public function actionAddAidPlan(): string
     {
         if (Yii::$app->request->isAjax) {
             $row = Yii::$app->request->post('AidPlan');

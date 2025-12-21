@@ -2,18 +2,18 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
 use app\models\Disaster;
+use Crenspire\Yii2Inertia\Inertia;
+use Yii;
 use yii\db\Exception;
+use yii\filters\VerbFilter;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
-use Crenspire\Yii2Inertia\Inertia;
 use yii\web\Response;
 
 /**
- * DisasterController implements the CRUD actions for Disaster model.
+ * DisasterController implements the CRUD actions for a Disaster model.
  */
 class DisasterController extends BaseController
 {
@@ -97,9 +97,9 @@ class DisasterController extends BaseController
         $disastersData = array_map(function ($disaster) {
             return [
                 'id' => $disaster->id,
-                'disaster_type_id' => (int)$disaster->disaster_type_id,
+                'disaster_type_id' => $disaster->disaster_type_id,
                 'disaster_type_label' => $disaster->getDisasterTypeLabel(),
-                'disaster_status_id' => (int)$disaster->disaster_status_id,
+                'disaster_status_id' => $disaster->disaster_status_id,
                 'disaster_status_label' => $disaster->getDisasterStatusLabel(),
                 'start_date' => $disaster->start_date,
                 'end_date' => $disaster->end_date,
@@ -148,9 +148,9 @@ class DisasterController extends BaseController
         return Inertia::render('Disaster/View', [
             'disaster' => [
                 'id' => $model->id,
-                'disaster_type_id' => (int)$model->disaster_type_id,
+                'disaster_type_id' => $model->disaster_type_id,
                 'disaster_type_label' => $model->getDisasterTypeLabel(),
-                'disaster_status_id' => (int)$model->disaster_status_id,
+                'disaster_status_id' => $model->disaster_status_id,
                 'disaster_status_label' => $model->getDisasterStatusLabel(),
                 'start_date' => $model->start_date,
                 'end_date' => $model->end_date,
@@ -164,47 +164,25 @@ class DisasterController extends BaseController
     /**
      * Creates a new Disaster model.
      * If creation is successful, the browser will be redirected to the 'index' page.
-     * @return mixed
+     * @return Response
      * @throws ForbiddenHttpException|Exception
      */
-    public function actionCreate()
+    public function actionCreate(): Response
     {
         $this->checkAccess('disaster.create');
         $model = new Disaster();
 
         if (Yii::$app->request->isPost) {
-            if ($model->load(Yii::$app->request->post(), '')) {
-                if ($model->validate() && $model->save()) {
-                    // For Inertia requests, directly render the index page
-                    // This allows onSuccess callback to fire properly
-                    if (Yii::$app->request->headers->get('X-Inertia')) {
-                        return $this->actionIndex();
-                    }
-                    return $this->redirect(['/disasters']);
-                }
-            }
-
-            // If we get here, validation failed - return form with errors
-            return Inertia::render('Disaster/Form', [
-                'disaster' => null,
-                'errors' => $model->errors,
-                'disasterTypes' => Disaster::getDisasterTypes(),
-                'disasterStatuses' => Disaster::getDisasterStatuses(),
-            ]);
+            return $this->processDisasterFormSubmission($model);
         }
 
-        // GET request - show empty form
-        return Inertia::render('Disaster/Form', [
-            'disaster' => null,
-            'errors' => [],
-            'disasterTypes' => Disaster::getDisasterTypes(),
-            'disasterStatuses' => Disaster::getDisasterStatuses(),
-        ]);
+        // GET request - show an empty form
+        return $this->renderDisasterForm();
     }
 
     /**
      * Updates an existing Disaster model.
-     * If update is successful, the browser will be redirected to the 'index' page.
+     * If the update is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return Response
      * @throws NotFoundHttpException
@@ -215,67 +193,15 @@ class DisasterController extends BaseController
         $model = $this->findModel($id);
         $this->checkAccess('disaster.update', $model);
         
-        // Handle both POST and PUT requests
         $isPost = Yii::$app->request->isPost;
         $isPut = Yii::$app->request->isPut;
 
         if ($isPost || $isPut) {
-            // For PUT requests, get data from bodyParams; for POST, use post()
-            if ($isPut) {
-                $requestData = Yii::$app->request->bodyParams;
-                // If bodyParams is empty, parse JSON from rawBody
-                if (empty($requestData) && Yii::$app->request->contentType === 'application/json') {
-                    $rawBody = Yii::$app->request->rawBody;
-                    if (!empty($rawBody)) {
-                        $requestData = json_decode($rawBody, true) ?: [];
-                    }
-                }
-            } else {
-                $requestData = Yii::$app->request->post();
-            }
-
-            // Load the data
-            if ($model->load($requestData, '')) {
-                if ($model->validate() && $model->save()) {
-                    // For Inertia requests, directly render the index page
-                    // This allows onSuccess callback to fire properly
-                    if (Yii::$app->request->headers->get('X-Inertia')) {
-                        return $this->actionIndex();
-                    }
-                    return $this->redirect(['/disasters']);
-                }
-            }
-
-            // If we get here, validation failed - return form with errors
-            return Inertia::render('Disaster/Form', [
-                'disaster' => [
-                    'id' => $model->id,
-                    'disaster_type_id' => (int)$model->disaster_type_id,
-                    'disaster_status_id' => (int)$model->disaster_status_id,
-                    'start_date' => $model->start_date,
-                    'end_date' => $model->end_date,
-                    'description' => $model->description,
-                ],
-                'errors' => $model->errors,
-                'disasterTypes' => Disaster::getDisasterTypes(),
-                'disasterStatuses' => Disaster::getDisasterStatuses(),
-            ]);
+            return $this->processDisasterFormSubmission($model);
         }
 
-        // GET request - show form with current data
-        return Inertia::render('Disaster/Form', [
-            'disaster' => [
-                'id' => $model->id,
-                'disaster_type_id' => (int)$model->disaster_type_id,
-                'disaster_status_id' => (int)$model->disaster_status_id,
-                'start_date' => $model->start_date,
-                'end_date' => $model->end_date,
-                'description' => $model->description,
-            ],
-            'errors' => [],
-            'disasterTypes' => Disaster::getDisasterTypes(),
-            'disasterStatuses' => Disaster::getDisasterStatuses(),
-        ]);
+        // GET request - show a form with current data
+        return $this->renderDisasterForm($model);
     }
 
     /**
@@ -291,7 +217,7 @@ class DisasterController extends BaseController
         $model = $this->findModel($id);
         $this->checkAccess('disaster.delete', $model);
         
-        // Soft delete
+        // Softly delete
         $model->is_deleted = 1;
         $model->deleted_at = date('Y-m-d H:i:s');
         $model->deleted_by = Yii::$app->user->id;
@@ -302,7 +228,11 @@ class DisasterController extends BaseController
             Yii::$app->session->setFlash('error', 'Failed to delete disaster');
         }
 
-        return Inertia::location('/disasters');
+        if (Yii::$app->request->headers->get('X-Inertia')) {
+            return $this->actionIndex();
+        }
+
+        return $this->redirect(['/disasters']);
     }
 
     /**
@@ -319,5 +249,67 @@ class DisasterController extends BaseController
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * Renders the Disaster form.
+     * @param Disaster|null $model The Disaster model instance, or null for a new form.
+     * @param array $errors An array of validation errors.
+     * @return Response
+     */
+    private function renderDisasterForm(?Disaster $model = null, array $errors = []): Response
+    {
+        $disasterData = null;
+        if ($model) {
+            $disasterData = [
+                'id' => $model->id,
+                'disaster_type_id' => $model->disaster_type_id,
+                'disaster_status_id' => $model->disaster_status_id,
+                'start_date' => $model->start_date,
+                'end_date' => $model->end_date,
+                'description' => $model->description,
+            ];
+        }
+
+        return Inertia::render('Disaster/Form', [
+            'disaster' => $disasterData,
+            'errors' => $errors,
+            'disasterTypes' => Disaster::getDisasterTypes(),
+            'disasterStatuses' => Disaster::getDisasterStatuses(),
+        ]);
+    }
+
+    /**
+     * Processes form submission for Disaster models (create/update).
+     * Loads request data, validates, and saves the model.
+     * Returns a redirect response on success or renders the form with errors on failure.
+     * @param Disaster $model The Disaster model instance to process.
+     * @return Response
+     * @throws Exception
+     * @throws ForbiddenHttpException
+     */
+    private function processDisasterFormSubmission(Disaster $model): Response
+    {
+        $request = Yii::$app->request;
+        $requestData = $request->isPut ? $request->bodyParams : $request->post();
+
+        if ($request->isPut && empty($requestData) && $request->contentType === 'application/json') {
+            $rawBody = $request->rawBody;
+            if (!empty($rawBody)) {
+                $requestData = json_decode($rawBody, true) ?: [];
+            }
+        }
+
+        if ($model->load($requestData, '')) {
+            if ($model->validate() && $model->save()) {
+                if ($request->headers->get('X-Inertia')) {
+                    return $this->actionIndex();
+                }
+                return $this->redirect(['/disasters']);
+            }
+        }
+
+        // If we get here, validation failed or the model couldn't load
+        return $this->renderDisasterForm($model, $model->errors);
     }
 }

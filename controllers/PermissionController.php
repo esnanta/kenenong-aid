@@ -2,13 +2,18 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
+use Crenspire\Yii2Inertia\Inertia;
+use Da\User\Helper\AuthHelper;
 use Da\User\Model\Permission;
 use Da\User\Search\PermissionSearch;
-use Da\User\Helper\AuthHelper;
 use Da\User\Service\AuthItemEditionService;
-use Crenspire\Yii2Inertia\Inertia;
+use Yii;
+use yii\base\InvalidConfigException;
+use yii\filters\AccessControl;
+use yii\rbac\Item;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 class PermissionController extends BaseController
 {
@@ -16,6 +21,7 @@ class PermissionController extends BaseController
 
     /**
      * {@inheritdoc}
+     * @throws InvalidConfigException
      */
     public function __construct($id, $module, $config = [])
     {
@@ -25,13 +31,13 @@ class PermissionController extends BaseController
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'access' => [
-                'class' => \yii\filters\AccessControl::class,
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'allow' => true,
@@ -43,35 +49,40 @@ class PermissionController extends BaseController
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
-    protected function getModelClass()
+    protected function getModelClass(): string
     {
         return Permission::class;
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
-    protected function getSearchModelClass()
+    protected function getSearchModelClass(): string
     {
         return PermissionSearch::class;
     }
 
     /**
      * Helper method to create instances
+     * @param string $class
+     * @param array $params
+     * @param array $config
+     * @return object
+     * @throws InvalidConfigException
      */
-    protected function make($class, $params = [], $config = [])
+    protected function make(string $class, array $params = [], array $config = []): object
     {
         return Yii::createObject(array_merge(['class' => $class], $config), $params);
     }
 
     /**
-     * {@inheritdoc}
-     *
+     * @param string $name
+     * @return Permission
      * @throws NotFoundHttpException
      */
-    protected function getItem($name)
+    protected function getItem(string $name): Permission
     {
         $authItem = $this->authHelper->getPermission($name);
 
@@ -85,16 +96,19 @@ class PermissionController extends BaseController
     /**
      * Lists all permissions.
      *
-     * @return \yii\web\Response
+     * @return Response
+     * @throws InvalidConfigException
      */
-    public function actionIndex()
+    public function actionIndex(): Response
     {
+        /** @var PermissionSearch $searchModel */
         $searchModel = $this->make($this->getSearchModelClass());
         $dataProvider = $searchModel->search(Yii::$app->request->get());
 
         // Get permissions data
         $permissions = [];
         foreach ($dataProvider->getModels() as $permission) {
+            /* @var \yii\rbac\Permission $permission */
             $permissions[] = [
                 'name' => $permission->name,
                 'description' => $permission->description,
@@ -119,17 +133,21 @@ class PermissionController extends BaseController
      * Displays a single permission.
      *
      * @param string $name
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException
+     * @throws InvalidConfigException
      */
-    public function actionView($name)
+    public function actionView(string $name): Response
     {
+        /* @var \yii\rbac\Permission $authItem */
         $authItem = $this->getItem($name);
+        /** @var Permission $model */
         $model = $this->make($this->getModelClass(), [], ['scenario' => 'update', 'item' => $authItem]);
 
         // Get assigned items (child permissions)
         $assignedItems = [];
         foreach ($authItem->children as $child) {
+            /** @var Item $child */
             $assignedItems[] = [
                 'name' => $child->name,
                 'type' => $child->type === 1 ? 'role' : 'permission',
@@ -152,9 +170,10 @@ class PermissionController extends BaseController
     /**
      * Creates a new permission.
      *
-     * @return \yii\web\Response
+     * @return Response
+     * @throws InvalidConfigException
      */
-    public function actionCreate()
+    public function actionCreate(): Response
     {
         /** @var Permission $model */
         $model = $this->make($this->getModelClass(), [], ['scenario' => 'create']);
@@ -190,7 +209,7 @@ class PermissionController extends BaseController
             ]);
         }
 
-        // GET request - show empty form
+        // GET request - show an empty form
         return Inertia::render('Permission/Form', [
             'permission' => [
                 'name' => '',
@@ -207,11 +226,13 @@ class PermissionController extends BaseController
      * Updates an existing permission.
      *
      * @param string $name
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException
+     * @throws InvalidConfigException
      */
-    public function actionUpdate($name)
+    public function actionUpdate(string $name): Response
     {
+        /* @var \yii\rbac\Permission $authItem */
         $authItem = $this->getItem($name);
         /** @var Permission $model */
         $model = $this->make($this->getModelClass(), [], ['scenario' => 'update', 'item' => $authItem]);
@@ -248,7 +269,7 @@ class PermissionController extends BaseController
             ]);
         }
 
-        // GET request - show form with current data
+        // GET request - show a form with current data
         return Inertia::render('Permission/Form', [
             'permission' => [
                 'name' => $model->name,
@@ -266,11 +287,12 @@ class PermissionController extends BaseController
      * Deletes an existing permission.
      *
      * @param string $name
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException
      */
-    public function actionDelete($name)
+    public function actionDelete(string $name): Response
     {
+        /** @var \yii\rbac\Permission $item */
         $item = $this->getItem($name);
 
         if ($this->authHelper->remove($item)) {
@@ -288,10 +310,11 @@ class PermissionController extends BaseController
      * @param array $items
      * @return array
      */
-    protected function formatUnassignedItems($items)
+    protected function formatUnassignedItems(array $items): array
     {
         $formatted = [];
         foreach ($items as $item) {
+            /** @var Item $item */
             $formatted[] = [
                 'name' => $item->name,
                 'type' => $item->type === 1 ? 'role' : 'permission',
@@ -302,11 +325,11 @@ class PermissionController extends BaseController
     }
 
     /**
-     * Get list of available rules.
+     * Get a list of available rules.
      *
      * @return array
      */
-    protected function getRulesList()
+    protected function getRulesList(): array
     {
         $rules = Yii::$app->authManager->getRules();
         $rulesList = [['value' => 'none', 'label' => 'No rule']];
@@ -319,4 +342,3 @@ class PermissionController extends BaseController
         return $rulesList;
     }
 }
-

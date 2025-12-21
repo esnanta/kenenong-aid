@@ -3,7 +3,7 @@
 namespace app\models;
 
 use Yii;
-use \app\models\base\AccessRoute as BaseAccessRoute;
+use app\models\base\AccessRoute as BaseAccessRoute;
 
 /**
  * This is the model class for table "t_access_route".
@@ -13,7 +13,7 @@ class AccessRoute extends BaseAccessRoute
     /**
      * @inheritdoc
      */
-    public function rules()
+    public function rules(): array
     {
         return array_replace_recursive(parent::rules(),
 	    [
@@ -22,7 +22,7 @@ class AccessRoute extends BaseAccessRoute
             [['route_length_km'], 'number'],
             [['geometry_updated_at', 'created_at', 'updated_at', 'deleted_at'], 'safe'],
             [['route_name'], 'string', 'max' => 255],
-            [['is_deleted'], 'string', 'max' => 1],
+            [['is_deleted'], 'integer'],
             [['uuid'], 'string', 'max' => 36],
             [['verlock'], 'default', 'value' => '0'],
             [['verlock'], 'mootensai\components\OptimisticLockValidator']
@@ -32,7 +32,7 @@ class AccessRoute extends BaseAccessRoute
     /**
      * @inheritdoc
      */
-    public function attributeHints()
+    public function attributeHints(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -47,5 +47,14 @@ class AccessRoute extends BaseAccessRoute
             'verlock' => Yii::t('app', 'Verlock'),
             'uuid' => Yii::t('app', 'Uuid'),
         ];
+    }
+
+    /**
+     * @inheritdoc
+     * @return AccessRouteQuery the active query used by this AR class.
+     */
+    public static function find(): AccessRouteQuery
+    {
+        return new AccessRouteQuery(get_called_class());
     }
 }

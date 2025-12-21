@@ -71,7 +71,7 @@ class VerificationVote extends \yii\db\ActiveRecord
             [['verification_id', 'verification_action_id', 'voted_by', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
             [['notes'], 'string'],
             [['voted_at', 'created_at', 'updated_at', 'deleted_at'], 'safe'],
-            [['is_deleted'], 'string', 'max' => 1],
+            [['is_deleted'], 'integer'],
             [['uuid'], 'string', 'max' => 36],
             [['verification_id', 'voted_by'], 'unique', 'targetAttribute' => ['verification_id', 'voted_by'], 'message' => 'The combination of Verification ID and Voted By has already been taken.'],
             [['verlock'], 'default', 'value' => '0'],
@@ -121,7 +121,7 @@ class VerificationVote extends \yii\db\ActiveRecord
      */
     public function getVerificationAction()
     {
-        return $this->hasOne(\app\models\VerificationAction::className(), ['id' => 'verification_action_id']);
+        return $this->hasOne(\app\models\VerificationAction::class, ['id' => 'verification_action_id']);
     }
         
     /**
@@ -129,7 +129,7 @@ class VerificationVote extends \yii\db\ActiveRecord
      */
     public function getVerification()
     {
-        return $this->hasOne(\app\models\Verification::className(), ['id' => 'verification_id']);
+        return $this->hasOne(\app\models\Verification::class, ['id' => 'verification_id']);
     }
         
     /**
@@ -137,7 +137,7 @@ class VerificationVote extends \yii\db\ActiveRecord
      */
     public function getVotedBy()
     {
-        return $this->hasOne(\app\models\Users::className(), ['id' => 'voted_by']);
+        return $this->hasOne(\app\models\Users::class, ['id' => 'voted_by']);
     }
     
     /**
@@ -148,18 +148,18 @@ class VerificationVote extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -194,6 +194,6 @@ class VerificationVote extends \yii\db\ActiveRecord
     public static function find()
     {
         $query = new \app\models\VerificationVoteQuery(get_called_class());
-        return $query->where(['t_verification_vote.deleted_by' => 0]);
+        return $query->where(['t_verification_vote.is_deleted' => 0]);
     }
 }

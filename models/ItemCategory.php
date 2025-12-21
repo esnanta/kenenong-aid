@@ -22,7 +22,7 @@ class ItemCategory extends BaseItemCategory
             [['created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
             [['code'], 'string', 'max' => 50],
             [['title'], 'string', 'max' => 255],
-            [['is_deleted'], 'string', 'max' => 1],
+            [['is_deleted'], 'integer'],
             [['uuid'], 'string', 'max' => 36],
             [['code'], 'unique'],
             [['verlock'], 'default', 'value' => '0'],

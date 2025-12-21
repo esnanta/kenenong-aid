@@ -1,11 +1,12 @@
 <?php
 
-namespace app\controllers;
+namespace app\controllers\base;
 
-use Yii;
-use yii\web\Controller;
-use yii\web\BadRequestHttpException;
 use Crenspire\Yii2Inertia\Inertia;
+use Yii;
+use yii\base\InvalidConfigException;
+use yii\web\BadRequestHttpException;
+use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 
 /**
@@ -27,10 +28,12 @@ class BaseController extends Controller
 
     /**
      * {@inheritdoc}
+     * @throws InvalidConfigException
+     * @throws BadRequestHttpException
      */
-    public function beforeAction($action)
+    public function beforeAction($action): bool
     {
-        // For Inertia JSON requests, ensure CSRF token is read from JSON body
+        // For Inertia JSON requests, ensure CSRF token is read from the JSON body
         $isInertiaRequest = (Yii::$app->request->isPost || Yii::$app->request->isPut || Yii::$app->request->isPatch) && 
             (Yii::$app->request->headers->get('X-Inertia') !== null || 
              Yii::$app->request->headers->get('X-Inertia-Version') !== null);
@@ -85,9 +88,11 @@ class BaseController extends Controller
     }
 
     /**
-     * Get Inertia page component name from route
+     * Get Inertia page component name from the route
+     * @param string $route
+     * @return string
      */
-    protected function getPageComponentFromRoute($route)
+    protected function getPageComponentFromRoute(string $route): string
     {
         // Map routes to Inertia page components
         $routeMap = [
@@ -103,6 +108,14 @@ class BaseController extends Controller
             'users/create' => 'Users/Form',
             'users/<id:\d+>' => 'Users/View',
             'users/<id:\d+>/edit' => 'Users/Form',
+            'disaster-statuses' => 'DisasterStatus/Index',
+            'disaster-statuses/create' => 'DisasterStatus/Form',
+            'disaster-statuses/<id:\d+>/edit' => 'DisasterStatus/Form',
+            'disaster-statuses/<id:\d+>' => 'DisasterStatus/View',
+            'disaster-types' => 'DisasterType/Index',
+            'disaster-types/create' => 'DisasterType/Form',
+            'disaster-types/<id:\d+>/edit' => 'DisasterType/Form',
+            'disaster-types/<id:\d+>' => 'DisasterType/View',
             '' => 'Home',
             'home/index' => 'Home',
         ];
@@ -115,7 +128,20 @@ class BaseController extends Controller
             return 'Users/Form';
         }
         
+        if (preg_match('/^disaster-statuses\/(\d+)$/', $route, $matches)) {
+            return 'DisasterStatus/View';
+        }
+        if (preg_match('/^disaster-statuses\/(\d+)\/edit$/', $route, $matches)) {
+            return 'DisasterStatus/Form';
+        }
+
+        if (preg_match('/^disaster-types\/(\d+)$/', $route, $matches)) {
+            return 'DisasterType/View';
+        }
+        if (preg_match('/^disaster-types\/(\d+)\/edit$/', $route, $matches)) {
+            return 'DisasterType/Form';
+        }
+        
         return $routeMap[$route] ?? 'Home';
     }
 }
-

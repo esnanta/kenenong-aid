@@ -2,18 +2,19 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
+use Crenspire\Yii2Inertia\Inertia;
 use Da\User\Model\Rule;
 use Da\User\Search\RuleSearch;
 use Da\User\Service\AuthRuleEditionService;
-use Da\User\Validator\AjaxRequestModelValidator;
-use Da\User\Filter\AccessRuleFilter;
 use Da\User\Traits\AuthManagerAwareTrait;
 use Da\User\Traits\ContainerAwareTrait;
-use Crenspire\Yii2Inertia\Inertia;
+use Yii;
+use yii\base\InvalidConfigException;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
-use app\controllers\BaseController;
+use yii\web\Response;
+use yii\rbac\Rule as RbacRule;
 
 class RuleController extends BaseController
 {
@@ -23,7 +24,7 @@ class RuleController extends BaseController
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'access' => [
@@ -40,8 +41,9 @@ class RuleController extends BaseController
 
     /**
      * Helper method to create instances
+     * @throws InvalidConfigException
      */
-    protected function make($class, $params = [], $config = [])
+    protected function make($class, $params = [], $config = []): object
     {
         return Yii::createObject(array_merge(['class' => $class], $config), $params);
     }
@@ -49,9 +51,10 @@ class RuleController extends BaseController
     /**
      * Lists all rules.
      *
-     * @return \yii\web\Response
+     * @return Response
+     * @throws InvalidConfigException
      */
-    public function actionIndex()
+    public function actionIndex(): Response
     {
         /** @var RuleSearch $searchModel */
         $searchModel = $this->make(RuleSearch::class);
@@ -81,10 +84,10 @@ class RuleController extends BaseController
      * Displays a single rule.
      *
      * @param string $name
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException
      */
-    public function actionView($name)
+    public function actionView(string $name): Response
     {
         $rule = $this->findRule($name);
 
@@ -99,11 +102,12 @@ class RuleController extends BaseController
     /**
      * Creates a new rule.
      *
-     * @return \yii\web\Response
+     * @return Response
+     * @throws InvalidConfigException
      */
-    public function actionCreate()
+    public function actionCreate(): Response
     {
-        $model = $this->make(Rule::class, [], ['scenario' => 'create', 'className' => \yii\rbac\Rule::class]);
+        $model = $this->make(Rule::class, [], ['scenario' => 'create', 'className' => RbacRule::class]);
 
         if (Yii::$app->request->isPost) {
             $requestData = Yii::$app->request->post();
@@ -128,7 +132,7 @@ class RuleController extends BaseController
             ]);
         }
 
-        // GET request - show empty form
+        // GET request - show an empty form
         return Inertia::render('Rule/Form', [
             'rule' => [
                 'name' => '',
@@ -142,10 +146,11 @@ class RuleController extends BaseController
      * Updates an existing rule.
      *
      * @param string $name
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException
+     * @throws InvalidConfigException
      */
-    public function actionUpdate($name)
+    public function actionUpdate(string $name): Response
     {
         /** @var Rule $model */
         $model = $this->make(Rule::class, [], ['scenario' => 'update']);
@@ -181,7 +186,7 @@ class RuleController extends BaseController
             ]);
         }
 
-        // GET request - show form with current data
+        // GET request - show a form with current data
         return Inertia::render('Rule/Form', [
             'rule' => [
                 'name' => $model->name,
@@ -196,10 +201,10 @@ class RuleController extends BaseController
      * Deletes an existing rule.
      *
      * @param string $name
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException
      */
-    public function actionDelete($name)
+    public function actionDelete(string $name): Response
     {
         $rule = $this->findRule($name);
 
@@ -215,18 +220,17 @@ class RuleController extends BaseController
      * Find rule by name.
      *
      * @param string $name
-     * @return \yii\rbac\Rule
+     * @return RbacRule
      * @throws NotFoundHttpException
      */
-    protected function findRule($name)
+    protected function findRule(string $name): RbacRule
     {
         $rule = $this->getAuthManager()->getRule($name);
 
-        if (!($rule instanceof \yii\rbac\Rule)) {
+        if (!($rule instanceof RbacRule)) {
             throw new NotFoundHttpException('Rule not found.');
         }
 
         return $rule;
     }
 }
-

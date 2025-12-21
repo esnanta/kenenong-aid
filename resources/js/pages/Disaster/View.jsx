@@ -1,6 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react'
 import { ArrowLeft, Edit } from 'lucide-react'
-import DashboardLayout from '@/components/layouts/DashboardLayout'
+import {DashboardLayout} from '@/components/layouts/DashboardLayout'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -65,27 +65,24 @@ export default function DisasterView({ disaster }) {
         <div className="space-y-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-              <div className="flex items-center gap-3">
+              <CardTitle>{disaster.disaster_type_label}</CardTitle>
+              <div className="flex items-center gap-2">
                 <Link href="/disasters">
-                  <Button variant="ghost" size="icon">
-                    <ArrowLeft className="h-4 w-4" />
+                  <Button variant="outline" size="sm">
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Back
                   </Button>
                 </Link>
-                <CardTitle>{disaster.disaster_type_label}</CardTitle>
+                <Link href={`/disasters/${disaster.id}/edit`}>
+                  <Button size="sm">
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit
+                  </Button>
+                </Link>
               </div>
-              <Link href={`/disasters/${disaster.id}/edit`}>
-                <Button>
-                  <Edit className="mr-2 h-4 w-4" />
-                  Edit
-                </Button>
-              </Link>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">ID</label>
-                  <p className="text-sm font-medium">{disaster.id}</p>
-                </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Disaster Type</label>
                   <div className="mt-1">

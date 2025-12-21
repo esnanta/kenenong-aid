@@ -66,7 +66,7 @@ class Verification extends \yii\db\ActiveRecord
         return [
             [['entity_type_id', 'entity_id', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
             [['created_at', 'updated_at', 'last_activity_at', 'deleted_at'], 'safe'],
-            [['is_deleted'], 'string', 'max' => 1],
+            [['is_deleted'], 'integer'],
             [['uuid'], 'string', 'max' => 36],
             [['entity_type_id', 'entity_id'], 'unique', 'targetAttribute' => ['entity_type_id', 'entity_id'], 'message' => 'The combination of Entity Type ID and Entity ID has already been taken.'],
             [['verlock'], 'default', 'value' => '0'],
@@ -114,7 +114,7 @@ class Verification extends \yii\db\ActiveRecord
      */
     public function getEntityType()
     {
-        return $this->hasOne(\app\models\EntityType::className(), ['id' => 'entity_type_id']);
+        return $this->hasOne(\app\models\EntityType::class, ['id' => 'entity_type_id']);
     }
         
     /**
@@ -122,7 +122,7 @@ class Verification extends \yii\db\ActiveRecord
      */
     public function getVerificationVotes()
     {
-        return $this->hasMany(\app\models\VerificationVotes::className(), ['verification_id' => 'id']);
+        return $this->hasMany(\app\models\VerificationVotes::class, ['verification_id' => 'id']);
     }
     
     /**
@@ -133,18 +133,18 @@ class Verification extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -179,6 +179,6 @@ class Verification extends \yii\db\ActiveRecord
     public static function find()
     {
         $query = new \app\models\VerificationQuery(get_called_class());
-        return $query->where(['t_verification.deleted_by' => 0]);
+        return $query->where(['t_verification.is_deleted' => 0]);
     }
 }

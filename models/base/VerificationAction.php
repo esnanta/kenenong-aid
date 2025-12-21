@@ -68,7 +68,7 @@ class VerificationAction extends \yii\db\ActiveRecord
             [['created_at', 'updated_at', 'deleted_at'], 'safe'],
             [['code'], 'string', 'max' => 50],
             [['title'], 'string', 'max' => 255],
-            [['is_deleted'], 'string', 'max' => 1],
+            [['is_deleted'], 'integer'],
             [['uuid'], 'string', 'max' => 36],
             [['code'], 'unique'],
             [['verlock'], 'default', 'value' => '0'],
@@ -117,7 +117,7 @@ class VerificationAction extends \yii\db\ActiveRecord
      */
     public function getVerificationVotes()
     {
-        return $this->hasMany(\app\models\VerificationVotes::className(), ['verification_action_id' => 'id']);
+        return $this->hasMany(\app\models\VerificationVotes::class, ['verification_action_id' => 'id']);
     }
     
     /**
@@ -128,18 +128,18 @@ class VerificationAction extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -174,6 +174,6 @@ class VerificationAction extends \yii\db\ActiveRecord
     public static function find()
     {
         $query = new \app\models\VerificationActionQuery(get_called_class());
-        return $query->where(['t_verification_action.deleted_by' => 0]);
+        return $query->where(['t_verification_action.is_deleted' => 0]);
     }
 }

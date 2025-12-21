@@ -1,8 +1,8 @@
 import { Head, Link, usePage } from '@inertiajs/react'
 import { ArrowLeft, Edit } from 'lucide-react'
-import DashboardLayout from '@/components/layouts/DashboardLayout.jsx'
+import {DashboardLayout} from '@/components/layouts/DashboardLayout.jsx'
 import { Button } from '@/components/ui/button.tsx'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
 
 export default function UserView({ user }) {
   const { props } = usePage()
@@ -24,32 +24,23 @@ export default function UserView({ user }) {
       <Head title={`User: ${user.name}`} />
       <DashboardLayout user={props.user}>
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/user">
-                <Button variant="ghost" size="icon">
-                  <ArrowLeft className="h-4 w-4" />
-                </Button>
-              </Link>
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">{user.name}</h1>
-                <p className="text-muted-foreground">User Details</p>
-              </div>
-            </div>
-            <Link href={`/user/${user.id}/edit`}>
-              <Button>
-                <Edit className="mr-2 h-4 w-4" />
-                Edit User
-              </Button>
-            </Link>
-          </div>
-
           <Card>
-            <CardHeader>
-              <CardTitle>User Information</CardTitle>
-              <CardDescription>
-                Detailed information about the user
-              </CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+              <CardTitle>{user.name}</CardTitle>
+              <div className="flex items-center gap-2">
+                <Link href="/user">
+                  <Button variant="outline" size="sm">
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Back
+                  </Button>
+                </Link>
+                <Link href={`/user/${user.id}/edit`}>
+                  <Button size="sm">
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit
+                  </Button>
+                </Link>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">

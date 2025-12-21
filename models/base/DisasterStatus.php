@@ -2,6 +2,7 @@
 
 namespace app\models\base;
 
+use app\models\DisasterStatusQuery;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
@@ -67,7 +68,7 @@ class DisasterStatus extends \yii\db\ActiveRecord
             [['created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
             [['code'], 'string', 'max' => 50],
             [['title'], 'string', 'max' => 255],
-            [['is_deleted'], 'string', 'max' => 1],
+            [['is_deleted'], 'integer'],
             [['uuid'], 'string', 'max' => 36],
             [['code'], 'unique'],
             [['verlock'], 'default', 'value' => '0'],
@@ -115,7 +116,7 @@ class DisasterStatus extends \yii\db\ActiveRecord
      */
     public function getDisasters()
     {
-        return $this->hasMany(\app\models\Disaster::className(), ['disaster_status_id' => 'id']);
+        return $this->hasMany(\app\models\Disaster::class, ['disaster_status_id' => 'id']);
     }
     
     /**
@@ -126,18 +127,18 @@ class DisasterStatus extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -167,11 +168,11 @@ class DisasterStatus extends \yii\db\ActiveRecord
 
     /**
      * @inheritdoc
-     * @return \app\models\DisasterStatusQuery the active query used by this AR class.
+     * @return DisasterStatusQuery the active query used by this AR class.
      */
     public static function find()
     {
-        $query = new \app\models\DisasterStatusQuery(get_called_class());
-        return $query->where(['t_disaster_status.deleted_by' => 0]);
+        $query = new DisasterStatusQuery(get_called_class());
+        return $query->where(['t_disaster_status.is_deleted' => 0]);
     }
 }

@@ -2,10 +2,10 @@ import { Head, Link, router, usePage } from '@inertiajs/react'
 import { ArrowLeft, Lock, Shield } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import DashboardLayout from '@/components/layouts/DashboardLayout.jsx'
+import { DashboardLayout } from '@/components/layouts/DashboardLayout.jsx'
 import { Badge } from '@/components/ui/badge.tsx'
 import { Button } from '@/components/ui/button.tsx'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
 import { Checkbox } from '@/components/ui/checkbox.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Label } from '@/components/ui/label.tsx'
@@ -18,11 +18,44 @@ import {
   SelectValue,
 } from '@/components/ui/select.tsx'
 import { Textarea } from '@/components/ui/textarea.tsx'
+import { addCsrfToData } from '@/lib/csrf' // Import addCsrfToData
 
 const EMPTY_ERRORS = {}
+/** @type {RuleOption[]} */
 const EMPTY_RULES = []
+/** @type {UnassignedItem[]} */
 const EMPTY_ITEMS = []
 
+/**
+ * @typedef {object} Role
+ * @property {string} name - The name of the role.
+ * @property {string} description - The description of the role.
+ * @property {string} rule_name - The name of the rule associated with the role.
+ * @property {string | null} old_name - The original name of the role, if it was edited.
+ * @property {string[]} children - An array of child permissions or roles.
+ */
+
+/**
+ * @typedef {object} RuleOption
+ * @property {string} value - The value of the rule option.
+ * @property {string} label - The label of the rule option.
+ */
+
+/**
+ * @typedef {object} UnassignedItem
+ * @property {string} name - The name of the unassigned item.
+ * @property {'role' | 'permission'} type - The type of the unassigned item (role or permission).
+ * @property {string} description - The description of the unassigned item.
+ * @property {string} label - The label of the unassigned item.
+ */
+
+/**
+ * @param {object} props
+ * @param {Role} [props.role] - The role object.
+ * @param {{[key: string]: string[]}} [props.errors] - An object containing form errors.
+ * @param {RuleOption[]} [props.rules] - An array of available rule options.
+ * @param {UnassignedItem[]} [props.unassignedItems] - An array of unassigned items (permissions or roles).
+ */
 export default function RoleForm({ role, errors = EMPTY_ERRORS, rules = EMPTY_RULES, unassignedItems = EMPTY_ITEMS }) {
   const { props } = usePage()
   const isEdit = !!role?.old_name
@@ -48,12 +81,14 @@ export default function RoleForm({ role, errors = EMPTY_ERRORS, rules = EMPTY_RU
   const handleSubmit = (e) => {
     e.preventDefault()
 
+    const formDataWithCsrf = addCsrfToData(formData)
+
     const url = isEdit ? `/role/${role.old_name}/update` : '/role/create'
     const method = isEdit ? 'put' : 'post'
 
     router[method](
       url,
-      formData,
+      formDataWithCsrf,
       {
         onSuccess: () => {
           toast.success(isEdit ? 'Role updated successfully' : 'Role created successfully')
@@ -71,16 +106,12 @@ export default function RoleForm({ role, errors = EMPTY_ERRORS, rules = EMPTY_RU
 
       <div className="space-y-6">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0">
-            <div className="space-y-1.5">
-              <CardTitle>Role Information</CardTitle>
-              <CardDescription>
-                Enter the details for the role
-              </CardDescription>
-            </div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle>Role Information</CardTitle>
             <Link href="/role">
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="h-4 w-4" />
+              <Button variant="outline" size="sm">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
               </Button>
             </Link>
           </CardHeader>

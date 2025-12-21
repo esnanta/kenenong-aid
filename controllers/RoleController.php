@@ -2,22 +2,30 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
+use app\models\AuthItem;
+use Crenspire\Yii2Inertia\Inertia;
+use Da\User\Helper\AuthHelper;
 use Da\User\Model\Role;
 use Da\User\Search\RoleSearch;
-use Da\User\Helper\AuthHelper;
 use Da\User\Service\AuthItemEditionService;
-use Crenspire\Yii2Inertia\Inertia;
+use Yii;
+use yii\base\InvalidConfigException;
+use yii\base\Module;
+use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
-
+use yii\web\Response;
 class RoleController extends BaseController
 {
-    protected $authHelper;
+    protected AuthHelper $authHelper; // Added type declaration
 
     /**
-     * {@inheritdoc}
+     * @param string $id
+     * @param Module $module
+     * @param array $config
+     * @throws InvalidConfigException
      */
-    public function __construct($id, $module, $config = [])
+    public function __construct($id, Module $module, $config = [])
     {
         // Get AuthHelper instance
         $this->authHelper = Yii::createObject(AuthHelper::class);
@@ -25,13 +33,13 @@ class RoleController extends BaseController
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'access' => [
-                'class' => \yii\filters\AccessControl::class,
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'allow' => true,
@@ -43,35 +51,40 @@ class RoleController extends BaseController
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the model class name.
+     * @return string
      */
-    protected function getModelClass()
+    protected function getModelClass(): string
     {
         return Role::class;
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the search model class name.
+     * @return string
      */
-    protected function getSearchModelClass()
+    protected function getSearchModelClass(): string
     {
         return RoleSearch::class;
     }
 
     /**
      * Helper method to create instances
+     * @throws InvalidConfigException
      */
-    protected function make($class, $params = [], $config = [])
+    protected function make($class, $params = [], $config = []): object
     {
         return Yii::createObject(array_merge(['class' => $class], $config), $params);
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves an AuthItem (Role) by its name.
      *
-     * @throws NotFoundHttpException
+     * @param string $name The name of the role.
+     * @return Role
+     * @throws NotFoundHttpException if the role is not found.
      */
-    protected function getItem($name)
+    protected function getItem(string $name): Role
     {
         $authItem = $this->authHelper->getRole($name);
         if ($authItem !== null) {
@@ -84,9 +97,10 @@ class RoleController extends BaseController
     /**
      * Lists all roles.
      *
-     * @return \yii\web\Response
+     * @return Response
+     * @throws InvalidConfigException
      */
-    public function actionIndex()
+    public function actionIndex(): Response
     {
         $searchModel = $this->make($this->getSearchModelClass());
         $dataProvider = $searchModel->search(Yii::$app->request->get());
@@ -118,16 +132,18 @@ class RoleController extends BaseController
      * Displays a single role.
      *
      * @param string $name
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException
+     * @throws InvalidConfigException
      */
-    public function actionView($name)
+    public function actionView(string $name): Response
     {
         $authItem = $this->getItem($name);
         $model = $this->make($this->getModelClass(), [], ['scenario' => 'update', 'item' => $authItem]);
 
         // Get assigned items (child roles and permissions)
         $assignedItems = [];
+        /** @var AuthItem $child */
         foreach ($authItem->children as $child) {
             $assignedItems[] = [
                 'name' => $child->name,
@@ -151,9 +167,10 @@ class RoleController extends BaseController
     /**
      * Creates a new role.
      *
-     * @return \yii\web\Response
+     * @return Response
+     * @throws InvalidConfigException
      */
-    public function actionCreate()
+    public function actionCreate(): Response
     {
         /** @var Role $model */
         $model = $this->make($this->getModelClass(), [], ['scenario' => 'create']);
@@ -182,6 +199,7 @@ class RoleController extends BaseController
                     'name' => $model->name ?? '',
                     'description' => $model->description ?? '',
                     'rule_name' => $model->ruleName ?? 'none',
+                    'old_name' => null, // Always include old_name, set to null for new roles
                 ],
                 'errors' => $model->errors,
                 'unassignedItems' => $this->formatUnassignedItems($this->authHelper->getUnassignedItems($model)),
@@ -189,12 +207,13 @@ class RoleController extends BaseController
             ]);
         }
 
-        // GET request - show empty form
+        // GET request - show an empty form
         return Inertia::render('Role/Form', [
             'role' => [
                 'name' => '',
                 'description' => '',
                 'rule_name' => 'none',
+                'old_name' => null, // Always include old_name, set to null for new roles
             ],
             'errors' => [],
             'unassignedItems' => $this->formatUnassignedItems($this->authHelper->getUnassignedItems($model)),
@@ -206,10 +225,11 @@ class RoleController extends BaseController
      * Updates an existing role.
      *
      * @param string $name
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException
+     * @throws InvalidConfigException
      */
-    public function actionUpdate($name)
+    public function actionUpdate(string $name): Response
     {
         $authItem = $this->getItem($name);
         /** @var Role $model */
@@ -255,7 +275,7 @@ class RoleController extends BaseController
             $assignedChildren[] = $child->name;
         }
 
-        // GET request - show form with current data
+        // GET request - show a form with current data
         return Inertia::render('Role/Form', [
             'role' => [
                 'name' => $model->name,
@@ -274,10 +294,10 @@ class RoleController extends BaseController
      * Deletes an existing role.
      *
      * @param string $name
-     * @return \yii\web\Response
+     * @return Response
      * @throws NotFoundHttpException
      */
-    public function actionDelete($name)
+    public function actionDelete(string $name): Response
     {
         $item = $this->getItem($name);
 
@@ -296,13 +316,13 @@ class RoleController extends BaseController
      * @param array $items Array with format ['name' => 'label']
      * @return array
      */
-    protected function formatUnassignedItems($items)
+    protected function formatUnassignedItems(array $items): array
     {
         $formatted = [];
         $authManager = Yii::$app->authManager;
 
         foreach ($items as $name => $label) {
-            // Get the actual item object from auth manager
+            // Get the actual item object from the auth manager
             $item = $authManager->getPermission($name) ?? $authManager->getRole($name);
 
             if ($item !== null) {
@@ -319,11 +339,11 @@ class RoleController extends BaseController
     }
 
     /**
-     * Get list of available rules.
+     * Get a list of available rules.
      *
      * @return array
      */
-    protected function getRulesList()
+    protected function getRulesList(): array
     {
         $rules = Yii::$app->authManager->getRules();
         $rulesList = [['value' => 'none', 'label' => 'No rule']];

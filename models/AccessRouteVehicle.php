@@ -3,23 +3,23 @@
 namespace app\models;
 
 use Yii;
-use \app\models\base\AccessRouteVehicles as BaseAccessRouteVehicles;
+use app\models\base\AccessRouteVehicle as BaseAccessRouteVehicles;
 
 /**
  * This is the model class for table "t_access_route_vehicles".
  */
-class AccessRouteVehicles extends BaseAccessRouteVehicles
+class AccessRouteVehicle extends BaseAccessRouteVehicles
 {
     /**
      * @inheritdoc
      */
-    public function rules()
+    public function rules(): array
     {
         return array_replace_recursive(parent::rules(),
 	    [
             [['access_route_id', 'vehicle_type_id', 'created_by', 'updated_by', 'verlock'], 'integer'],
             [['created_at', 'updated_at', 'deleted_at'], 'safe'],
-            [['is_deleted'], 'string', 'max' => 1],
+            [['is_deleted'], 'integer'],
             [['deleted_by'], 'string', 'max' => 255],
             [['uuid'], 'string', 'max' => 36],
             [['verlock'], 'default', 'value' => '0'],
@@ -30,7 +30,7 @@ class AccessRouteVehicles extends BaseAccessRouteVehicles
     /**
      * @inheritdoc
      */
-    public function attributeHints()
+    public function attributeHints(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),

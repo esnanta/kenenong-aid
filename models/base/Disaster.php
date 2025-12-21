@@ -2,6 +2,7 @@
 
 namespace app\models\base;
 
+use app\models\DisasterQuery;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
@@ -75,7 +76,7 @@ class Disaster extends \yii\db\ActiveRecord
             [['start_date', 'end_date', 'created_at', 'updated_at', 'deleted_at'], 'safe'],
             [['description'], 'string'],
             [['title'], 'string', 'max' => 255],
-            [['is_deleted'], 'string', 'max' => 1],
+            [['is_deleted'], 'integer'],
             [['uuid'], 'string', 'max' => 36],
             [['verlock'], 'default', 'value' => '0'],
             [['verlock'], 'mootensai\components\OptimisticLockValidator']
@@ -125,7 +126,7 @@ class Disaster extends \yii\db\ActiveRecord
      */
     public function getAccessRoutes()
     {
-        return $this->hasMany(\app\models\AccessRoute::className(), ['disaster_id' => 'id']);
+        return $this->hasMany(\app\models\AccessRoute::class, ['disaster_id' => 'id']);
     }
         
     /**
@@ -133,7 +134,7 @@ class Disaster extends \yii\db\ActiveRecord
      */
     public function getDisasterStatus()
     {
-        return $this->hasOne(\app\models\DisasterStatus::className(), ['id' => 'disaster_status_id']);
+        return $this->hasOne(\app\models\DisasterStatus::class, ['id' => 'disaster_status_id']);
     }
         
     /**
@@ -141,7 +142,7 @@ class Disaster extends \yii\db\ActiveRecord
      */
     public function getDisasterType()
     {
-        return $this->hasOne(\app\models\DisasterType::className(), ['id' => 'disaster_type_id']);
+        return $this->hasOne(\app\models\DisasterType::class, ['id' => 'disaster_type_id']);
     }
         
     /**
@@ -149,7 +150,7 @@ class Disaster extends \yii\db\ActiveRecord
      */
     public function getShelters()
     {
-        return $this->hasMany(\app\models\Shelter::className(), ['disaster_id' => 'id']);
+        return $this->hasMany(\app\models\Shelter::class, ['disaster_id' => 'id']);
     }
     
     /**
@@ -160,20 +161,52 @@ class Disaster extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
+    }
+
+    /**
+     * The following code shows how to apply a default condition for all queries:
+     *
+     * ```php
+     * class Customer extends ActiveRecord
+     * {
+     *     public static function find()
+     *     {
+     *         return parent::find()->where(['deleted' => false]);
+     *     }
+     * }
+     *
+     * // Use andWhere()/orWhere() to apply the default condition
+     * // SELECT FROM customer WHERE `deleted`=:deleted AND age>30
+     * $customers = Customer::find()->andWhere('age>30')->all();
+     *
+     * // Use where() to ignore the default condition
+     * // SELECT FROM customer WHERE age>30
+     * $customers = Customer::find()->where('age>30')->all();
+     * ```
+     */
+
+    /**
+     * @inheritdoc
+     * @return DisasterQuery the active query used by this AR class.
+     */
+    public static function find()
+    {
+        $query = new DisasterQuery(get_called_class());
+        return $query->where(['t_disaster.is_deleted' => 0]);
     }
 }

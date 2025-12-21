@@ -4,6 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title inertia>Yii2 - Modern Starter Kit</title>
+
+    <style>
+        body {
+            margin: 0;
+            /* Match your app's background color (e.g., slate-950 or white) */
+            background-color: #ffffff;
+        }
+
+        #app-loader {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #29d;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Dark mode support (if using tailwind 'dark' class) */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #020817;
+            }
+
+            .spinner {
+                border-color: #1e293b;
+                border-top-color: #3b82f6;
+            }
+        }
+    </style>
+
+
     <?php
     // Register CSRF meta tags for Yii2
     $csrfParam = Yii::$app->request->csrfParam;
@@ -18,8 +68,10 @@
         <script type="module" src="http://localhost:5173/@vite/client"></script>
         <script type="module">
             import RefreshRuntime from 'http://localhost:5173/@react-refresh';
+
             RefreshRuntime.injectIntoGlobalHook(window);
-            window.$RefreshReg$ = () => {};
+            window.$RefreshReg$ = () => {
+            };
             window.$RefreshSig$ = () => (type) => type;
             window.__vite_plugin_react_preamble_installed__ = true;
         </script>
@@ -46,6 +98,10 @@
     <?php endif; ?>
 </head>
 <body>
-    <div id="app" data-page="<?= htmlspecialchars(json_encode($page), ENT_QUOTES, 'UTF-8') ?>"></div>
+<div id="app-loader">
+    <div class="spinner"></div>
+</div>
+
+<div id="app" data-page="<?= htmlspecialchars(json_encode($page), ENT_QUOTES, 'UTF-8') ?>"></div>
 </body>
 </html>

@@ -2,23 +2,28 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
 use app\models\DisasterStatus;
 use app\models\DisasterStatusSearch;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
+use Crenspire\Yii2Inertia\Inertia;
+use Yii;
+use yii\db\Exception;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
+use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
- * DisasterStatusController implements the CRUD actions for DisasterStatus model.
+ * DisasterStatusController implements the CRUD actions for the DisasterStatus model.
  */
-class DisasterStatusController extends Controller
+class DisasterStatusController extends BaseController
 {
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                 ],
@@ -28,82 +33,173 @@ class DisasterStatusController extends Controller
 
     /**
      * Lists all DisasterStatus models.
-     * @return mixed
+     * @return Response
+     * @throws ForbiddenHttpException
      */
-    public function actionIndex()
+    public function actionIndex(): Response
     {
+        $this->checkAccess('disasterStatus.index');
         $searchModel = new DisasterStatusSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $statuses = $dataProvider->getModels();
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+        $statusesData = array_map(function ($status) {
+            return [
+                'id' => $status->id,
+                'code' => $status->code,
+                'title' => $status->title,
+                'description' => $status->description,
+            ];
+        }, $statuses);
+
+        return Inertia::render('DisasterStatus/Index', [
+            'statuses' => $statusesData,
+            'pagination' => [
+                'total' => $dataProvider->getPagination()->totalCount,
+                'per_page' => $dataProvider->getPagination()->pageSize,
+                'current_page' => $dataProvider->getPagination()->getPage() + 1,
+                'last_page' => $dataProvider->getPagination()->getPageCount(),
+            ],
+            'filters' => Yii::$app->request->queryParams,
+            'sort' => [
+                'sort_by' => Yii::$app->request->get('sort_by', 'id'),
+                'sort_order' => Yii::$app->request->get('sort_order', 'asc'),
+            ],
         ]);
     }
 
     /**
      * Displays a single DisasterStatus model.
      * @param integer $id
-     * @return mixed
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws ForbiddenHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): Response
     {
         $model = $this->findModel($id);
-        $providerDisaster = new \yii\data\ArrayDataProvider([
-            'allModels' => $model->disasters,
-        ]);
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-            'providerDisaster' => $providerDisaster,
+        $this->checkAccess('disasterStatus.view', $model);
+
+        return Inertia::render('DisasterStatus/View', [
+            'status' => $model,
         ]);
     }
 
     /**
      * Creates a new DisasterStatus model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * If creation is successful, the browser will be redirected to the 'index' page.
+     * @return Response
+     * @throws ForbiddenHttpException
+     * @throws Exception
      */
-    public function actionCreate()
+    public function actionCreate(): Response
     {
+        $this->checkAccess('disasterStatus.create');
         $model = new DisasterStatus();
 
-        if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
+        if (Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post(), '')) {
+                if ($model->validate() && $model->save()) {
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'Data saved successfully.'));
+                    if (Yii::$app->request->headers->get('X-Inertia')) {
+                        return Inertia::location(Url::to(['index']));
+                    }
+                    return $this->redirect(['index']);
+                }
+            }
+
+            return Inertia::render('DisasterStatus/Form', [
+                'status' => null,
+                'errors' => $model->errors,
             ]);
         }
+
+        return Inertia::render('DisasterStatus/Form', [
+            'status' => null,
+            'errors' => [],
+        ]);
     }
 
     /**
      * Updates an existing DisasterStatus model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * If the update is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
-     * @return mixed
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws Exception
+     * @throws ForbiddenHttpException
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id): Response
     {
         $model = $this->findModel($id);
+        $this->checkAccess('disasterStatus.update', $model);
 
-        if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
+        $isPost = Yii::$app->request->isPost;
+        $isPut = Yii::$app->request->isPut;
+
+        if ($isPost || $isPut) {
+            if ($isPut) {
+                $requestData = Yii::$app->request->bodyParams;
+                if (empty($requestData) && Yii::$app->request->contentType === 'application/json') {
+                    $rawBody = Yii::$app->request->rawBody;
+                    if (!empty($rawBody)) {
+                        $requestData = json_decode($rawBody, true) ?: [];
+                    }
+                }
+            } else {
+                $requestData = Yii::$app->request->post();
+            }
+
+            if ($model->load($requestData, '')) {
+                if ($model->validate() && $model->save()) {
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'Data saved successfully.'));
+                    if (Yii::$app->request->headers->get('X-Inertia')) {
+                        return Inertia::location(Url::to(['index']));
+                    }
+                    return $this->redirect(['index']);
+                }
+            }
+
+            return Inertia::render('DisasterStatus/Form', [
+                'status' => $model,
+                'errors' => $model->errors,
             ]);
         }
+
+        return Inertia::render('DisasterStatus/Form', [
+            'status' => $model,
+            'errors' => [],
+        ]);
     }
 
     /**
      * Deletes an existing DisasterStatus model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
-     * @return mixed
+     * @return Response
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
+     * @throws Exception
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
+        $model = $this->findModel($id);
+        $this->checkAccess('disasterStatus.delete', $model);
+
+        // Soft delete manually
+        $model->is_deleted = 1;
+        $model->deleted_at = date('Y-m-d H:i:s');
+        $model->deleted_by = Yii::$app->user->id;
+
+        if ($model->save(false)) {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Data deleted successfully.'));
+        } else {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Failed to delete data.'));
+        }
+
+        if (Yii::$app->request->headers->get('X-Inertia')) {
+            return Inertia::location(Url::to(['index']));
+        }
 
         return $this->redirect(['index']);
     }
@@ -116,7 +212,7 @@ class DisasterStatusController extends Controller
      * @return DisasterStatus the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): DisasterStatus
     {
         if (($model = DisasterStatus::findOne($id)) !== null) {
             return $model;
@@ -131,9 +227,10 @@ class DisasterStatusController extends Controller
     * @author Yohanes Candrajaya <moo.tensai@gmail.com>
     * @author Jiwantoro Ndaru <jiwanndaru@gmail.com>
     *
-    * @return mixed
+    * @return string
+    * @throws NotFoundHttpException
     */
-    public function actionAddDisaster()
+    public function actionAddDisaster(): string
     {
         if (Yii::$app->request->isAjax) {
             $row = Yii::$app->request->post('Disaster');

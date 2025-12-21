@@ -26,7 +26,7 @@ use mootensai\behaviors\UUIDBehavior;
  * @property integer $verlock
  * @property string $uuid
  *
- * @property \app\models\Users $distributedBy
+ * @property \app\models\User $distributedBy
  * @property \app\models\AidPlan $aidPlan
  * @property \app\models\Shelter $shelter
  * @property \app\models\AidDistributionDetails[] $aidDistributionDetails
@@ -73,7 +73,7 @@ class AidDistribution extends \yii\db\ActiveRecord
             [['aid_plan_id', 'shelter_id', 'distributed_by', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
             [['distribution_date', 'created_at', 'updated_at', 'deleted_at'], 'safe'],
             [['notes'], 'string'],
-            [['is_deleted'], 'string', 'max' => 1],
+            [['is_deleted'], 'integer'],
             [['uuid'], 'string', 'max' => 36],
             [['verlock'], 'default', 'value' => '0'],
             [['verlock'], 'mootensai\components\OptimisticLockValidator']
@@ -122,7 +122,7 @@ class AidDistribution extends \yii\db\ActiveRecord
      */
     public function getDistributedBy()
     {
-        return $this->hasOne(\app\models\Users::className(), ['id' => 'distributed_by']);
+        return $this->hasOne(\app\models\User::class, ['id' => 'distributed_by']);
     }
         
     /**
@@ -130,7 +130,7 @@ class AidDistribution extends \yii\db\ActiveRecord
      */
     public function getAidPlan()
     {
-        return $this->hasOne(\app\models\AidPlan::className(), ['id' => 'aid_plan_id']);
+        return $this->hasOne(\app\models\AidPlan::class, ['id' => 'aid_plan_id']);
     }
         
     /**
@@ -138,7 +138,7 @@ class AidDistribution extends \yii\db\ActiveRecord
      */
     public function getShelter()
     {
-        return $this->hasOne(\app\models\Shelter::className(), ['id' => 'shelter_id']);
+        return $this->hasOne(\app\models\Shelter::class, ['id' => 'shelter_id']);
     }
         
     /**
@@ -146,7 +146,7 @@ class AidDistribution extends \yii\db\ActiveRecord
      */
     public function getAidDistributionDetails()
     {
-        return $this->hasMany(\app\models\AidDistributionDetails::className(), ['aid_distribution_id' => 'id']);
+        return $this->hasMany(\app\models\AidDistributionDetails::class, ['aid_distribution_id' => 'id']);
     }
     
     /**
@@ -157,18 +157,18 @@ class AidDistribution extends \yii\db\ActiveRecord
     {
         return [
             'timestamp' => [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created_at',
                 'updatedAtAttribute' => 'updated_at',
                 'value' => new \yii\db\Expression('NOW()'),
             ],
             'blameable' => [
-                'class' => BlameableBehavior::className(),
+                'class' => BlameableBehavior::class,
                 'createdByAttribute' => 'created_by',
                 'updatedByAttribute' => 'updated_by',
             ],
             'uuid' => [
-                'class' => UUIDBehavior::className(),
+                'class' => UUIDBehavior::class,
                 'column' => 'uuid',
             ],
         ];
@@ -203,6 +203,6 @@ class AidDistribution extends \yii\db\ActiveRecord
     public static function find()
     {
         $query = new \app\models\AidDistributionQuery(get_called_class());
-        return $query->where(['t_aid_distribution.deleted_by' => 0]);
+        return $query->where(['t_aid_distribution.is_deleted' => 0]);
     }
 }

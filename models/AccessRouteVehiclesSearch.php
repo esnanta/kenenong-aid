@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\AccessRouteVehicles;
+use app\models\AccessRouteVehicle;
 
 /**
  * app\models\AccessRouteVehiclesSearch represents the model behind the search form about `app\models\AccessRouteVehicles`.
  */
- class AccessRouteVehiclesSearch extends AccessRouteVehicles
+ class AccessRouteVehiclesSearch extends AccessRouteVehicle
 {
     /**
      * @inheritdoc
@@ -41,7 +41,7 @@ use app\models\AccessRouteVehicles;
      */
     public function search($params)
     {
-        $query = AccessRouteVehicles::find();
+        $query = AccessRouteVehicle::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

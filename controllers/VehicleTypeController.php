@@ -2,23 +2,30 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\controllers\base\BaseController;
 use app\models\VehicleType;
 use app\models\VehicleTypeSearch;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
+use Yii;
+use yii\data\ArrayDataProvider;
+use yii\db\Exception;
 use yii\filters\VerbFilter;
+use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
- * VehicleTypeController implements the CRUD actions for VehicleType model.
+ * VehicleTypeController implements the CRUD actions for the VehicleType model.
  */
-class VehicleTypeController extends Controller
+class VehicleTypeController extends BaseController
 {
-    public function behaviors()
+    /**
+     * @return array
+     */
+    public function behaviors(): array
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['post'],
                 ],
@@ -28,10 +35,12 @@ class VehicleTypeController extends Controller
 
     /**
      * Lists all VehicleType models.
-     * @return mixed
+     * @return string
+     * @throws ForbiddenHttpException
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
+        $this->checkAccess('vehicleType.index');
         $searchModel = new VehicleTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -43,13 +52,17 @@ class VehicleTypeController extends Controller
 
     /**
      * Displays a single VehicleType model.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return string
+     * @throws NotFoundHttpException
+     * @throws ForbiddenHttpException
      */
-    public function actionView($id)
+    public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $providerAccessRouteVehicles = new \yii\data\ArrayDataProvider([
+        $this->checkAccess('vehicleType.view', $model);
+
+        $providerAccessRouteVehicles = new ArrayDataProvider([
             'allModels' => $model->accessRouteVehicles,
         ]);
         return $this->render('view', [
@@ -61,10 +74,13 @@ class VehicleTypeController extends Controller
     /**
      * Creates a new VehicleType model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return string|Response
+     * @throws Exception
+     * @throws ForbiddenHttpException
      */
     public function actionCreate()
     {
+        $this->checkAccess('vehicleType.index');
         $model = new VehicleType();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -78,13 +94,17 @@ class VehicleTypeController extends Controller
 
     /**
      * Updates an existing VehicleType model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
+     * If the update is successful, the browser will be redirected to the 'view' page.
+     * @param int $id
+     * @return string|Response
+     * @throws NotFoundHttpException
+     * @throws Exception
+     * @throws ForbiddenHttpException
      */
-    public function actionUpdate($id)
+    public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
+        $this->checkAccess('vehicleType.update', $model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -98,12 +118,17 @@ class VehicleTypeController extends Controller
     /**
      * Deletes an existing VehicleType model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
+     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws Exception
+     * @throws ForbiddenHttpException
      */
-    public function actionDelete($id)
+    public function actionDelete(int $id): Response
     {
-        $this->findModel($id)->deleteWithRelated();
+        $model = $this->findModel($id);
+        $this->checkAccess('vehicleType.delete', $model);
+        $model->deleteWithRelated();
 
         return $this->redirect(['index']);
     }
@@ -112,11 +137,11 @@ class VehicleTypeController extends Controller
     /**
      * Finds the VehicleType model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param int $id
      * @return VehicleType the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel(int $id): VehicleType
     {
         if (($model = VehicleType::findOne($id)) !== null) {
             return $model;
@@ -131,9 +156,10 @@ class VehicleTypeController extends Controller
     * @author Yohanes Candrajaya <moo.tensai@gmail.com>
     * @author Jiwantoro Ndaru <jiwanndaru@gmail.com>
     *
-    * @return mixed
+    * @return string
+    * @throws NotFoundHttpException
     */
-    public function actionAddAccessRouteVehicles()
+    public function actionAddAccessRouteVehicles(): string
     {
         if (Yii::$app->request->isAjax) {
             $row = Yii::$app->request->post('AccessRouteVehicles');
