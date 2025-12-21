@@ -424,11 +424,13 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
                           ))
                         )
                       : (
-                          <TableRow>
-                            <TableCell colSpan={Object.values(columnVisibility).filter(Boolean).length} className="text-center text-muted-foreground py-8">
-                              No roles found
-                            </TableCell>
-                          </TableRow>
+                          [ // Wrap the single TableRow in an array
+                            <TableRow key="no-roles">
+                              <TableCell colSpan={Object.values(columnVisibility).filter(Boolean).length} className="text-center text-muted-foreground py-8">
+                                No roles found
+                              </TableCell>
+                            </TableRow>,
+                          ]
                         )}
                   </TableBody>
                 </Table>
