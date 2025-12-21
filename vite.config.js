@@ -16,7 +16,8 @@ export default defineConfig({
       host: 'localhost',
     },
     watch: {
-      ignored: ['**/vendor/**', '**/runtime/**', '**/views/**'],
+      // Ignore Yii2
+      ignored: ['**/vendor/**', '**/runtime/**', '**/views/**', '**/controllers/**'],
     },
   },
   build: {
@@ -32,7 +33,9 @@ export default defineConfig({
           if (id.includes('node_modules')) {
             if (id.includes('react'))
               return 'vendor-react'
-            if (id.includes('axios'))
+            if (id.includes('lucide-react'))
+              return 'vendor-icons'
+            if (id.includes('axios') || id.includes('sonner'))
               return 'vendor-utils'
             return 'vendor'
           }

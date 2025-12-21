@@ -3,9 +3,9 @@ import {
   AlertTriangle,
   Bell,
   CheckCircle,
-  ChevronDown,
   ChevronRight,
   Database,
+  Gavel, // Import Gavel icon for Rules
   Home,
   Key,
   LayoutDashboard,
@@ -72,7 +72,7 @@ export function DashboardLayout({ children, user }) {
 
   // State untuk mengontrol menu yang terbuka secara otomatis berdasarkan URL
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(
-    url.startsWith('/users') || url.startsWith('/roles') || url.startsWith('/permissions'),
+    url.startsWith('/users') || url.startsWith('/roles') || url.startsWith('/permissions') || url.startsWith('/rules'),
   )
   const [isMasterMenuOpen, setIsMasterMenuOpen] = useState(
     url.startsWith('/disaster-statuses') || url.startsWith('/disaster-types') || url.startsWith('/item-categories') || url.startsWith('/units'),
@@ -289,6 +289,15 @@ export function DashboardLayout({ children, user }) {
                             <Link href="/permissions">
                               <Key className="w-4 h-4 mr-2" />
                               <span>Izin Akses</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        {/* Rule Management */}
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={url.startsWith('/rules')}>
+                            <Link href="/rules">
+                              <Gavel className="w-4 h-4 mr-2" />
+                              <span>Aturan (Rules)</span>
                             </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
