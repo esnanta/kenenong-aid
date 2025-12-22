@@ -9,15 +9,15 @@ use Yii;
 
 class PermissionSearch extends BasePermissionSearch
 {
-    public $search;
-    public $rule_name;
-    public $created_at_from;
-    public $created_at_to;
+    public ?string $search = null;
+    public $rule_name = null;
+    public ?string $created_at_from = null;
+    public ?string $created_at_to = null;
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['search', 'rule_name'], 'safe'],
@@ -25,10 +25,7 @@ class PermissionSearch extends BasePermissionSearch
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function search($params = [])
+    public function search($params = []): ArrayDataProvider
     {
         /* @var ManagerInterface $authManager */
         $authManager = Yii::$app->authManager;
@@ -37,30 +34,24 @@ class PermissionSearch extends BasePermissionSearch
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return new ArrayDataProvider([
                 'allModels' => [],
             ]);
         }
 
         $filteredPermissions = [];
-        foreach ($permissions as $name => $permission) {
+        foreach ($permissions as $permission) {
             $match = true;
 
             // Filter by search (name or description)
             if ($this->search) {
                 $searchLower = strtolower($this->search);
                 if (
-                    (isset($permission->name) && strtolower($permission->name) === $searchLower) ||
-                    (isset($permission->description) && strtolower($permission->description) === $searchLower)
+                    !(
+                        (isset($permission->name) && str_contains(strtolower($permission->name), $searchLower)) ||
+                        (isset($permission->description) && str_contains(strtolower($permission->description), $searchLower))
+                    )
                 ) {
-                } elseif (
-                    (isset($permission->name) && str_contains(strtolower($permission->name), $searchLower)) ||
-                    (isset($permission->description) && str_contains(strtolower($permission->description), $searchLower))
-                ) {
-                    // Partial match
-                } else {
                     $match = false;
                 }
             }
