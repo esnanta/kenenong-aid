@@ -162,7 +162,6 @@ class PermissionController extends BaseController
      */
     public function actionView(string $name): Response
     {
-        /* @var \yii\rbac\Permission $authItem */
         $authItem = $this->getItem($name);
 
         // Get assigned items (child permissions)
