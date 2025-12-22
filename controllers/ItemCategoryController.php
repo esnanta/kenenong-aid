@@ -40,7 +40,7 @@ class ItemCategoryController extends BaseController
      */
     public function actionIndex(): string
     {
-        $this->checkAccess('itemCategory.index');
+        $this->checkAccess('itemCategory-index');
         $searchModel = new ItemCategorySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -60,7 +60,7 @@ class ItemCategoryController extends BaseController
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $this->checkAccess('itemCategory.view', $model);
+        $this->checkAccess('itemCategory-view', $model);
 
         $providerItem = new ArrayDataProvider([
             'allModels' => $model->items,
@@ -80,7 +80,7 @@ class ItemCategoryController extends BaseController
      */
     public function actionCreate()
     {
-        $this->checkAccess('itemCategory.create');
+        $this->checkAccess('itemCategory-create');
         $model = new ItemCategory();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -104,7 +104,7 @@ class ItemCategoryController extends BaseController
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
-        $this->checkAccess('itemCategory.update',$model);
+        $this->checkAccess('itemCategory-update',$model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -127,7 +127,7 @@ class ItemCategoryController extends BaseController
     public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('itemCategory.delete', $model);
+        $this->checkAccess('itemCategory-delete', $model);
         $model->deleteWithRelated();
 
         return $this->redirect(['index']);

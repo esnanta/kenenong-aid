@@ -36,7 +36,7 @@ class AccessRouteShelterController extends BaseController
      */
     public function actionIndex(): string
     {
-        $this->checkAccess('accessRouteShelter.index');
+        $this->checkAccess('accessRouteShelter-index');
         $searchModel = new AccessRouteSheltersSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -56,7 +56,7 @@ class AccessRouteShelterController extends BaseController
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $this->checkAccess('accessRouteShelter.view', $model);
+        $this->checkAccess('accessRouteShelter-view', $model);
 
         return $this->render('view', [
             'model' => $model,
@@ -72,7 +72,7 @@ class AccessRouteShelterController extends BaseController
      */
     public function actionCreate()
     {
-        $this->checkAccess('accessRouteShelter.create');
+        $this->checkAccess('accessRouteShelter-create');
         $model = new AccessRouteShelter();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -96,7 +96,7 @@ class AccessRouteShelterController extends BaseController
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
-        $this->checkAccess('accessRouteShelter.update', $model);
+        $this->checkAccess('accessRouteShelter-update', $model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -119,7 +119,7 @@ class AccessRouteShelterController extends BaseController
     public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('accessRouteShelter.delete', $model);
+        $this->checkAccess('accessRouteShelter-delete', $model);
         $model->deleteWithRelated();
         return $this->redirect(['index']);
     }

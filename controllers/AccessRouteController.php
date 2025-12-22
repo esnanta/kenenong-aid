@@ -37,7 +37,7 @@ class AccessRouteController extends BaseController
      */
     public function actionIndex(): string
     {
-        $this->checkAccess('accessRoute.index');
+        $this->checkAccess('accessRoute-index');
         $searchModel = new AccessRouteSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -57,7 +57,7 @@ class AccessRouteController extends BaseController
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $this->checkAccess('accessRoute.view', $model);
+        $this->checkAccess('accessRoute-view', $model);
 
         $providerAccessRouteShelters = new ArrayDataProvider([
             'allModels' => $model->accessRouteShelters,
@@ -81,7 +81,7 @@ class AccessRouteController extends BaseController
     public function actionCreate()
     {
 
-        $this->checkAccess('accessRoute.create');
+        $this->checkAccess('accessRoute-create');
         $model = new AccessRoute();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -104,7 +104,7 @@ class AccessRouteController extends BaseController
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
-        $this->checkAccess('accessRoute.update', $model);
+        $this->checkAccess('accessRoute-update', $model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -126,7 +126,7 @@ class AccessRouteController extends BaseController
     public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('accessRoute.delete', $model);
+        $this->checkAccess('accessRoute-delete', $model);
         $model->deleteWithRelated();
         return $this->redirect(['index']);
     }
@@ -160,7 +160,7 @@ class AccessRouteController extends BaseController
      */
     public function actionAddAccessRouteShelters(): string
     {
-        $this->checkAccess('accessRoute.update');
+        $this->checkAccess('accessRoute-update');
         return $this->_renderAjaxForm('AccessRouteShelters', '_formAccessRouteShelters');
     }
 
@@ -176,7 +176,7 @@ class AccessRouteController extends BaseController
      */
     public function actionAddAccessRouteVehicles(): string
     {
-        $this->checkAccess('accessRoute.update');
+        $this->checkAccess('accessRoute-update');
         return $this->_renderAjaxForm('AccessRouteVehicles', '_formAccessRouteVehicles');
     }
 

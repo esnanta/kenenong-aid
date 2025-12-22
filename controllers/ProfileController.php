@@ -39,7 +39,7 @@ class ProfileController extends BaseController
      */
     public function actionIndex(): string
     {
-        $this->checkAccess('profile.index');
+        $this->checkAccess('profile-index');
         $searchModel = new ProfileSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -59,7 +59,7 @@ class ProfileController extends BaseController
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $this->checkAccess('profile.view',$model);
+        $this->checkAccess('profile-view',$model);
 
         return $this->render('view', [
             'model' => $model,
@@ -74,7 +74,7 @@ class ProfileController extends BaseController
      */
     public function actionCreate()
     {
-        $this->checkAccess('profile.create');
+        $this->checkAccess('profile-create');
         $model = new Profile();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -98,7 +98,7 @@ class ProfileController extends BaseController
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
-        $this->checkAccess('profile.update',$model);
+        $this->checkAccess('profile-update',$model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->user_id]);
@@ -121,7 +121,7 @@ class ProfileController extends BaseController
     public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('profile.delete', $model);
+        $this->checkAccess('profile-delete', $model);
         $model->deleteWithRelated();
 
         return $this->redirect(['index']);

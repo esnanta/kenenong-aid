@@ -39,7 +39,7 @@ class AidPlanDetailController extends BaseController
      */
     public function actionIndex(): string
     {
-        $this->checkAccess('aidPlan.index');
+        $this->checkAccess('aidPlan-index');
         $searchModel = new AidPlanDetailSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -59,7 +59,7 @@ class AidPlanDetailController extends BaseController
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $this->checkAccess('aidPlan.view',$model);
+        $this->checkAccess('aidPlan-view',$model);
         return $this->render('view', [
             'model' => $model,
         ]);
@@ -73,7 +73,7 @@ class AidPlanDetailController extends BaseController
      */
     public function actionCreate()
     {
-        $this->checkAccess('aidPlan.create');
+        $this->checkAccess('aidPlan-create');
         $model = new AidPlanDetails();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -97,7 +97,7 @@ class AidPlanDetailController extends BaseController
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
-        $this->checkAccess('aidPlan.update',$model);
+        $this->checkAccess('aidPlan-update',$model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -120,7 +120,7 @@ class AidPlanDetailController extends BaseController
     public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('aidPlan.delete', $model);
+        $this->checkAccess('aidPlan-delete', $model);
         $model->deleteWithRelated();
 
         return $this->redirect(['index']);

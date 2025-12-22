@@ -41,7 +41,7 @@ class MediaFileController extends BaseController
      */
     public function actionIndex(): string
     {
-        $this->checkAccess('mediaFile.index');
+        $this->checkAccess('mediaFile-index');
         $searchModel = new MediaFileSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -61,7 +61,7 @@ class MediaFileController extends BaseController
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $this->checkAccess('mediaFile.view', $model);
+        $this->checkAccess('mediaFile-view', $model);
 
         return $this->render('view', [
             'model' => $model,
@@ -77,7 +77,7 @@ class MediaFileController extends BaseController
      */
     public function actionCreate()
     {
-        $this->checkAccess('mediaFile.create');
+        $this->checkAccess('mediaFile-create');
         $model = new MediaFile();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -101,7 +101,7 @@ class MediaFileController extends BaseController
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
-        $this->checkAccess('mediaFile.update', $model);
+        $this->checkAccess('mediaFile-update', $model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -124,7 +124,7 @@ class MediaFileController extends BaseController
     public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('mediaFile.delete', $model);
+        $this->checkAccess('mediaFile-delete', $model);
         $model->deleteWithRelated();
 
         return $this->redirect(['index']);

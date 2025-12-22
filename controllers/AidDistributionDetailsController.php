@@ -39,7 +39,7 @@ class AidDistributionDetailsController extends BaseController
      */
     public function actionIndex(): string
     {
-        $this->checkAccess('aidDistribution.index');
+        $this->checkAccess('aidDistribution-index');
         $searchModel = new AidDistributionDetailsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -59,7 +59,7 @@ class AidDistributionDetailsController extends BaseController
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $this->checkAccess('aidDistribution.view',$model);
+        $this->checkAccess('aidDistribution-view',$model);
 
         return $this->render('view', [
             'model' => $model,
@@ -75,7 +75,7 @@ class AidDistributionDetailsController extends BaseController
      */
     public function actionCreate()
     {
-        $this->checkAccess('aidDistribution.create');
+        $this->checkAccess('aidDistribution-create');
         $model = new AidDistributionDetails();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -99,7 +99,7 @@ class AidDistributionDetailsController extends BaseController
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
-        $this->checkAccess('aidDistribution.update',$model);
+        $this->checkAccess('aidDistribution-update',$model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -121,7 +121,7 @@ class AidDistributionDetailsController extends BaseController
     public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('aidDistribution.delete', $model);
+        $this->checkAccess('aidDistribution-delete', $model);
         $model->deleteWithRelated();
         return $this->redirect(['index']);
     }

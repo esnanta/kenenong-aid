@@ -15,6 +15,13 @@ use yii\base\Module;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+
+/**
+ *
+ * @property-read array[] $rulesList
+ * @property-read string $modelClass
+ * @property-read string $searchModelClass
+ */
 class RoleController extends BaseController
 {
     protected AuthHelper $authHelper; // Added type declaration

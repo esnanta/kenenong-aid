@@ -40,7 +40,7 @@ class VerificationController extends BaseController
      */
     public function actionIndex(): string
     {
-        $this->checkAccess('verification.index');
+        $this->checkAccess('verification-index');
         $searchModel = new VerificationSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -60,7 +60,7 @@ class VerificationController extends BaseController
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $this->checkAccess('verification.view', $model);
+        $this->checkAccess('verification-view', $model);
 
         $providerVerificationVote = new ArrayDataProvider([
             'allModels' => $model->verificationVotes,
@@ -79,7 +79,7 @@ class VerificationController extends BaseController
      */
     public function actionCreate()
     {
-        $this->checkAccess('verification.create');
+        $this->checkAccess('verification-create');
         $model = new Verification();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -102,7 +102,7 @@ class VerificationController extends BaseController
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
-        $this->checkAccess('verification.update', $model);
+        $this->checkAccess('verification-update', $model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -124,7 +124,7 @@ class VerificationController extends BaseController
     public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('verification.delete', $model);
+        $this->checkAccess('verification-delete', $model);
         $model->deleteWithRelated();
 
         return $this->redirect(['index']);

@@ -37,7 +37,7 @@ class DisasterTypeController extends BaseController
      */
     public function actionIndex(): Response
     {
-        $this->checkAccess('disasterType.index');
+        $this->checkAccess('disasterType-index');
         $searchModel = new DisasterTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $types = $dataProvider->getModels();
@@ -77,7 +77,7 @@ class DisasterTypeController extends BaseController
     public function actionView(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('disasterType.view', $model);
+        $this->checkAccess('disasterType-view', $model);
         
         return Inertia::render('DisasterType/View', [
             'type' => $model,
@@ -93,7 +93,7 @@ class DisasterTypeController extends BaseController
      */
     public function actionCreate(): Response
     {
-        $this->checkAccess('disasterType.create');
+        $this->checkAccess('disasterType-create');
         $model = new DisasterType();
 
         if (Yii::$app->request->isPost) {
@@ -131,7 +131,7 @@ class DisasterTypeController extends BaseController
     public function actionUpdate(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('disasterType.update', $model);
+        $this->checkAccess('disasterType-update', $model);
 
         $isPost = Yii::$app->request->isPost;
         $isPut = Yii::$app->request->isPut;
@@ -183,7 +183,7 @@ class DisasterTypeController extends BaseController
     public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('disasterType.delete', $model);
+        $this->checkAccess('disasterType-delete', $model);
 
         // Soft delete manually
         $model->is_deleted = 1;

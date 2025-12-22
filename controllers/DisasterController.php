@@ -39,7 +39,7 @@ class DisasterController extends BaseController
      */
     public function actionIndex(): Response
     {
-        $this->checkAccess('disaster.index');
+        $this->checkAccess('disaster-index');
         $request = Yii::$app->request;
 
         // Get filter parameters
@@ -143,7 +143,7 @@ class DisasterController extends BaseController
     public function actionView(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('disaster.view', $model);
+        $this->checkAccess('disaster-view', $model);
         
         return Inertia::render('Disaster/View', [
             'disaster' => [
@@ -169,7 +169,7 @@ class DisasterController extends BaseController
      */
     public function actionCreate(): Response
     {
-        $this->checkAccess('disaster.create');
+        $this->checkAccess('disaster-create');
         $model = new Disaster();
 
         if (Yii::$app->request->isPost) {
@@ -191,7 +191,7 @@ class DisasterController extends BaseController
     public function actionUpdate(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('disaster.update', $model);
+        $this->checkAccess('disaster-update', $model);
         
         $isPost = Yii::$app->request->isPost;
         $isPut = Yii::$app->request->isPut;
@@ -215,7 +215,7 @@ class DisasterController extends BaseController
     public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('disaster.delete', $model);
+        $this->checkAccess('disaster-delete', $model);
         
         // Softly delete
         $model->is_deleted = 1;

@@ -37,7 +37,7 @@ class UnitController extends BaseController
      */
     public function actionIndex(): string
     {
-        $this->checkAccess('unit.index');
+        $this->checkAccess('unit-index');
         $searchModel = new UnitSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -57,7 +57,7 @@ class UnitController extends BaseController
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $this->checkAccess('unit.view', $model);
+        $this->checkAccess('unit-view', $model);
 
         $providerAidDistributionDetails = new ArrayDataProvider([
             'allModels' => $model->aidDistributionDetails,
@@ -81,7 +81,7 @@ class UnitController extends BaseController
      */
     public function actionCreate()
     {
-        $this->checkAccess('unit.create');
+        $this->checkAccess('unit-create');
         $model = new Unit();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -105,7 +105,7 @@ class UnitController extends BaseController
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
-        $this->checkAccess('unit.update',$model);
+        $this->checkAccess('unit-update',$model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -128,7 +128,7 @@ class UnitController extends BaseController
     public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('unit.delete', $model);
+        $this->checkAccess('unit-delete', $model);
         $model->deleteWithRelated();
 
         return $this->redirect(['index']);

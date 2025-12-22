@@ -42,7 +42,7 @@ class UserController extends BaseController
      */
     public function actionIndex(): Response
     {
-        $this->checkAccess('user.index');
+        $this->checkAccess('user-index');
 
         $request = Yii::$app->request;
         $search = $request->get('search', '');
@@ -136,7 +136,7 @@ class UserController extends BaseController
     }
 
     /**
-     * Displays a single user.
+     * Displays a single user-
      *
      * @param int $id
      * @return Response
@@ -146,7 +146,7 @@ class UserController extends BaseController
     public function actionView(int $id): Response
     {
         $user = $this->findModel($id);
-        $this->checkAccess('user.view', $user);
+        $this->checkAccess('user-view', $user);
 
         return Inertia::render('User/View', [
             'user' => [
@@ -161,14 +161,14 @@ class UserController extends BaseController
     }
 
     /**
-     * Creates a new user.
+     * Creates a new user-
      *
      * @return Response
      * @throws Exception|ForbiddenHttpException
      */
     public function actionCreate(): Response
     {
-        $this->checkAccess('user.create');
+        $this->checkAccess('user-create');
 
         $model = new User();
         $model->scenario = 'create';
@@ -224,7 +224,7 @@ class UserController extends BaseController
     }
 
     /**
-     * Updates an existing user.
+     * Updates an existing user-
      *
      * @param int $id
      * @return Response
@@ -234,7 +234,7 @@ class UserController extends BaseController
     public function actionUpdate(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('user.update', $model);
+        $this->checkAccess('user-update', $model);
 
         $profile = $model->profile;
 
@@ -342,7 +342,7 @@ class UserController extends BaseController
     public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('user.delete', $model);
+        $this->checkAccess('user-delete', $model);
 
         // Prevent deleting yourself
         if ($model->id === Yii::$app->user->id) {

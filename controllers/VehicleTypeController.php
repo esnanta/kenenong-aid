@@ -40,7 +40,7 @@ class VehicleTypeController extends BaseController
      */
     public function actionIndex(): string
     {
-        $this->checkAccess('vehicleType.index');
+        $this->checkAccess('vehicleType-index');
         $searchModel = new VehicleTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -60,7 +60,7 @@ class VehicleTypeController extends BaseController
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $this->checkAccess('vehicleType.view', $model);
+        $this->checkAccess('vehicleType-view', $model);
 
         $providerAccessRouteVehicles = new ArrayDataProvider([
             'allModels' => $model->accessRouteVehicles,
@@ -80,7 +80,7 @@ class VehicleTypeController extends BaseController
      */
     public function actionCreate()
     {
-        $this->checkAccess('vehicleType.index');
+        $this->checkAccess('vehicleType-index');
         $model = new VehicleType();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -104,7 +104,7 @@ class VehicleTypeController extends BaseController
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
-        $this->checkAccess('vehicleType.update', $model);
+        $this->checkAccess('vehicleType-update', $model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -127,7 +127,7 @@ class VehicleTypeController extends BaseController
     public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('vehicleType.delete', $model);
+        $this->checkAccess('vehicleType-delete', $model);
         $model->deleteWithRelated();
 
         return $this->redirect(['index']);

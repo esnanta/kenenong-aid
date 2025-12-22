@@ -37,7 +37,7 @@ class ItemController extends BaseController
      */
     public function actionIndex(): string
     {
-        $this->checkAccess('item.index');
+        $this->checkAccess('item-index');
         $searchModel = new ItemSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -57,7 +57,7 @@ class ItemController extends BaseController
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $this->checkAccess('item.view', $model);
+        $this->checkAccess('item-view', $model);
 
         $providerAidDistributionDetails = new ArrayDataProvider([
             'allModels' => $model->aidDistributionDetails,
@@ -81,7 +81,7 @@ class ItemController extends BaseController
      */
     public function actionCreate(): string
     {
-        $this->checkAccess('item.create');
+        $this->checkAccess('item-create');
         $model = new Item();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
@@ -105,7 +105,7 @@ class ItemController extends BaseController
     public function actionUpdate(int $id): string
     {
         $model = $this->findModel($id);
-        $this->checkAccess('item.update',$model);
+        $this->checkAccess('item-update',$model);
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -128,7 +128,7 @@ class ItemController extends BaseController
     public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('item.delete', $model);
+        $this->checkAccess('item-delete', $model);
         $model->deleteWithRelated();
 
         return $this->redirect(['index']);
