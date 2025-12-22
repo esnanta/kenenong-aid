@@ -31,7 +31,12 @@ class PermissionSearch extends BasePermissionSearch
         $authManager = Yii::$app->authManager;
         $permissions = $authManager->getPermissions();
 
-        $this->load($params);
+        // FIX: Manually assign attributes to ensure they are populated
+        // This bypasses any scenario or load() issues
+        $this->search = $params['search'] ?? null;
+        $this->rule_name = $params['rule_name'] ?? null;
+        $this->created_at_from = $params['created_at_from'] ?? null;
+        $this->created_at_to = $params['created_at_to'] ?? null;
 
         if (!$this->validate()) {
             return new ArrayDataProvider([
@@ -45,13 +50,16 @@ class PermissionSearch extends BasePermissionSearch
 
             // Filter by search (name or description)
             if ($this->search) {
-                $searchLower = strtolower($this->search);
-                if (
-                    !(
-                        (isset($permission->name) && str_contains(strtolower($permission->name), $searchLower)) ||
-                        (isset($permission->description) && str_contains(strtolower($permission->description), $searchLower))
-                    )
-                ) {
+                // Use stripos for case-insensitive search (PHP 7/8 compatible)
+                $found = false;
+                if (isset($permission->name) && stripos($permission->name, $this->search) !== false) {
+                    $found = true;
+                }
+                if (!$found && isset($permission->description) && stripos($permission->description, $this->search) !== false) {
+                    $found = true;
+                }
+
+                if (!$found) {
                     $match = false;
                 }
             }
@@ -59,6 +67,7 @@ class PermissionSearch extends BasePermissionSearch
             // Filter by rule_name
             if ($match && $this->rule_name && $this->rule_name !== 'all') {
                 if ($this->rule_name === 'none') {
+                    // If filtering for "No Rule", exclude permissions that HAVE a rule
                     if ($permission->ruleName !== null) {
                         $match = false;
                     }

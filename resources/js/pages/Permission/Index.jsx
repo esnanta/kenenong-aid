@@ -80,7 +80,7 @@ export default function PermissionIndex({ permissions, pagination, filters, sort
   const currentSortOrder = sort?.sort_order || 'asc'
 
   const handleSort = (column) => {
-    router.get('/permission', {
+    router.get('/permissions', {
       ...filters,
       search,
       rule_name: ruleName,
@@ -93,7 +93,7 @@ export default function PermissionIndex({ permissions, pagination, filters, sort
   }
 
   const handleFilter = () => {
-    router.get('/permission', {
+    router.get('/permissions', {
       search,
       rule_name: ruleName,
       created_at_from: createdAtFrom,
@@ -109,7 +109,7 @@ export default function PermissionIndex({ permissions, pagination, filters, sort
     setRuleName('')
     setCreatedAtFrom('')
     setCreatedAtTo('')
-    router.get('/permission', {
+    router.get('/permissions', {
       sort_by: currentSortBy,
       sort_order: currentSortOrder,
       page: 1,
@@ -501,7 +501,7 @@ export default function PermissionIndex({ permissions, pagination, filters, sort
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => router.get('/permission', {
+                        onClick={() => router.get('/permissions', {
                           ...filters,
                           search,
                           rule_name: ruleName,
@@ -519,7 +519,7 @@ export default function PermissionIndex({ permissions, pagination, filters, sort
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => router.get('/permission', {
+                        onClick={() => router.get('/permissions', {
                           ...filters,
                           search,
                           rule_name: ruleName,
