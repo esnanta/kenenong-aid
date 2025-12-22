@@ -2,7 +2,6 @@ import { Head, Link, router, usePage } from '@inertiajs/react'
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, ChevronUp, Columns2, Edit, Eye, Filter, Plus, Search, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { getCsrfParam, getCsrfToken } from '@/lib/csrf'
 import { DashboardLayout } from '@/components/layouts/DashboardLayout.jsx'
 import {
   AlertDialog,
@@ -42,6 +41,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table.tsx'
+import { getCsrfParam, getCsrfToken } from '@/lib/csrf'
 
 // Moved SortableHeader component definition to the top level
 function SortableHeader({ column, children, currentSortBy, currentSortOrder, handleSort }) {
