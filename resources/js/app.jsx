@@ -104,7 +104,7 @@ createInertiaApp({
     }
     return pages[name] || NotFound
   },
-  title: title => title ? `${title}` : 'Yii2 - Modern Starter Kit',
+  title: title => title ? `${title}` : 'Logistic Disaster Aid',
   setup({ el, App, props }) {
     // Store initial page props for CSRF token access globally
     if (typeof window !== 'undefined') {
