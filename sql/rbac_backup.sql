@@ -183,12 +183,12 @@ VALUES ('profile-index', 2, 'Index Profile', UNIX_TIMESTAMP(), UNIX_TIMESTAMP())
 
 INSERT INTO t_auth_item
 (name, type, description, created_at, updated_at)
-VALUES ('shelter.index', 2, 'Index Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-       ('shelter.create', 2, 'Create Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-       ('shelter.update', 2, 'Update Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-       ('shelter.view', 2, 'View Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-       ('shelter.delete', 2, 'Delete Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-       ('shelter.report', 2, 'Report Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+VALUES ('shelter-index', 2, 'Index Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('shelter-create', 2, 'Create Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('shelter-update', 2, 'Update Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('shelter-view', 2, 'View Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('shelter-delete', 2, 'Delete Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('shelter-report', 2, 'Report Shelter', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
 
 INSERT INTO t_auth_item
 (name, type, description, created_at, updated_at)
@@ -315,12 +315,12 @@ VALUES ('master-index', 'unit-index'),
 
 INSERT INTO t_auth_item_child
 (parent, child)
-VALUES ('master-index', 'shelter.index'),
-       ('master-create', 'shelter.create'),
-       ('master-update', 'shelter.update'),
-       ('master-view', 'shelter.view'),
-       ('master-delete', 'shelter.delete'),
-       ('master-report', 'shelter.report');
+VALUES ('master-index', 'shelter-index'),
+       ('master-create', 'shelter-create'),
+       ('master-update', 'shelter-update'),
+       ('master-view', 'shelter-view'),
+       ('master-delete', 'shelter-delete'),
+       ('master-report', 'shelter-report');
 
 INSERT INTO t_auth_item_child
 (parent, child)
