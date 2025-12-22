@@ -28,7 +28,7 @@ class PermissionSearch extends BasePermissionSearch
     /**
      * {@inheritdoc}
      */
-    public function search($params)
+    public function search($params = [])
     {
         /* @var ManagerInterface $authManager */
         $authManager = Yii::$app->authManager;
@@ -55,7 +55,6 @@ class PermissionSearch extends BasePermissionSearch
                     (isset($permission->name) && strtolower($permission->name) === $searchLower) ||
                     (isset($permission->description) && strtolower($permission->description) === $searchLower)
                 ) {
-                    // Exact match, prioritize
                 } elseif (
                     (isset($permission->name) && str_contains(strtolower($permission->name), $searchLower)) ||
                     (isset($permission->description) && str_contains(strtolower($permission->description), $searchLower))

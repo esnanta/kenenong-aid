@@ -196,7 +196,7 @@ class PermissionController extends BaseController
         $model = $this->make($this->getModelClass(), [], ['scenario' => 'create']);
 
         if (Yii::$app->request->isPost) {
-            $requestData = Yii::$app->request->post();
+            $requestData = Yii::$app->request->bodyParams;
 
             // Convert 'none' to empty string for ruleName
             if (isset($requestData['ruleName']) && $requestData['ruleName'] === 'none') {
@@ -205,10 +205,7 @@ class PermissionController extends BaseController
 
             if ($model->load($requestData, '')) {
                 if ($this->make(AuthItemEditionService::class, [$model])->run()) {
-                    // For Inertia requests, redirect to index
-                    if (Yii::$app->request->headers->get('X-Inertia')) {
-                        return $this->actionIndex();
-                    }
+                    // Redirect to index on success. Inertia will handle this as a client-side visit.
                     return $this->redirect(['index']);
                 }
             }
@@ -255,7 +252,7 @@ class PermissionController extends BaseController
         $model = $this->make($this->getModelClass(), [], ['scenario' => 'update', 'item' => $authItem]);
 
         if (Yii::$app->request->isPost || Yii::$app->request->isPut) {
-            $requestData = Yii::$app->request->bodyParams ?: Yii::$app->request->post();
+            $requestData = Yii::$app->request->bodyParams;
 
             // Convert 'none' to empty string for ruleName
             if (isset($requestData['ruleName']) && $requestData['ruleName'] === 'none') {
@@ -264,10 +261,7 @@ class PermissionController extends BaseController
 
             if ($model->load($requestData, '')) {
                 if ($this->make(AuthItemEditionService::class, [$model])->run()) {
-                    // For Inertia requests, redirect to index
-                    if (Yii::$app->request->headers->get('X-Inertia')) {
-                        return $this->actionIndex();
-                    }
+                    // Redirect to index on success. Inertia will handle this as a client-side visit.
                     return $this->redirect(['index']);
                 }
             }
@@ -318,7 +312,9 @@ class PermissionController extends BaseController
             Yii::$app->getSession()->setFlash('error', 'Unable to delete permission.');
         }
 
-        return Inertia::location('/permission');
+        // A standard redirect is the correct way to handle this with Inertia.
+        // The yii2-inertia wrapper will convert this to a proper Inertia response.
+        return $this->redirect(['index']);
     }
 
     /**
