@@ -234,7 +234,11 @@ class RoleController extends BaseController
     {
         $authItem = $this->getItem($name);
         /** @var Role $model */
-        $model = $this->make($this->getModelClass(), [], ['scenario' => 'update', 'item' => $authItem]);
+        $model = $this->make(
+            $this->getModelClass(),
+            [],
+            ['scenario' => 'update', 'item' => $authItem]
+        );
 
         if (Yii::$app->request->isPost || Yii::$app->request->isPut) {
             $requestData = Yii::$app->request->bodyParams ?: Yii::$app->request->post();
@@ -279,9 +283,9 @@ class RoleController extends BaseController
         // GET request - show a form with current data
         return Inertia::render('Role/Form', [
             'role' => [
-                'name' => $model->name,
-                'description' => $model->description,
-                'rule_name' => $model->ruleName ?: 'none',
+                'name' => $authItem->name,
+                'description' => $authItem->description,
+                'rule_name' => $authItem->ruleName ?: 'none',
                 'old_name' => $name,
                 'children' => $assignedChildren,
             ],
