@@ -127,25 +127,6 @@ function ColumnVisibilityDropdown({ columnVisibility, setColumnVisibility }) {
  */
 
 /**
- * Helper function to get CSRF token and parameter.
- * @param {object} props - The props object from usePage().
- * @returns {{csrfToken: string, csrfParam: string} | null} - An object containing csrfToken and csrfParam, or null if not found.
- */
-function getCsrfTokenAndParam(props) {
-  const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-  const metaParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute('content')
-
-  const csrfToken = metaToken || props.csrfToken
-  const csrfParam = metaParam || props.csrfParam
-
-  if (!csrfToken || !csrfParam) {
-    toast.error('CSRF token missing. Please refresh the page.')
-    return null
-  }
-  return { csrfToken, csrfParam }
-}
-
-/**
  * @param {object} props
  * @param {Role[]} props.roles
  * @param {Pagination} props.pagination
@@ -197,15 +178,7 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
   }
 
   const handleDelete = (name) => {
-    const csrf = getCsrfTokenAndParam(props)
-    if (!csrf)
-      return
-
-    const formData = {
-      [csrf.csrfParam]: csrf.csrfToken,
-    }
-
-    router.post(`/roles/${name}/delete`, formData, {
+    router.post(`/roles/${name}/delete`, {}, {
       onSuccess: () => {
         setDeleteName(null)
         toast.success('Role deleted successfully')

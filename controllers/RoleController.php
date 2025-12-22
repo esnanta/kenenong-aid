@@ -13,6 +13,7 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\Module;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -52,6 +53,12 @@ class RoleController extends BaseController
                         'allow' => true,
                         'roles' => ['@'], // Allow all authenticated users for now
                     ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['POST'],
                 ],
             ],
         ];
@@ -319,7 +326,11 @@ class RoleController extends BaseController
             Yii::$app->getSession()->setFlash('error', 'Unable to delete role.');
         }
 
-        return Inertia::location('/roles');
+        if (Yii::$app->request->headers->get('X-Inertia')) {
+            return $this->actionIndex();
+        }
+
+        return $this->redirect(['index']);
     }
 
     /**
