@@ -2,6 +2,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react'
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, ChevronUp, Columns2, Edit, Eye, Filter, Plus, Search, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { getCsrfParam, getCsrfToken } from '@/lib/csrf'
 import { DashboardLayout } from '@/components/layouts/DashboardLayout.jsx'
 import {
   AlertDialog,
@@ -41,7 +42,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table.tsx'
-import { getCsrfParam, getCsrfToken } from '@/lib/csrf'
 
 // Moved SortableHeader component definition to the top level
 function SortableHeader({ column, children, currentSortBy, currentSortOrder, handleSort }) {
@@ -130,7 +130,7 @@ export default function PermissionIndex({ permissions, pagination, filters, sort
       [csrfParam]: csrfToken,
     }
 
-    router.delete(`/permissions/delete?name=${encodeURIComponent(name)}`, {
+    router.delete(`/permissions/${encodeURIComponent(name)}/delete`, {
       data,
       onSuccess: () => {
         setDeleteId(null)
@@ -440,12 +440,12 @@ export default function PermissionIndex({ permissions, pagination, filters, sort
                               {columnVisibility.actions && (
                                 <TableCell className="text-right">
                                   <div className="flex justify-end gap-2">
-                                    <Link href={`/permissions/view?name=${encodeURIComponent(permission.name)}`}>
+                                    <Link href={`/permissions/${encodeURIComponent(permission.name)}`}>
                                       <Button variant="ghost" size="sm" title="View">
                                         <Eye className="h-4 w-4" />
                                       </Button>
                                     </Link>
-                                    <Link href={`/permissions/update?name=${encodeURIComponent(permission.name)}`}>
+                                    <Link href={`/permissions/${encodeURIComponent(permission.name)}/update`}>
                                       <Button variant="ghost" size="sm" title="Update">
                                         <Edit className="h-4 w-4" />
                                       </Button>

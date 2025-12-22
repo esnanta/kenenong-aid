@@ -122,16 +122,16 @@ $config = [
                 // Permission management
                 'permissions' => 'permission/index',
                 'permissions/create' => 'permission/create',
-                'permissions/<name:.+>' => 'permission/view',
                 'permissions/<name:.+>/update' => 'permission/update',
                 'permissions/<name:.+>/delete' => 'permission/delete',
+                'permissions/<name:.+>' => 'permission/view',
 
                 // Rule management
                 'rules' => 'rule/index',
                 'rules/create' => 'rule/create',
-                'rules/<name:.+>' => 'rule/view',
                 'rules/<name:.+>/update' => 'rule/update',
                 'rules/<name:.+>/delete' => 'rule/delete',
+                'rules/<name:.+>' => 'rule/view',
 
                 // Disaster routes
                 'disasters' => 'disaster/index',
