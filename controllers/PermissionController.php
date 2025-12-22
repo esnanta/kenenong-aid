@@ -328,7 +328,9 @@ class PermissionController extends BaseController
     protected function formatUnassignedItems(array $items): array
     {
         $formatted = [];
-        foreach ($items as $item) {
+        $allItems = array_merge($items['permissions'] ?? [], $items['roles'] ?? []);
+
+        foreach ($allItems as $item) {
             /** @var Item $item */
             $formatted[] = [
                 'name' => $item->name,
