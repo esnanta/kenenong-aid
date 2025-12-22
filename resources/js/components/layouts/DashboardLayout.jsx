@@ -115,7 +115,7 @@ export function DashboardLayout({ children, user }) {
             href="/"
             className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity w-full group-data-[collapsible=icon]:justify-center"
           >
-            <Logo className="h-6 w-6 flex-shrink-0" />
+            <Logo className="h-6 w-6 shrink-0" />
             <span className="text-xl font-bold group-data-[collapsible=icon]:hidden">Kenenong Aid</span>
           </Link>
         </SidebarHeader>
@@ -313,7 +313,7 @@ export function DashboardLayout({ children, user }) {
 
       <SidebarInset>
         <header
-          className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+          className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60"
         >
           <div className="flex h-16 items-center gap-4 px-4 sm:px-6 lg:px-8">
             <SidebarTrigger />
