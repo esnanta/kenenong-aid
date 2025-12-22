@@ -81,10 +81,10 @@ class RoleController extends BaseController
      * Retrieves an AuthItem (Role) by its name.
      *
      * @param string $name The name of the role.
-     * @return Role
+     * @return \yii\rbac\Role
      * @throws NotFoundHttpException if the role is not found.
      */
-    protected function getItem(string $name): Role
+    protected function getItem(string $name)
     {
         $authItem = $this->authHelper->getRole($name);
         if ($authItem !== null) {
@@ -112,8 +112,6 @@ class RoleController extends BaseController
                 'name' => $role['name'],
                 'description' => $role['description'],
                 'rule_name' => $role['rule_name'],
-                'created_at' => isset($role['created_at']) ? date('Y-m-d H:i:s', $role['created_at']) : null,
-                'updated_at' => isset($role['updated_at']) ? date('Y-m-d H:i:s', $role['updated_at']) : null,
             ];
         }
 
@@ -124,6 +122,11 @@ class RoleController extends BaseController
                 'per_page' => $dataProvider->pagination ? $dataProvider->pagination->getPageSize() : 20,
                 'total' => $dataProvider->totalCount,
                 'last_page' => $dataProvider->pagination ? $dataProvider->pagination->getPageCount() : 1,
+            ],
+            'filters' => Yii::$app->request->get(),
+            'sort' => [
+                'sort_by' => Yii::$app->request->get('sort_by'),
+                'sort_order' => Yii::$app->request->get('sort_order'),
             ],
         ]);
     }
@@ -139,12 +142,12 @@ class RoleController extends BaseController
     public function actionView(string $name): Response
     {
         $authItem = $this->getItem($name);
-        $model = $this->make($this->getModelClass(), [], ['scenario' => 'update', 'item' => $authItem]);
 
         // Get assigned items (child roles and permissions)
         $assignedItems = [];
+        $children = Yii::$app->authManager->getChildren($name);
         /** @var AuthItem $child */
-        foreach ($authItem->children as $child) {
+        foreach ($children as $child) {
             $assignedItems[] = [
                 'name' => $child->name,
                 'type' => $child->type === 1 ? 'role' : 'permission',
@@ -154,11 +157,9 @@ class RoleController extends BaseController
 
         return Inertia::render('Role/View', [
             'role' => [
-                'name' => $model->name,
-                'description' => $model->description,
-                'rule_name' => $model->ruleName,
-                'created_at' => $authItem->createdAt ? date('Y-m-d H:i:s', $authItem->createdAt) : null,
-                'updated_at' => $authItem->updatedAt ? date('Y-m-d H:i:s', $authItem->updatedAt) : null,
+                'name' => $authItem->name,
+                'description' => $authItem->description,
+                'rule_name' => $authItem->ruleName,
                 'children' => $assignedItems,
             ],
         ]);
@@ -233,7 +234,11 @@ class RoleController extends BaseController
     {
         $authItem = $this->getItem($name);
         /** @var Role $model */
-        $model = $this->make($this->getModelClass(), [], ['scenario' => 'update', 'item' => $authItem]);
+        $model = $this->make(
+            $this->getModelClass(),
+            [],
+            ['scenario' => 'update', 'item' => $authItem]
+        );
 
         if (Yii::$app->request->isPost || Yii::$app->request->isPut) {
             $requestData = Yii::$app->request->bodyParams ?: Yii::$app->request->post();
@@ -278,9 +283,9 @@ class RoleController extends BaseController
         // GET request - show a form with current data
         return Inertia::render('Role/Form', [
             'role' => [
-                'name' => $model->name,
-                'description' => $model->description,
-                'rule_name' => $model->ruleName ?: 'none',
+                'name' => $authItem->name,
+                'description' => $authItem->description,
+                'rule_name' => $authItem->ruleName ?: 'none',
                 'old_name' => $name,
                 'children' => $assignedChildren,
             ],
@@ -307,7 +312,7 @@ class RoleController extends BaseController
             Yii::$app->getSession()->setFlash('error', 'Unable to delete role.');
         }
 
-        return Inertia::location('/role');
+        return Inertia::location('/roles');
     }
 
     /**

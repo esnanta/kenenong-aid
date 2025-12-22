@@ -3,9 +3,9 @@ import {
   AlertTriangle,
   Bell,
   CheckCircle,
-  ChevronDown,
   ChevronRight,
   Database,
+  Gavel, // Import Gavel icon for Rules
   Home,
   Key,
   LayoutDashboard,
@@ -51,7 +51,6 @@ import { Input } from '@/components/ui/input'
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
@@ -73,7 +72,7 @@ export function DashboardLayout({ children, user }) {
 
   // State untuk mengontrol menu yang terbuka secara otomatis berdasarkan URL
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(
-    url.startsWith('/users') || url.startsWith('/roles') || url.startsWith('/permissions'),
+    url.startsWith('/users') || url.startsWith('/roles') || url.startsWith('/permissions') || url.startsWith('/rules'),
   )
   const [isMasterMenuOpen, setIsMasterMenuOpen] = useState(
     url.startsWith('/disaster-statuses') || url.startsWith('/disaster-types') || url.startsWith('/item-categories') || url.startsWith('/units'),
@@ -116,7 +115,7 @@ export function DashboardLayout({ children, user }) {
             href="/"
             className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity w-full group-data-[collapsible=icon]:justify-center"
           >
-            <Logo className="h-6 w-6 flex-shrink-0" />
+            <Logo className="h-6 w-6 shrink-0" />
             <span className="text-xl font-bold group-data-[collapsible=icon]:hidden">Kenenong Aid</span>
           </Link>
         </SidebarHeader>
@@ -293,6 +292,15 @@ export function DashboardLayout({ children, user }) {
                             </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
+                        {/* Rule Management */}
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={url.startsWith('/rules')}>
+                            <Link href="/rules">
+                              <Gavel className="w-4 h-4 mr-2" />
+                              <span>Aturan (Rules)</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
                       </SidebarMenuSub>
                     </CollapsibleContent>
                   </SidebarMenuItem>
@@ -301,61 +309,11 @@ export function DashboardLayout({ children, user }) {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-
-        <SidebarFooter>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton tooltip={user?.name || 'User'}>
-                    <Avatar className="h-8 w-8 group-data-[collapsible=icon]:h-9 group-data-[collapsible=icon]:w-9">
-                      <AvatarFallback className="text-xs">{getUserInitials()}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col min-w-0 group-data-[collapsible=icon]:hidden">
-                      <span className="text-sm font-medium leading-none truncate">{user?.name || 'User'}</span>
-                      <span className="text-xs text-muted-foreground leading-none truncate">{user?.email || ''}</span>
-                    </div>
-                    <ChevronDown
-                      className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180 group-data-[collapsible=icon]:hidden"
-                    />
-                  </SidebarMenuButton>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent side="right" align="start" className="w-56">
-                  <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard/profile" className="cursor-pointer">
-                      <User className="mr-2 h-4 w-4" />
-                      {' '}
-                      Profil
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard/settings" className="cursor-pointer">
-                      <Settings className="mr-2 h-4 w-4" />
-                      {' '}
-                      Pengaturan
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => setShowLogoutDialog(true)}
-                    className="cursor-pointer text-destructive"
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    {' '}
-                    Keluar
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarFooter>
       </Sidebar>
 
       <SidebarInset>
         <header
-          className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+          className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60"
         >
           <div className="flex h-16 items-center gap-4 px-4 sm:px-6 lg:px-8">
             <SidebarTrigger />
@@ -371,6 +329,46 @@ export function DashboardLayout({ children, user }) {
                 <Bell className="h-4 w-4" />
                 <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-destructive" />
               </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full cursor-pointer">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="text-xs">{getUserInitials()}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{user?.name || 'User'}</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user?.email || ''}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard/profile" className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      Profil
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard/settings" className="cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Pengaturan
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => setShowLogoutDialog(true)}
+                    className="cursor-pointer text-destructive"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Keluar
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </header>

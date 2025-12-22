@@ -83,7 +83,7 @@ export default function RoleForm({ role, errors = EMPTY_ERRORS, rules = EMPTY_RU
 
     const formDataWithCsrf = addCsrfToData(formData)
 
-    const url = isEdit ? `/role/${role.old_name}/update` : '/role/create'
+    const url = isEdit ? `/roles/${role.old_name}/update` : '/roles/create'
     const method = isEdit ? 'put' : 'post'
 
     router[method](

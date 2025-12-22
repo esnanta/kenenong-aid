@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client'
 import { toast, Toaster } from 'sonner'
 import ErrorBoundary from './components/ErrorBoundary'
 import { ThemeProvider } from './components/ThemeProvider'
+import { addCsrfToData, getCsrfToken } from './lib/csrf'
 import Dashboard from './pages/Dashboard/Index'
 
 import Home from './pages/Home'
@@ -43,21 +44,13 @@ const RuleIndex = lazy(() => import('./pages/Rule/Index'))
 const RuleForm = lazy(() => import('./pages/Rule/Form'))
 const RuleView = lazy(() => import('./pages/Rule/View'))
 
-// Get CSRF token from meta tag
-function getCsrfToken() {
-  const meta = document.querySelector('meta[name="csrf-token"]')
-  return meta ? meta.getAttribute('content') : null
-}
-
-function getCsrfParam() {
-  const meta = document.querySelector('meta[name="csrf-param"]')
-  return meta ? meta.getAttribute('content') : null
-}
-
-// CSRF Header setup
-const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+// CSRF Header setup for Axios
+const token = getCsrfToken()
 if (token) {
   axios.defaults.headers.common['X-CSRF-Token'] = token
+}
+else {
+  console.warn('CSRF token not found for Axios header')
 }
 
 createInertiaApp({
@@ -104,7 +97,7 @@ createInertiaApp({
     }
     return pages[name] || NotFound
   },
-  title: title => title ? `${title}` : 'Yii2 - Modern Starter Kit',
+  title: title => title ? `${title}` : 'Logistic Disaster Aid',
   setup({ el, App, props }) {
     // Store initial page props for CSRF token access globally
     if (typeof window !== 'undefined') {
@@ -119,70 +112,24 @@ createInertiaApp({
     })
 
     // Configure Inertia router to automatically include CSRF token in all POST/PUT/PATCH/DELETE requests
-    // IMPORTANT: Only add CSRF token to request body, NEVER to query params or GET requests
     router.on('start', (event) => {
       const visit = event.detail?.visit || event.detail
-      const method = visit?.method || 'GET'
-      const url = visit?.url || ''
+      const method = (visit?.method || 'GET').toUpperCase()
 
-      // SECURITY: Ensure CSRF token is NEVER in query parameters
-      // Check if url is a string before calling includes
-      if (url && typeof url === 'string' && url.includes('_csrf')) {
-        console.error('SECURITY WARNING: CSRF token found in URL query params!', url)
-        // Remove CSRF from URL if somehow it got there
-        try {
-          const urlObj = new URL(url, window.location.origin)
-          if (urlObj.searchParams.has('_csrf')) {
-            urlObj.searchParams.delete('_csrf')
-            visit.url = urlObj.pathname + urlObj.search
-            console.warn('Removed CSRF token from URL query params')
-          }
-        }
-        catch {
-          // URL parsing failed, ignore
-        }
-      }
-
-      // CRITICAL: Only add CSRF token for POST/PUT/PATCH/DELETE requests in the request body
-      // NEVER add CSRF token to GET requests or query parameters
-      if ((method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE') && visit?.data !== undefined) {
-        // Get CSRF token from Inertia shared props or meta tag
-        const currentPage = window.__INERTIA_PAGE__ || props.initialPage
-        const csrfToken = currentPage?.props?.csrfToken || getCsrfToken()
-        const csrfParam = currentPage?.props?.csrfParam || getCsrfParam()
-
-        if (csrfToken && csrfParam) {
-          // Add CSRF token to the request data (body), NOT to URL
-          if (visit.data instanceof FormData) {
-            // Check if already added
-            if (!visit.data.has(csrfParam)) {
-              visit.data.append(csrfParam, csrfToken)
-            }
-          }
-          else if (typeof visit.data === 'object' && visit.data !== null) {
-            // Check if already added
-            if (!visit.data[csrfParam]) {
-              visit.data[csrfParam] = csrfToken
-            }
-          }
-        }
-        else {
-          console.warn('CSRF token or param missing in router.on(start)')
-        }
+      // CRITICAL: Only add CSRF token for POST/PUT/PATCH/DELETE requests
+      if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method) && visit?.data !== undefined) {
+        visit.data = addCsrfToData(visit.data)
       }
     })
 
     // Global error handler for 400 Bad Request errors
-    // This catches 400 errors that occur outside of form submissions
     router.on('error', (event) => {
       const error = event.detail
 
-      // Handle 400 Bad Request errors with toast notifications
       if (error?.status === 400 || error?.response?.status === 400) {
         const errors = error?.errors || error?.response?.data?.errors
 
         if (errors && typeof errors === 'object') {
-          // Handle validation errors
           Object.values(errors).forEach((errorMsg) => {
             if (Array.isArray(errorMsg)) {
               errorMsg.forEach(err => toast.error(err))
@@ -199,14 +146,12 @@ createInertiaApp({
           toast.error(error.message)
         }
         else {
-          // Generic 400 error message
           toast.error('Bad Request - Please check your input and try again')
         }
       }
     })
 
     // Also handle errors from Inertia responses
-    // This catches errors that come from server responses
     if (props.initialPage?.props?.errors) {
       const serverErrors = props.initialPage.props.errors
       if (typeof serverErrors === 'object') {

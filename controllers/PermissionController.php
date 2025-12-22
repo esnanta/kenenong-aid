@@ -6,7 +6,7 @@ use app\controllers\base\BaseController;
 use Crenspire\Yii2Inertia\Inertia;
 use Da\User\Helper\AuthHelper;
 use Da\User\Model\Permission;
-use Da\User\Search\PermissionSearch;
+use app\models\PermissionSearch; // Use the custom PermissionSearch
 use Da\User\Service\AuthItemEditionService;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -61,14 +61,14 @@ class PermissionController extends BaseController
      */
     protected function getSearchModelClass(): string
     {
-        return PermissionSearch::class;
+        return PermissionSearch::class; // Use the custom PermissionSearch
     }
 
     /**
      * Helper method to create instances
      * @param string $class
-     * @param array $params
-     * @param array $config
+     * @param array $params = []
+     * @param array $config = []
      * @return object
      * @throws InvalidConfigException
      */
@@ -103,20 +103,34 @@ class PermissionController extends BaseController
     {
         /** @var PermissionSearch $searchModel */
         $searchModel = $this->make($this->getSearchModelClass());
-        $dataProvider = $searchModel->search(Yii::$app->request->get());
+        $requestParams = Yii::$app->request->get();
+        $dataProvider = $searchModel->search($requestParams);
 
         // Get permissions data
         $permissions = [];
         foreach ($dataProvider->getModels() as $permission) {
-            /* @var \yii\rbac\Permission $permission */
+            /* @var \yii\rbac\Permission|array $permission */
             $permissions[] = [
-                'name' => $permission->name,
-                'description' => $permission->description,
-                'rule_name' => $permission->ruleName,
-                'created_at' => $permission->createdAt ? date('Y-m-d H:i:s', $permission->createdAt) : null,
-                'updated_at' => $permission->updatedAt ? date('Y-m-d H:i:s', $permission->updatedAt) : null,
+                'name' => is_array($permission) ? ($permission['name'] ?? null) : $permission->name,
+                'description' => is_array($permission) ? ($permission['description'] ?? null) : $permission->description,
+                'rule_name' => is_array($permission) ? (array_key_exists('ruleName', $permission) ? $permission['ruleName'] : null) : $permission->ruleName,
+                'created_at' => is_array($permission) ? (array_key_exists('createdAt', $permission) ? date('Y-m-d H:i:s', $permission['createdAt']) : null) : ($permission->createdAt ? date('Y-m-d H:i:s', $permission->createdAt) : null),
+                'updated_at' => is_array($permission) ? (array_key_exists('updatedAt', $permission) ? date('Y-m-d H:i:s', $permission['updatedAt']) : null) : ($permission->updatedAt ? date('Y-m-d H:i:s', $permission->updatedAt) : null),
             ];
         }
+
+        // Extract filters and sort from requestParams to pass to frontend
+        $filters = [
+            'search' => $requestParams['search'] ?? null,
+            'rule_name' => $requestParams['rule_name'] ?? null,
+            'created_at_from' => $requestParams['created_at_from'] ?? null,
+            'created_at_to' => $requestParams['created_at_to'] ?? null,
+        ];
+
+        $sort = [
+            'sort_by' => $requestParams['sort_by'] ?? 'name', // Default sort column
+            'sort_order' => $requestParams['sort_order'] ?? 'asc', // Default sort order
+        ];
 
         return Inertia::render('Permission/Index', [
             'permissions' => $permissions,
@@ -126,6 +140,9 @@ class PermissionController extends BaseController
                 'total' => $dataProvider->totalCount,
                 'last_page' => $dataProvider->pagination ? $dataProvider->pagination->getPageCount() : 1,
             ],
+            'filters' => $filters,
+            'sort' => $sort,
+            'rulesList' => $this->getRulesList(), // Pass rules list for filter dropdown
         ]);
     }
 

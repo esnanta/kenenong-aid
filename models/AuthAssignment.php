@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use Da\User\Model\Assignment as BaseAssignment;
 
 /**
  * This is the model class for table "t_auth_assignment".
@@ -13,10 +14,8 @@ use Yii;
  *
  * @property AuthItem $itemName
  */
-class AuthAssignment extends \yii\db\ActiveRecord
+class AuthAssignment extends BaseAssignment
 {
-
-
     /**
      * {@inheritdoc}
      */
@@ -61,5 +60,4 @@ class AuthAssignment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(AuthItem::class, ['name' => 'item_name']);
     }
-
 }

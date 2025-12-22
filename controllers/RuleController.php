@@ -4,8 +4,8 @@ namespace app\controllers;
 
 use app\controllers\base\BaseController;
 use Crenspire\Yii2Inertia\Inertia;
-use Da\User\Model\Rule;
-use Da\User\Search\RuleSearch;
+use Da\User\Model\Rule; // Use Da\User's Rule model
+use Da\User\Search\RuleSearch; // Use Da\User's RuleSearch model
 use Da\User\Service\AuthRuleEditionService;
 use Da\User\Traits\AuthManagerAwareTrait;
 use Da\User\Traits\ContainerAwareTrait;
@@ -66,6 +66,8 @@ class RuleController extends BaseController
             $rules[] = [
                 'name' => $rule->name,
                 'class_name' => $rule->className,
+                'created_at' => date('Y-m-d H:i:s', $rule->createdAt), // Assuming createdAt is a timestamp
+                'updated_at' => date('Y-m-d H:i:s', $rule->updatedAt), // Assuming updatedAt is a timestamp
             ];
         }
 
@@ -76,6 +78,11 @@ class RuleController extends BaseController
                 'per_page' => $dataProvider->pagination ? $dataProvider->pagination->getPageSize() : 20,
                 'total' => $dataProvider->totalCount,
                 'last_page' => $dataProvider->pagination ? $dataProvider->pagination->getPageCount() : 1,
+            ],
+            'filters' => Yii::$app->request->get(),
+            'sort' => [
+                'sort_by' => Yii::$app->request->get('sort_by'),
+                'sort_order' => Yii::$app->request->get('sort_order'),
             ],
         ]);
     }
@@ -95,6 +102,8 @@ class RuleController extends BaseController
             'rule' => [
                 'name' => $rule->name,
                 'class_name' => get_class($rule),
+                'created_at' => date('Y-m-d H:i:s', $rule->createdAt),
+                'updated_at' => date('Y-m-d H:i:s', $rule->updatedAt),
             ],
         ]);
     }

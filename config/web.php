@@ -13,7 +13,7 @@ $config = [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log', InertiaBootstrap::class],
     'aliases' => [
-        '@bower' => '@vendor/bower-asset',
+        '@bower' => '@vendor/yidas/yii2-bower-asset/bower',
         '@npm'   => '@vendor/npm-asset',
     ],
     'modules' => [
@@ -109,13 +109,13 @@ $config = [
                 'users' => 'user/admin/index',
                 'users/create' => 'user/admin/create',
                 'users/<id:\d+>' => 'user/admin/view',
-                'users/<id:\d+>/edit' => 'user/admin/update',
+                'users/<id:\d+>/update' => 'user/admin/update',
                 'users/<id:\d+>/delete' => 'user/admin/delete',
 
                 // Role management
                 'roles' => 'role/index',
                 'roles/create' => 'role/create',
-                'roles/<name:.+>/edit' => 'role/update',
+                'roles/<name:.+>/update' => 'role/update',
                 'roles/<name:.+>/delete' => 'role/delete',
                 'roles/<name:.+>' => 'role/view',
 
@@ -123,34 +123,34 @@ $config = [
                 'permissions' => 'permission/index',
                 'permissions/create' => 'permission/create',
                 'permissions/<name:.+>' => 'permission/view',
-                'permissions/<name:.+>/edit' => 'permission/update',
+                'permissions/<name:.+>/update' => 'permission/update',
                 'permissions/<name:.+>/delete' => 'permission/delete',
 
                 // Rule management
                 'rules' => 'rule/index',
                 'rules/create' => 'rule/create',
                 'rules/<name:.+>' => 'rule/view',
-                'rules/<name:.+>/edit' => 'rule/update',
+                'rules/<name:.+>/update' => 'rule/update',
                 'rules/<name:.+>/delete' => 'rule/delete',
 
                 // Disaster routes
                 'disasters' => 'disaster/index',
                 'disasters/create' => 'disaster/create',
                 'disasters/<id:\d+>' => 'disaster/view',
-                'disasters/<id:\d+>/edit' => 'disaster/update',
+                'disasters/<id:\d+>/update' => 'disaster/update',
                 'disasters/<id:\d+>/delete' => 'disaster/delete',
 
                 // Disaster Status routes
                 'disaster-statuses' => 'disaster-status/index',
                 'disaster-statuses/create' => 'disaster-status/create',
-                'disaster-statuses/<id:\d+>/edit' => 'disaster-status/update',
+                'disaster-statuses/<id:\d+>/update' => 'disaster-status/update',
                 'disaster-statuses/<id:\d+>/delete' => 'disaster-status/delete',
                 'disaster-statuses/<id:\d+>' => 'disaster-status/view',
 
                 // Disaster Type routes
                 'disaster-types' => 'disaster-type/index',
                 'disaster-types/create' => 'disaster-type/create',
-                'disaster-types/<id:\d+>/edit' => 'disaster-type/update',
+                'disaster-types/<id:\d+>/update' => 'disaster-type/update',
                 'disaster-types/<id:\d+>/delete' => 'disaster-type/delete',
                 'disaster-types/<id:\d+>' => 'disaster-type/view',
 

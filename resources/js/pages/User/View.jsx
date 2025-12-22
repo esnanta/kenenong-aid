@@ -1,6 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react'
 import { ArrowLeft, Edit } from 'lucide-react'
-import {DashboardLayout} from '@/components/layouts/DashboardLayout.jsx'
+import { DashboardLayout } from '@/components/layouts/DashboardLayout.jsx'
 import { Button } from '@/components/ui/button.tsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
 
@@ -28,13 +28,13 @@ export default function UserView({ user }) {
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
               <CardTitle>{user.name}</CardTitle>
               <div className="flex items-center gap-2">
-                <Link href="/user">
+                <Link href="/users">
                   <Button variant="outline" size="sm">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Back
                   </Button>
                 </Link>
-                <Link href={`/user/${user.id}/edit`}>
+                <Link href={`/users/${user.id}/update`}>
                   <Button size="sm">
                     <Edit className="mr-2 h-4 w-4" />
                     Edit
