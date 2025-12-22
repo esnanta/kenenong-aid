@@ -15,9 +15,15 @@ use yii\rbac\Item;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
+/**
+ *
+ * @property-read array[] $rulesList
+ * @property-read string $modelClass
+ * @property-read string $searchModelClass
+ */
 class PermissionController extends BaseController
 {
-    protected $authHelper;
+    protected AuthHelper $authHelper;
 
     /**
      * {@inheritdoc}
@@ -79,10 +85,10 @@ class PermissionController extends BaseController
 
     /**
      * @param string $name
-     * @return Permission
+     * @return \yii\rbac\Permission
      * @throws NotFoundHttpException
      */
-    protected function getItem(string $name): Permission
+    protected function getItem(string $name): \yii\rbac\Permission
     {
         $authItem = $this->authHelper->getPermission($name);
 
@@ -119,7 +125,7 @@ class PermissionController extends BaseController
             ];
         }
 
-        // Extract filters and sort from requestParams to pass to frontend
+        // Extract filters and sort from requestParams to pass to the frontend
         $filters = [
             'search' => $requestParams['search'] ?? null,
             'rule_name' => $requestParams['rule_name'] ?? null,
@@ -142,7 +148,7 @@ class PermissionController extends BaseController
             ],
             'filters' => $filters,
             'sort' => $sort,
-            'rulesList' => $this->getRulesList(), // Pass rules list for filter dropdown
+            'rulesList' => $this->getRulesList(), // Pass the rules list for filter dropdown
         ]);
     }
 
@@ -158,12 +164,11 @@ class PermissionController extends BaseController
     {
         /* @var \yii\rbac\Permission $authItem */
         $authItem = $this->getItem($name);
-        /** @var Permission $model */
-        $model = $this->make($this->getModelClass(), [], ['scenario' => 'update', 'item' => $authItem]);
 
         // Get assigned items (child permissions)
         $assignedItems = [];
-        foreach ($authItem->children as $child) {
+        $children = Yii::$app->authManager->getChildren($authItem->name);
+        foreach ($children as $child) {
             /** @var Item $child */
             $assignedItems[] = [
                 'name' => $child->name,
@@ -174,9 +179,9 @@ class PermissionController extends BaseController
 
         return Inertia::render('Permission/View', [
             'permission' => [
-                'name' => $model->name,
-                'description' => $model->description,
-                'rule_name' => $model->ruleName,
+                'name' => $authItem->name,
+                'description' => $authItem->description,
+                'rule_name' => $authItem->ruleName,
                 'created_at' => $authItem->createdAt ? date('Y-m-d H:i:s', $authItem->createdAt) : null,
                 'updated_at' => $authItem->updatedAt ? date('Y-m-d H:i:s', $authItem->updatedAt) : null,
                 'children' => $assignedItems,
@@ -246,7 +251,6 @@ class PermissionController extends BaseController
      */
     public function actionUpdate(string $name): Response
     {
-        /* @var \yii\rbac\Permission $authItem */
         $authItem = $this->getItem($name);
         /** @var Permission $model */
         $model = $this->make($this->getModelClass(), [], ['scenario' => 'update', 'item' => $authItem]);
@@ -303,7 +307,6 @@ class PermissionController extends BaseController
      */
     public function actionDelete(string $name): Response
     {
-        /** @var \yii\rbac\Permission $item */
         $item = $this->getItem($name);
 
         if ($this->authHelper->remove($item)) {

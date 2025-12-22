@@ -443,12 +443,12 @@ export default function PermissionIndex({ permissions, pagination, filters, sort
                               {columnVisibility.actions && (
                                 <TableCell className="text-right">
                                   <div className="flex justify-end gap-2">
-                                    <Link href={`/permissions/${permission.name}`}>
+                                    <Link href={`/permissions/${encodeURIComponent(permission.name)}`}>
                                       <Button variant="ghost" size="sm" title="View">
                                         <Eye className="h-4 w-4" />
                                       </Button>
                                     </Link>
-                                    <Link href={`/permissions/${permission.name}/update`}>
+                                    <Link href={`/permissions/${encodeURIComponent(permission.name)}/update`}>
                                       <Button variant="ghost" size="sm" title="Update">
                                         <Edit className="h-4 w-4" />
                                       </Button>
