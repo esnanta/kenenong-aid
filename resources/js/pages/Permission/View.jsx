@@ -36,7 +36,7 @@ export default function PermissionView({ permission }) {
                   Back
                 </Button>
               </Link>
-              <Link href={`/permission/${permission.name}/update`}>
+              <Link href={`/permissions/${permission.name}/update`}>
                 <Button size="sm">
                   <Edit className="mr-2 h-4 w-4" />
                   Edit
