@@ -418,8 +418,8 @@ export default function DisasterIndex({ disasters, pagination, filters, sort, di
                                         <Eye className="h-4 w-4" />
                                       </Button>
                                     </Link>
-                                    <Link href={`/disasters/${disaster.id}/edit`}>
-                                      <Button variant="ghost" size="sm" title="Edit">
+                                    <Link href={`/disasters/${disaster.id}/update`}>
+                                      <Button variant="ghost" size="sm" title="update">
                                         <Edit className="h-4 w-4" />
                                       </Button>
                                     </Link>

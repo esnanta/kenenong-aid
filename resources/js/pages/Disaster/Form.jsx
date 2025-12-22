@@ -60,7 +60,7 @@ export default function DisasterForm({ disaster, errors: serverErrors, disasterT
 
     const formDataWithCsrf = addCsrfToData(rawFormData)
 
-    const url = isEdit ? `/disasters/${disaster.id}/edit` : '/disasters/create'
+    const url = isEdit ? `/disasters/${disaster.id}/update` : '/disasters/create'
     const method = isEdit ? 'put' : 'post'
 
     router[method](url, formDataWithCsrf, {
