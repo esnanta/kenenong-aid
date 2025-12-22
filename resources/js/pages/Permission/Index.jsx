@@ -134,7 +134,7 @@ export default function PermissionIndex({ permissions, pagination, filters, sort
       _method: 'delete', // Inertia uses _method for DELETE requests
     }
 
-    router.post(`/permission/${name}/delete`, formData, {
+    router.post(`/permissions/${name}/delete`, formData, {
       onSuccess: () => {
         setDeleteId(null)
         toast.success('Permission deleted successfully.')
@@ -237,7 +237,7 @@ export default function PermissionIndex({ permissions, pagination, filters, sort
                       </DropdownMenuCheckboxItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                  <Link href="/permission/create">
+                  <Link href="/permissions/create">
                     <Button size="sm">
                       <Plus className="mr-2 h-4 w-4" />
                       Add Permission
@@ -443,13 +443,13 @@ export default function PermissionIndex({ permissions, pagination, filters, sort
                               {columnVisibility.actions && (
                                 <TableCell className="text-right">
                                   <div className="flex justify-end gap-2">
-                                    <Link href={`/permission/${permission.name}`}>
+                                    <Link href={`/permissions/${permission.name}`}>
                                       <Button variant="ghost" size="sm" title="View">
                                         <Eye className="h-4 w-4" />
                                       </Button>
                                     </Link>
-                                    <Link href={`/permission/${permission.name}/edit`}>
-                                      <Button variant="ghost" size="sm" title="Edit">
+                                    <Link href={`/permissions/${permission.name}/update`}>
+                                      <Button variant="ghost" size="sm" title="Update">
                                         <Edit className="h-4 w-4" />
                                       </Button>
                                     </Link>
