@@ -165,7 +165,7 @@ export default function UserIndex({ users, pagination, filters, sort }) {
       [csrfParam]: csrfToken,
     }
 
-    router.post(`/user/${id}/delete`, formData, {
+    router.post(`/users/${id}/delete`, formData, {
       onSuccess: () => {
         setDeleteId(null)
       },
@@ -262,7 +262,7 @@ export default function UserIndex({ users, pagination, filters, sort }) {
                       </DropdownMenuCheckboxItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                  <Link href="/user/create">
+                  <Link href="/users/create">
                     <Button size="sm">
                       <Plus className="mr-2 h-4 w-4" />
                       Add User
@@ -431,12 +431,12 @@ export default function UserIndex({ users, pagination, filters, sort }) {
                               {columnVisibility.actions && (
                                 <TableCell className="text-right">
                                   <div className="flex justify-end gap-2">
-                                    <Link href={`/user/${user.id}`}>
+                                    <Link href={`/users/${user.id}`}>
                                       <Button variant="ghost" size="sm" title="View">
                                         <Eye className="h-4 w-4" />
                                       </Button>
                                     </Link>
-                                    <Link href={`/user/${user.id}/edit`}>
+                                    <Link href={`/users/${user.id}/update`}>
                                       <Button variant="ghost" size="sm" title="Edit">
                                         <Edit className="h-4 w-4" />
                                       </Button>
