@@ -6,7 +6,7 @@ use app\controllers\base\BaseController;
 use Crenspire\Yii2Inertia\Inertia;
 use Da\User\Helper\AuthHelper;
 use Da\User\Model\Permission;
-use app\models\PermissionSearch; // Use the custom PermissionSearch
+use app\models\PermissionSearch;
 use Da\User\Service\AuthItemEditionService;
 use Yii;
 use yii\base\InvalidConfigException;
