@@ -39,7 +39,7 @@ export default function RoleView({ role }) {
                   Back
                 </Button>
               </Link>
-              <Link href={`/role/${role.name}/update`}>
+              <Link href={`/roles/${role.name}/update`}>
                 <Button size="sm">
                   <Edit className="mr-2 h-4 w-4" />
                   Edit
