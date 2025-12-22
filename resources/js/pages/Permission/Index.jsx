@@ -41,6 +41,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table.tsx'
+import { getCsrfParam, getCsrfToken } from '@/lib/csrf'
 
 // Moved SortableHeader component definition to the top level
 function SortableHeader({ column, children, currentSortBy, currentSortOrder, handleSort }) {
@@ -117,24 +118,20 @@ export default function PermissionIndex({ permissions, pagination, filters, sort
   }
 
   const handleDelete = (name) => {
-    // Get CSRF token from meta tag or props
-    const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-    const metaParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute('content')
-
-    const csrfToken = metaToken || props.csrfToken
-    const csrfParam = metaParam || props.csrfParam
+    const csrfToken = getCsrfToken()
+    const csrfParam = getCsrfParam()
 
     if (!csrfToken || !csrfParam) {
       toast.error('CSRF token missing. Please refresh the page.')
       return
     }
 
-    const formData = {
+    const data = {
       [csrfParam]: csrfToken,
-      _method: 'delete', // Inertia uses _method for DELETE requests
     }
 
-    router.post(`/permissions/${name}/delete`, formData, {
+    router.delete(`/permissions/delete?name=${encodeURIComponent(name)}`, {
+      data,
       onSuccess: () => {
         setDeleteId(null)
         toast.success('Permission deleted successfully.')
@@ -443,12 +440,12 @@ export default function PermissionIndex({ permissions, pagination, filters, sort
                               {columnVisibility.actions && (
                                 <TableCell className="text-right">
                                   <div className="flex justify-end gap-2">
-                                    <Link href={`/permissions/${encodeURIComponent(permission.name)}`}>
+                                    <Link href={`/permissions/view?name=${encodeURIComponent(permission.name)}`}>
                                       <Button variant="ghost" size="sm" title="View">
                                         <Eye className="h-4 w-4" />
                                       </Button>
                                     </Link>
-                                    <Link href={`/permissions/${encodeURIComponent(permission.name)}/update`}>
+                                    <Link href={`/permissions/update?name=${encodeURIComponent(permission.name)}`}>
                                       <Button variant="ghost" size="sm" title="Update">
                                         <Edit className="h-4 w-4" />
                                       </Button>
