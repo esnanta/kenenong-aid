@@ -286,9 +286,9 @@ class PermissionController extends BaseController
         // GET request - show a form with current data
         return Inertia::render('Permission/Form', [
             'permission' => [
-                'name' => $model->name,
-                'description' => $model->description,
-                'rule_name' => $model->ruleName ?: 'none',
+                'name' => $authItem->name,
+                'description' => $authItem->description,
+                'rule_name' => $authItem->ruleName ?: 'none',
                 'old_name' => $name,
             ],
             'errors' => [],
