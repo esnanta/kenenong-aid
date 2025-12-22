@@ -118,20 +118,7 @@ export default function PermissionIndex({ permissions, pagination, filters, sort
   }
 
   const handleDelete = (name) => {
-    const csrfToken = getCsrfToken()
-    const csrfParam = getCsrfParam()
-
-    if (!csrfToken || !csrfParam) {
-      toast.error('CSRF token missing. Please refresh the page.')
-      return
-    }
-
-    const data = {
-      [csrfParam]: csrfToken,
-    }
-
-    router.delete(`/permissions/${encodeURIComponent(name)}/delete`, {
-      data,
+    router.post(`/permissions/${encodeURIComponent(name)}/delete`, {}, {
       onSuccess: () => {
         setDeleteId(null)
         toast.success('Permission deleted successfully.')

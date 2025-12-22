@@ -11,6 +11,7 @@ use Da\User\Service\AuthItemEditionService;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\rbac\Item;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -49,6 +50,12 @@ class PermissionController extends BaseController
                         'allow' => true,
                         'roles' => ['@'], // Allow all authenticated users for now
                     ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['POST'],
                 ],
             ],
         ];
@@ -314,8 +321,10 @@ class PermissionController extends BaseController
             Yii::$app->getSession()->setFlash('error', 'Unable to delete permission.');
         }
 
-        // A standard redirect is the correct way to handle this with Inertia.
-        // The yii2-inertia wrapper will convert this to a proper Inertia response.
+        if (Yii::$app->request->headers->get('X-Inertia')) {
+            return $this->actionIndex();
+        }
+
         return $this->redirect(['index']);
     }
 
