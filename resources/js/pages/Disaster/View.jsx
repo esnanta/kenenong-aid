@@ -1,6 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react'
 import { ArrowLeft, Edit } from 'lucide-react'
-import {DashboardLayout} from '@/components/layouts/DashboardLayout'
+import { DashboardLayout } from '@/components/layouts/DashboardLayout'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -73,10 +73,10 @@ export default function DisasterView({ disaster }) {
                     Back
                   </Button>
                 </Link>
-                <Link href={`/disasters/${disaster.id}/edit`}>
+                <Link href={`/disasters/${disaster.id}/update`}>
                   <Button size="sm">
                     <Edit className="mr-2 h-4 w-4" />
-                    Edit
+                    Update
                   </Button>
                 </Link>
               </div>

@@ -81,10 +81,10 @@ class RoleController extends BaseController
      * Retrieves an AuthItem (Role) by its name.
      *
      * @param string $name The name of the role.
-     * @return Role
+     * @return \yii\rbac\Role
      * @throws NotFoundHttpException if the role is not found.
      */
-    protected function getItem(string $name): Role
+    protected function getItem(string $name)
     {
         $authItem = $this->authHelper->getRole($name);
         if ($authItem !== null) {
@@ -142,12 +142,12 @@ class RoleController extends BaseController
     public function actionView(string $name): Response
     {
         $authItem = $this->getItem($name);
-        $model = $this->make($this->getModelClass(), [], ['scenario' => 'update', 'item' => $authItem]);
 
         // Get assigned items (child roles and permissions)
         $assignedItems = [];
+        $children = Yii::$app->authManager->getChildren($name);
         /** @var AuthItem $child */
-        foreach ($authItem->children as $child) {
+        foreach ($children as $child) {
             $assignedItems[] = [
                 'name' => $child->name,
                 'type' => $child->type === 1 ? 'role' : 'permission',
@@ -157,9 +157,9 @@ class RoleController extends BaseController
 
         return Inertia::render('Role/View', [
             'role' => [
-                'name' => $model->name,
-                'description' => $model->description,
-                'rule_name' => $model->ruleName,
+                'name' => $authItem->name,
+                'description' => $authItem->description,
+                'rule_name' => $authItem->ruleName,
                 'children' => $assignedItems,
             ],
         ]);
