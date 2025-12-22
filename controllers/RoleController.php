@@ -308,7 +308,7 @@ class RoleController extends BaseController
             Yii::$app->getSession()->setFlash('error', 'Unable to delete role.');
         }
 
-        return Inertia::location('/role');
+        return Inertia::location('/roles');
     }
 
     /**
