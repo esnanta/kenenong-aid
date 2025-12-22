@@ -169,7 +169,7 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
 
   const handleSort = (column) => {
     const newSortOrder = currentSortBy === column && currentSortOrder === 'asc' ? 'desc' : 'asc'
-    router.get('/role', {
+    router.get('/roles', {
       ...filters,
       search: String(search),
       sort_by: column,
@@ -179,7 +179,7 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
   }
 
   const handleFilter = () => {
-    router.get('/role', {
+    router.get('/roles', {
       search: String(search),
       sort_by: currentSortBy,
       sort_order: currentSortOrder,
@@ -189,7 +189,7 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
 
   const handleClearFilters = () => {
     setSearch('')
-    router.get('/role', {
+    router.get('/roles', {
       sort_by: currentSortBy,
       sort_order: currentSortOrder,
       page: 1,
@@ -205,7 +205,7 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
       [csrf.csrfParam]: csrf.csrfToken,
     }
 
-    router.post(`/role/${name}/delete`, formData, {
+    router.post(`/roles/${name}/delete`, formData, {
       onSuccess: () => {
         setDeleteName(null)
         toast.success('Role deleted successfully')
@@ -391,12 +391,12 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
                               {columnVisibility.actions && (
                                 <TableCell className="text-right">
                                   <div className="flex items-center justify-end gap-2">
-                                    <Link href={`/role/${role.name}`}>
+                                    <Link href={`/roles/${role.name}`}>
                                       <Button size="sm" variant="ghost" title="View">
                                         <Eye className="h-4 w-4" />
                                       </Button>
                                     </Link>
-                                    <Link href={`/role/${role.name}/update`}>
+                                    <Link href={`/roles/${role.name}/update`}>
                                       <Button size="sm" variant="ghost" title="Edit">
                                         <Edit className="h-4 w-4" />
                                       </Button>
@@ -451,7 +451,7 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => router.get('/role', {
+                        onClick={() => router.get('/roles', {
                           ...filters,
                           search: String(search),
                           sort_by: currentSortBy,
@@ -466,7 +466,7 @@ export default function RoleIndex({ roles, pagination, filters, sort }) {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => router.get('/role', {
+                        onClick={() => router.get('/roles', {
                           ...filters,
                           search: String(search),
                           sort_by: currentSortBy,
