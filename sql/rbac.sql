@@ -170,12 +170,12 @@ VALUES ('verification-index', 2, 'Index Verification', UNIX_TIMESTAMP(), UNIX_TI
        ('verificationVote-delete', 2, 'Delete Verification Vote', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
        ('verificationVote-report', 2, 'Report Verification Vote', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
 
-       ('verificationAction-index', 2, 'Index Verification Action', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-       ('verificationAction-create', 2, 'Create Verification Action', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-       ('verificationAction-update', 2, 'Update Verification Action', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-       ('verificationAction-view', 2, 'View Verification Action', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-       ('verificationAction-delete', 2, 'Delete Verification Action', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-       ('verificationAction-report', 2, 'Report Verification Action', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+       ('verificationType-index', 2, 'Index Verification Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verificationType-create', 2, 'Create Verification Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verificationType-update', 2, 'Update Verification Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verificationType-view', 2, 'View Verification Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verificationType-delete', 2, 'Delete Verification Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+       ('verificationType-report', 2, 'Report Verification Type', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
 
 -- -------------------------------------------------------------------------
 -- 4. MEDIA FILE (Bukti Lapangan)
@@ -318,12 +318,12 @@ VALUES
 ('master-report', 'disasterStatus-report'),
 
 -- Verification Master
-('master-index', 'verificationAction-index'),
-('master-create', 'verificationAction-create'),
-('master-update', 'verificationAction-update'),
-('master-view', 'verificationAction-view'),
-('master-delete', 'verificationAction-delete'),
-('master-report', 'verificationAction-report'),
+('master-index', 'verificationType-index'),
+('master-create', 'verificationType-create'),
+('master-update', 'verificationType-update'),
+('master-view', 'verificationType-view'),
+('master-delete', 'verificationType-delete'),
+('master-report', 'verificationType-report'),
 
 -- Item Master
 ('master-index', 'itemCategory-index'),
