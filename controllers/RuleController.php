@@ -62,13 +62,18 @@ class RuleController extends BaseController
 
         // Get rules data
         $rules = [];
-        foreach ($dataProvider->getModels() as $rule) {
-            $rules[] = [
-                'name' => $rule->name,
-                'class_name' => $rule->className,
-                'created_at' => date('Y-m-d H:i:s', $rule->createdAt), // Assuming createdAt is a timestamp
-                'updated_at' => date('Y-m-d H:i:s', $rule->updatedAt), // Assuming updatedAt is a timestamp
-            ];
+        $authManager = $this->getAuthManager();
+        foreach ($dataProvider->getModels() as $ruleData) {
+            // The data provider might return arrays, so we fetch the full rule object from the auth manager
+            $rule = $authManager->getRule(is_array($ruleData) ? $ruleData['name'] : $ruleData->name);
+            if ($rule instanceof RbacRule) {
+                $rules[] = [
+                    'name' => $rule->name,
+                    'class_name' => get_class($rule),
+                    'created_at' => date('Y-m-d H:i:s', $rule->createdAt),
+                    'updated_at' => date('Y-m-d H:i:s', $rule->updatedAt),
+                ];
+            }
         }
 
         return Inertia::render('Rule/Index', [
