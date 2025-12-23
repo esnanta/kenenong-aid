@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\VerificationActionSearch */
+/* @var $searchModel app\models\VerificationTypeSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 use yii\helpers\Html;

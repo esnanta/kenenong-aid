@@ -7,6 +7,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
 use mootensai\behaviors\UUIDBehavior;
+use yii\db\ActiveQuery;
 
 /**
  * This is the base model class for table "t_disaster".
@@ -122,7 +123,7 @@ class Disaster extends \yii\db\ActiveRecord
     }
     
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getAccessRoutes()
     {
@@ -130,7 +131,7 @@ class Disaster extends \yii\db\ActiveRecord
     }
         
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getDisasterStatus()
     {
@@ -138,7 +139,7 @@ class Disaster extends \yii\db\ActiveRecord
     }
         
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getDisasterType()
     {
@@ -146,7 +147,7 @@ class Disaster extends \yii\db\ActiveRecord
     }
         
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getShelters()
     {

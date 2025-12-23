@@ -3,12 +3,12 @@
 namespace app\models;
 
 use Yii;
-use \app\models\base\VerificationAction as BaseVerificationAction;
+use \app\models\base\VerificationType as BaseVerificationType;
 
 /**
- * This is the model class for table "t_verification_action".
+ * This is the model class for table "t_verification_type".
  */
-class VerificationAction extends BaseVerificationAction
+class VerificationType extends BaseVerificationType
 {
     /**
      * @inheritdoc

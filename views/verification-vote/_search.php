@@ -26,7 +26,7 @@ use yii\widgets\ActiveForm;
     ]); ?>
 
     <?= $form->field($model, 'verification_action_id')->widget(\kartik\widgets\Select2::classname(), [
-        'data' => \yii\helpers\ArrayHelper::map(\app\models\VerificationAction::find()->orderBy('id')->asArray()->all(), 'id', 'title'),
+        'data' => \yii\helpers\ArrayHelper::map(\app\models\VerificationType::find()->orderBy('id')->asArray()->all(), 'id', 'title'),
         'options' => ['placeholder' => Yii::t('app', 'Choose T verification action')],
         'pluginOptions' => [
             'allowClear' => true

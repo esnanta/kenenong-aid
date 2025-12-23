@@ -12,7 +12,7 @@ use mootensai\behaviors\UUIDBehavior;
  *
  * @property integer $id
  * @property integer $verification_id
- * @property integer $verification_action_id
+ * @property integer $verification_type_id
  * @property string $notes
  * @property integer $voted_by
  * @property string $voted_at
@@ -26,7 +26,7 @@ use mootensai\behaviors\UUIDBehavior;
  * @property integer $verlock
  * @property string $uuid
  *
- * @property \app\models\VerificationAction $verificationAction
+ * @property \app\models\VerificationType $VerificationType
  * @property \app\models\Verification $verification
  * @property \app\models\Users $votedBy
  */
@@ -56,7 +56,7 @@ class VerificationVote extends \yii\db\ActiveRecord
     public function relationNames()
     {
         return [
-            'verificationAction',
+            'VerificationType',
             'verification',
             'votedBy'
         ];
@@ -68,7 +68,7 @@ class VerificationVote extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['verification_id', 'verification_action_id', 'voted_by', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
+            [['verification_id', 'verification_type_id', 'voted_by', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
             [['notes'], 'string'],
             [['voted_at', 'created_at', 'updated_at', 'deleted_at'], 'safe'],
             [['is_deleted'], 'integer'],
@@ -106,7 +106,7 @@ class VerificationVote extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'verification_id' => Yii::t('app', 'Verification ID'),
-            'verification_action_id' => Yii::t('app', 'Verification Action ID'),
+            'verification_type_id' => Yii::t('app', 'Verification Action ID'),
             'notes' => Yii::t('app', 'Notes'),
             'voted_by' => Yii::t('app', 'Voted By'),
             'voted_at' => Yii::t('app', 'Voted At'),
@@ -119,9 +119,9 @@ class VerificationVote extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getVerificationAction()
+    public function getVerificationType()
     {
-        return $this->hasOne(\app\models\VerificationAction::class, ['id' => 'verification_action_id']);
+        return $this->hasOne(\app\models\VerificationType::class, ['id' => 'verification_type_id']);
     }
         
     /**

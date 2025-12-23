@@ -58,7 +58,7 @@ $this->registerJs($search);
                     {return NULL;}
                 },
                 'filterType' => GridView::FILTER_SELECT2,
-                'filter' => \yii\helpers\ArrayHelper::map(\app\models\VerificationAction::find()->asArray()->all(), 'id', 'title'),
+                'filter' => \yii\helpers\ArrayHelper::map(\app\models\VerificationType::find()->asArray()->all(), 'id', 'title'),
                 'filterWidgetOptions' => [
                     'pluginOptions' => ['allowClear' => true],
                 ],

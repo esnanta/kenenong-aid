@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\VerificationAction;
+use app\models\VerificationType;
 
 /**
- * app\models\VerificationActionSearch represents the model behind the search form about `app\models\VerificationAction`.
+ * app\models\VerificationTypeSearch represents the model behind the search form about `app\models\VerificationType`.
  */
- class VerificationActionSearch extends VerificationAction
+ class VerificationTypeSearch extends VerificationType
 {
     /**
      * @inheritdoc
@@ -41,7 +41,7 @@ use app\models\VerificationAction;
      */
     public function search($params)
     {
-        $query = VerificationAction::find();
+        $query = VerificationType::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

@@ -8,7 +8,7 @@ use yii\behaviors\BlameableBehavior;
 use mootensai\behaviors\UUIDBehavior;
 
 /**
- * This is the base model class for table "t_verification_action".
+ * This is the base model class for table "t_verification_type".
  *
  * @property integer $id
  * @property string $code
@@ -27,7 +27,7 @@ use mootensai\behaviors\UUIDBehavior;
  *
  * @property \app\models\VerificationVotes[] $verificationVotes
  */
-class VerificationAction extends \yii\db\ActiveRecord
+class VerificationType extends \yii\db\ActiveRecord
 {
     use \mootensai\relation\RelationTrait;
 
@@ -81,7 +81,7 @@ class VerificationAction extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 't_verification_action';
+        return 't_verification_type';
     }
 
     /**
@@ -117,7 +117,7 @@ class VerificationAction extends \yii\db\ActiveRecord
      */
     public function getVerificationVotes()
     {
-        return $this->hasMany(\app\models\VerificationVotes::class, ['verification_action_id' => 'id']);
+        return $this->hasMany(\app\models\VerificationVotes::class, ['verification_type_id' => 'id']);
     }
     
     /**
@@ -169,11 +169,11 @@ class VerificationAction extends \yii\db\ActiveRecord
 
     /**
      * @inheritdoc
-     * @return \app\models\VerificationActionQuery the active query used by this AR class.
+     * @return \app\models\VerificationTypeQuery the active query used by this AR class.
      */
     public static function find()
     {
-        $query = new \app\models\VerificationActionQuery(get_called_class());
-        return $query->where(['t_verification_action.is_deleted' => 0]);
+        $query = new \app\models\VerificationTypeQuery(get_called_class());
+        return $query->where(['t_verification_type.is_deleted' => 0]);
     }
 }

@@ -17,7 +17,7 @@ class VerificationVote extends BaseVerificationVote
     {
         return array_replace_recursive(parent::rules(),
 	    [
-            [['verification_id', 'verification_action_id', 'voted_by', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
+            [['verification_id', 'verification_type_id', 'voted_by', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
             [['notes'], 'string'],
             [['voted_at', 'created_at', 'updated_at', 'deleted_at'], 'safe'],
             [['is_deleted'], 'integer'],
@@ -36,7 +36,7 @@ class VerificationVote extends BaseVerificationVote
         return [
             'id' => Yii::t('app', 'ID'),
             'verification_id' => Yii::t('app', 'Verification ID'),
-            'verification_action_id' => Yii::t('app', 'Verification Action ID'),
+            'verification_type_id' => Yii::t('app', 'Verification Action ID'),
             'notes' => Yii::t('app', 'Notes'),
             'voted_by' => Yii::t('app', 'Voted By'),
             'voted_at' => Yii::t('app', 'Voted At'),

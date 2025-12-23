@@ -27,7 +27,7 @@ echo TabularForm::widget([
             'type' => TabularForm::INPUT_WIDGET,
             'widgetClass' => \kartik\widgets\Select2::className(),
             'options' => [
-                'data' => \yii\helpers\ArrayHelper::map(\app\models\VerificationAction::find()->orderBy('title')->asArray()->all(), 'id', 'title'),
+                'data' => \yii\helpers\ArrayHelper::map(\app\models\VerificationType::find()->orderBy('title')->asArray()->all(), 'id', 'title'),
                 'options' => ['placeholder' => Yii::t('app', 'Choose T verification action')],
             ],
             'columnOptions' => ['width' => '200px']

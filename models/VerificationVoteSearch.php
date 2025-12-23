@@ -18,7 +18,7 @@ use app\models\VerificationVote;
     public function rules()
     {
         return [
-            [['id', 'verification_id', 'verification_action_id', 'voted_by', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
+            [['id', 'verification_id', 'verification_type_id', 'voted_by', 'created_by', 'updated_by', 'deleted_by', 'verlock'], 'integer'],
             [['notes', 'voted_at', 'created_at', 'updated_at', 'is_deleted', 'deleted_at', 'uuid'], 'safe'],
         ];
     }
@@ -58,7 +58,7 @@ use app\models\VerificationVote;
         $query->andFilterWhere([
             'id' => $this->id,
             'verification_id' => $this->verification_id,
-            'verification_action_id' => $this->verification_action_id,
+            'verification_type_id' => $this->verification_type_id,
             'voted_by' => $this->voted_by,
             'voted_at' => $this->voted_at,
             'created_at' => $this->created_at,

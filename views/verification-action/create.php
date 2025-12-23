@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model app\models\VerificationAction */
+/* @var $model app\models\VerificationType */
 
 $this->title = Yii::t('app', 'Create Verification Action');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Verification Action'), 'url' => ['index']];

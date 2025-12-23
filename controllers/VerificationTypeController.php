@@ -3,8 +3,8 @@
 namespace app\controllers;
 
 use app\controllers\base\BaseController;
-use app\models\VerificationAction;
-use app\models\VerificationActionSearch;
+use app\models\VerificationType;
+use app\models\VerificationTypeSearch;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\db\Exception;
@@ -14,9 +14,9 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
- * VerificationActionController implements the CRUD actions for the VerificationAction model.
+ * VerificationTypeController implements the CRUD actions for the VerificationType model.
  */
-class VerificationActionController extends BaseController
+class VerificationTypeController extends BaseController
 {
     /**
      * @return array
@@ -34,14 +34,14 @@ class VerificationActionController extends BaseController
     }
 
     /**
-     * Lists all VerificationAction models.
+     * Lists all VerificationType models.
      * @return string
      * @throws ForbiddenHttpException
      */
     public function actionIndex(): string
     {
-        $this->checkAccess('verificationAction-index');
-        $searchModel = new VerificationActionSearch();
+        $this->checkAccess('verificationType-index');
+        $searchModel = new VerificationTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -51,7 +51,7 @@ class VerificationActionController extends BaseController
     }
 
     /**
-     * Displays a single VerificationAction model.
+     * Displays a single VerificationType model.
      * @param int $id
      * @return string
      * @throws NotFoundHttpException
@@ -60,7 +60,7 @@ class VerificationActionController extends BaseController
     public function actionView(int $id): string
     {
         $model = $this->findModel($id);
-        $this->checkAccess('verificationAction-view',$model);
+        $this->checkAccess('verificationType-view',$model);
         
         $providerVerificationVote = new ArrayDataProvider([
             'allModels' => $model->verificationVotes,
@@ -72,7 +72,7 @@ class VerificationActionController extends BaseController
     }
 
     /**
-     * Creates a new VerificationAction model.
+     * Creates a new VerificationType model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return Response|string
      * @throws Exception
@@ -80,8 +80,8 @@ class VerificationActionController extends BaseController
      */
     public function actionCreate()
     {
-        $this->checkAccess('verificationAction-create');
-        $model = new VerificationAction();
+        $this->checkAccess('verificationType-create');
+        $model = new VerificationType();
 
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -93,7 +93,7 @@ class VerificationActionController extends BaseController
     }
 
     /**
-     * Updates an existing VerificationAction model.
+     * Updates an existing VerificationType model.
      * If the update is successful, the browser will be redirected to the 'view' page.
      * @param int $id
      * @return Response|string
@@ -104,7 +104,7 @@ class VerificationActionController extends BaseController
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
-        $this->checkAccess('verificationAction-update',$model);
+        $this->checkAccess('verificationType-update',$model);
         
         if ($model->loadAll(Yii::$app->request->post()) && $model->saveAll()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -116,7 +116,7 @@ class VerificationActionController extends BaseController
     }
 
     /**
-     * Deletes an existing VerificationAction model.
+     * Deletes an existing VerificationType model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id
      * @return Response
@@ -127,7 +127,7 @@ class VerificationActionController extends BaseController
     public function actionDelete(int $id): Response
     {
         $model = $this->findModel($id);
-        $this->checkAccess('verificationAction-delete', $model);
+        $this->checkAccess('verificationType-delete', $model);
         $model->deleteWithRelated();
 
         return $this->redirect(['index']);
@@ -135,15 +135,15 @@ class VerificationActionController extends BaseController
 
     
     /**
-     * Finds the VerificationAction model based on its primary key value.
+     * Finds the VerificationType model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id
-     * @return VerificationAction the loaded model
+     * @return VerificationType the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel(int $id): VerificationAction
+    protected function findModel(int $id): VerificationType
     {
-        if (($model = VerificationAction::findOne($id)) !== null) {
+        if (($model = VerificationType::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
