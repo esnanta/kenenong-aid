@@ -34,6 +34,23 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table.tsx'
+import { addCsrfToData } from '@/lib/csrf.js'
+
+function SortableHeader({ column, children, currentSortBy, currentSortOrder, handleSort }) {
+  const isSorted = currentSortBy === column
+  const sortIcon = isSorted
+    ? (currentSortOrder === 'asc' ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />)
+    : <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
+
+  return (
+    <TableHead className="cursor-pointer hover:bg-muted/50" onClick={() => handleSort(column)}>
+      <div className="flex items-center">
+        {children}
+        {sortIcon}
+      </div>
+    </TableHead>
+  )
+}
 
 export default function RuleIndex({ rules, pagination, filters, sort }) {
   const { props } = usePage()
@@ -81,23 +98,8 @@ export default function RuleIndex({ rules, pagination, filters, sort }) {
   }
 
   const handleDelete = (name) => {
-    // Get CSRF token from meta tag or props
-    const metaToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-    const metaParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute('content')
-
-    const csrfToken = metaToken || props.csrfToken
-    const csrfParam = metaParam || props.csrfParam
-
-    if (!csrfToken || !csrfParam) {
-      toast.error('CSRF token missing. Please refresh the page.')
-      return
-    }
-
-    const formData = {
-      [csrfParam]: csrfToken,
-    }
-
-    router.post(`/rule/${name}/delete`, formData, {
+    const data = addCsrfToData({})
+    router.post(`/rule/${name}/delete`, data, {
       onSuccess: () => {
         setDeleteName(null)
         toast.success('Rule deleted successfully')
@@ -129,24 +131,6 @@ export default function RuleIndex({ rules, pagination, filters, sort }) {
       minute: '2-digit',
     })
   }
-
-  const SortableHeader = ({ column, children }) => {
-    const isSorted = currentSortBy === column
-    const sortIcon = isSorted
-      ? (currentSortOrder === 'asc' ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />)
-      : <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
-
-    return (
-      <TableHead className="cursor-pointer hover:bg-muted/50" onClick={() => handleSort(column)}>
-        <div className="flex items-center">
-          {children}
-          {sortIcon}
-        </div>
-      </TableHead>
-    )
-  }
-
-  const hasActiveFilters = search
 
   return (
     <>
@@ -226,7 +210,7 @@ export default function RuleIndex({ rules, pagination, filters, sort }) {
                       <Filter className="h-4 w-4" />
                       <h3 className="font-semibold">Filters</h3>
                     </div>
-                    {hasActiveFilters && (
+                    {search && (
                       <Button variant="ghost" size="sm" onClick={handleClearFilters}>
                         <X className="mr-2 h-4 w-4" />
                         Clear All
@@ -273,16 +257,16 @@ export default function RuleIndex({ rules, pagination, filters, sort }) {
                   <TableHeader>
                     <TableRow>
                       {columnVisibility.name && (
-                        <SortableHeader column="name">Name</SortableHeader>
+                        <SortableHeader column="name" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} handleSort={handleSort}>Name</SortableHeader>
                       )}
                       {columnVisibility.className && (
-                        <SortableHeader column="class_name">Class Name</SortableHeader>
+                        <SortableHeader column="class_name" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} handleSort={handleSort}>Class Name</SortableHeader>
                       )}
                       {columnVisibility.createdAt && (
-                        <SortableHeader column="created_at">Created At</SortableHeader>
+                        <SortableHeader column="created_at" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} handleSort={handleSort}>Created At</SortableHeader>
                       )}
                       {columnVisibility.updatedAt && (
-                        <SortableHeader column="updated_at">Updated At</SortableHeader>
+                        <SortableHeader column="updated_at" currentSortBy={currentSortBy} currentSortOrder={currentSortOrder} handleSort={handleSort}>Updated At</SortableHeader>
                       )}
                       {columnVisibility.actions && (
                         <TableHead className="text-right">Actions</TableHead>

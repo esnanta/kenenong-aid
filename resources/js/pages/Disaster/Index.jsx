@@ -2,7 +2,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react'
 import { ArrowDown, ArrowUp, ArrowUpDown, Columns2, Edit, Eye, Filter, Plus, Search, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import {DashboardLayout} from '@/components/layouts/DashboardLayout'
+import { DashboardLayout } from '@/components/layouts/DashboardLayout'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -45,6 +45,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { addCsrfToData } from '@/lib/csrf.js'
 
 // SortableHeader component (moved outside to avoid nesting)
 function SortableHeader({ column, currentSortBy, currentSortOrder, onSort, children }) {
@@ -126,10 +127,14 @@ export default function DisasterIndex({ disasters, pagination, filters, sort, di
   }
 
   const handleDelete = (id) => {
-    router.post(`/disasters/${id}/delete`, {}, {
+    const data = addCsrfToData({})
+    router.post(`/disasters/${id}/delete`, data, {
       onSuccess: () => {
         setDeleteId(null)
         toast.success('Disaster deleted successfully')
+      },
+      onError: () => {
+        toast.error('Failed to delete disaster')
       },
     })
   }
